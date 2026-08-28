@@ -1,0 +1,99 @@
+{
+  "toelichting": "Definities van de bouwstenen waarmee een business case wordt doorgerekend. Elk drivertype heeft invulvelden en een formule; de implementatie staat in src/lib/waarde/berekening.ts en wordt getest tegen dit bestand.",
+  "onzekerheid": {
+    "standaard_bandbreedte_pct": 30,
+    "toelichting": "Elke uitkomst wordt getoond als laag/verwacht/hoog. Laag en hoog worden berekend door de verwachte baat met dit percentage naar beneden en boven bij te stellen. Een business case toont nooit één hard getal."
+  },
+  "drivertypes": [
+    {
+      "id": "tijdsbesparing",
+      "naam": "Tijdsbesparing in een proces",
+      "toelichting": "Handelingen die vaak terugkomen en korter of automatisch worden. Wees eerlijk: bespaarde minuten worden pas geld als er ook echt minder capaciteit nodig is of de capaciteit elders wordt ingezet.",
+      "eenheid": "EUR/jaar",
+      "formule": "volume_per_jaar × (minuten_per_geval ÷ 60) × (reductie_pct ÷ 100) × uurtarief",
+      "velden": [
+        { "id": "volume_per_jaar", "label": "Aantal keer per jaar", "eenheid": "per jaar", "type": "getal", "min": 0 },
+        { "id": "minuten_per_geval", "label": "Minuten werk per keer (nu)", "eenheid": "minuten", "type": "getal", "min": 0 },
+        { "id": "reductie_pct", "label": "Verwachte tijdreductie", "eenheid": "%", "type": "percentage", "min": 0, "max": 100 },
+        { "id": "uurtarief", "label": "Intern uurtarief (all-in)", "eenheid": "EUR/uur", "type": "getal", "min": 0, "uitgangspunt": "uurtarief_intern" }
+      ]
+    },
+    {
+      "id": "leegstandsreductie",
+      "naam": "Minder leegstandsdagen bij mutatie",
+      "toelichting": "Sneller opnieuw verhuren tussen twee bewoners. Bij een hoge mutatiegraad is dit vaak de grootste financiële knop.",
+      "eenheid": "EUR/jaar",
+      "formule": "mutaties_per_jaar × leegstandsdagen_per_mutatie × (reductie_pct ÷ 100) × dagopbrengst",
+      "velden": [
+        { "id": "mutaties_per_jaar", "label": "Aantal mutaties per jaar", "eenheid": "per jaar", "type": "getal", "min": 0, "uitgangspunt": "verhuizingen_per_jaar" },
+        { "id": "leegstandsdagen_per_mutatie", "label": "Leegstandsdagen per mutatie (nu)", "eenheid": "dagen", "type": "getal", "min": 0, "uitgangspunt": "leegstandsdagen_per_mutatie" },
+        { "id": "reductie_pct", "label": "Verwachte reductie van die dagen", "eenheid": "%", "type": "percentage", "min": 0, "max": 100 },
+        { "id": "dagopbrengst", "label": "Gederfde opbrengst per leegstandsdag", "eenheid": "EUR/dag", "type": "getal", "min": 0, "uitgangspunt": "dagopbrengst_eenheid" }
+      ]
+    },
+    {
+      "id": "dervingsreductie",
+      "naam": "Minder derving of afboeking",
+      "toelichting": "Een bestaande jaarlijkse post die kleiner wordt, bijvoorbeeld huurachterstand, oninbaarheid of incassokosten.",
+      "eenheid": "EUR/jaar",
+      "formule": "huidige_post_per_jaar × (reductie_pct ÷ 100)",
+      "velden": [
+        { "id": "huidige_post_per_jaar", "label": "Huidige post per jaar", "eenheid": "EUR/jaar", "type": "getal", "min": 0 },
+        { "id": "reductie_pct", "label": "Verwachte reductie", "eenheid": "%", "type": "percentage", "min": 0, "max": 100 }
+      ]
+    },
+    {
+      "id": "vermeden_kosten",
+      "naam": "Vermeden kosten per geval",
+      "toelichting": "Gevallen die je voorkomt, bijvoorbeeld een tweede bezoek van een vakman, een spoedreparatie of een juridisch traject.",
+      "eenheid": "EUR/jaar",
+      "formule": "gevallen_per_jaar × kosten_per_geval × (reductie_pct ÷ 100)",
+      "velden": [
+        { "id": "gevallen_per_jaar", "label": "Aantal gevallen per jaar", "eenheid": "per jaar", "type": "getal", "min": 0 },
+        { "id": "kosten_per_geval", "label": "Kosten per geval", "eenheid": "EUR", "type": "getal", "min": 0 },
+        { "id": "reductie_pct", "label": "Aandeel dat je voorkomt", "eenheid": "%", "type": "percentage", "min": 0, "max": 100 }
+      ]
+    },
+    {
+      "id": "extra_opbrengst",
+      "naam": "Extra opbrengst",
+      "toelichting": "Nieuwe of hogere opbrengst, bijvoorbeeld door eenheden eerder in exploitatie te nemen of bezit beter te benutten.",
+      "eenheid": "EUR/jaar",
+      "formule": "extra_eenheden × jaaropbrengst_per_eenheid",
+      "velden": [
+        { "id": "extra_eenheden", "label": "Extra verhuurde eenheden (equivalent)", "eenheid": "eenheden", "type": "getal", "min": 0 },
+        { "id": "jaaropbrengst_per_eenheid", "label": "Jaaropbrengst per eenheid", "eenheid": "EUR/jaar", "type": "getal", "min": 0 }
+      ]
+    }
+  ],
+  "kostentypes": [
+    { "id": "eenmalig", "naam": "Eenmalige implementatiekosten", "eenheid": "EUR", "toelichting": "Bouw, inrichting, koppelvlakken, migratie en begeleiding bij invoering." },
+    { "id": "jaarlijks", "naam": "Jaarlijkse kosten", "eenheid": "EUR/jaar", "toelichting": "Licenties, verbruik, beheer en doorontwikkeling." },
+    { "id": "capaciteit", "naam": "Verandercapaciteit", "eenheid": "mensmaanden", "toelichting": "Wat de eigen organisatie erin moet stoppen: sleutelmensen uit IT, proces en de lijn." }
+  ],
+  "kwalitatieve_dimensies": [
+    { "id": "huurderswaarde", "naam": "Waarde voor de huurder", "vraag": "Merkt de bewoner hier zelf iets van, en is dat een verbetering?" },
+    { "id": "medewerkerswaarde", "naam": "Waarde voor de medewerker", "vraag": "Wordt het werk lichter, leuker of minder foutgevoelig?" },
+    { "id": "maatschappelijk", "naam": "Volkshuisvestelijke waarde", "vraag": "Draagt dit bij aan beschikbaarheid, betaalbaarheid, duurzaamheid of leefbaarheid?" },
+    { "id": "compliance", "naam": "Wettelijk en verantwoording", "vraag": "Helpt dit bij een wettelijke verplichting of de verantwoording aan toezicht?" },
+    { "id": "risicoreductie", "naam": "Risicoreductie", "vraag": "Verkleint dit een risico dat de organisatie nu echt loopt?" }
+  ],
+  "haalbaarheidsdimensies": [
+    { "id": "databeschikbaarheid", "naam": "Databeschikbaarheid", "vraag": "Hebben we de benodigde gegevens, in voldoende kwaliteit, uit een ontsloten bron?" },
+    { "id": "technische_complexiteit", "naam": "Technische eenvoud", "vraag": "Is dit te bouwen of te kopen zonder diepe ingreep in het primaire systeem?" },
+    { "id": "verandervermogen", "naam": "Verandervermogen", "vraag": "Kan de organisatie dit naast de lopende agenda absorberen?" },
+    { "id": "afhankelijkheden", "naam": "Zelfstandigheid", "vraag": "Kan dit los, of moet er eerst iets anders af?" },
+    { "id": "juridisch_ethisch", "naam": "Juridische en ethische ruimte", "vraag": "Is er een heldere grondslag, en kunnen we aan de bewoner uitleggen wat we doen?" }
+  ],
+  "scorekaart_dimensies": [
+    { "id": "impact", "naam": "Impact", "vraag": "Hoe groot is het effect als dit lukt?" },
+    { "id": "urgentie", "naam": "Urgentie", "vraag": "Hoe erg is het als we dit nog een jaar laten liggen?" },
+    { "id": "strategische_fit", "naam": "Strategische fit", "vraag": "Hoe direct raakt dit onze strategische thema's?" },
+    { "id": "haalbaarheid", "naam": "Haalbaarheid", "vraag": "Hoe realistisch is invoering binnen een jaar?" }
+  ],
+  "schaal": {
+    "min": 1,
+    "max": 5,
+    "labels": { "1": "zeer laag", "2": "laag", "3": "gemiddeld", "4": "hoog", "5": "zeer hoog" }
+  }
+}

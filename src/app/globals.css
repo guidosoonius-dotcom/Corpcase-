@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+/*
+ * Corpcase — visuele basis.
+ *
+ * Toon: boardroom, niet speelbord. Rustige neutralen, één ingehouden accent, veel wit.
+ * De game draait op telefoons in een vergaderzaal en op een beamer, dus contrast en
+ * raakvlakgrootte wegen zwaarder dan decoratie.
+ */
+
+@theme {
+  --color-papier: #f6f7f8;
+  --color-vlak: #ffffff;
+  --color-rand: #e2e5e9;
+  --color-rand-sterk: #c9cfd6;
+
+  --color-inkt: #14181d;
+  --color-inkt-zacht: #4a545f;
+  --color-inkt-licht: #78838f;
+
+  --color-accent: #1f4e6b;
+  --color-accent-diep: #163a50;
+  --color-accent-zacht: #e8eff4;
+
+  --color-waarde: #1c6b52;
+  --color-waarde-zacht: #e6f2ee;
+  --color-aandacht: #8a5a13;
+  --color-aandacht-zacht: #fbf1de;
+  --color-risico: #93332f;
+  --color-risico-zacht: #fbeceb;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --radius-kaart: 0.625rem;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-papier);
+  color: var(--color-inkt);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Voorkomt dat iOS bij het focussen van een invoerveld inzoomt tijdens een sessie. */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Raakvlakken op telefoon: minimaal 44 px, ook als de inhoud kleiner is. */
+button,
+[role="button"],
+a.knop,
+label.keuze {
+  min-height: 2.75rem;
+  touch-action: manipulation;
+}
+
+/* Tabellen en matrixen mogen zelf scrollen; de pagina nooit horizontaal. */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .niet-printen {
+    display: none !important;
+  }
+
+  .print-blok {
+    break-inside: avoid;
+  }
+}

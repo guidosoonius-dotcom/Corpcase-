@@ -1,0 +1,2585 @@
+{
+  "toelichting": "Bibliotheek van herkenbare use cases voor de corporatiesector, geordend langs CORA-domeinen. Spelers kiezen hieruit of maken een eigen kaart. De drivers zijn voorgevuld met DUWO-ordegroottes; elke waarde is een startpunt voor het gesprek, geen waarheid.",
+  "waarschuwing": "Alle voorgevulde driverwaarden zijn aannames tenzij anders vermeld. Ze zijn bedoeld om het gesprek te starten, niet om een besluit op te baseren.",
+  "usecases": [
+    {
+      "id": "uc-01",
+      "titel": "Meertalige AI-assistent in het huurdersportaal",
+      "domein": "klantbeheer",
+      "probleem": "Bewoners stellen dezelfde vragen over huur, servicekosten, opzeggen en sleutels, in twee talen en vaak buiten kantoortijden. Internationale bewoners kennen het Nederlandse systeem niet.",
+      "oplossingsrichting": "Een assistent in het portaal die vragen in Nederlands en Engels beantwoordt op basis van de eigen kennisbank en het contract van de bewoner, met een duidelijke overdracht naar een mens wanneer het niet lukt.",
+      "themas": [
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-internationaal",
+        "p-eerstejaars"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk"
+      ],
+      "benodigde_data": [
+        "Kennisbank en beleidsteksten",
+        "Huurovereenkomst",
+        "Relatie",
+        "Status lopende meldingen"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Antwoorden moeten herleidbaar zijn naar een bron; geen vrij fabulerende assistent.",
+        "AVG: alleen contractgegevens van de ingelogde bewoner tonen.",
+        "Escalatie naar een mens moet altijd binnen één klik bereikbaar zijn."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 120000,
+            "minuten_per_geval": 6,
+            "reductie_pct": 25,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 90000,
+        "jaarlijks": 45000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 3
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-02",
+      "titel": "Automatische triage en routering van inkomende berichten",
+      "domein": "klantbeheer",
+      "probleem": "E-mail en webformulieren komen op één hoop binnen en worden handmatig gelezen, gecategoriseerd en doorgezet. In de instroompiek loopt de wachttijd op.",
+      "oplossingsrichting": "Inkomende berichten automatisch classificeren op onderwerp, urgentie en taal, koppelen aan de juiste huurder en eenheid, en direct naar het juiste team of werkproces routeren.",
+      "themas": [
+        "dienstverlening",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-eerstejaars",
+        "p-gangbewoner"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-mutatiepiek"
+      ],
+      "benodigde_data": [
+        "E-mail en formulieren",
+        "Relatie",
+        "Eenheid",
+        "Huurovereenkomst"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Foutieve routering moet zichtbaar en corrigeerbaar zijn.",
+        "Meet de doorlooptijd vóór invoering, anders is het effect later niet aantoonbaar."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 60000,
+            "minuten_per_geval": 4,
+            "reductie_pct": 40,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 60000,
+        "jaarlijks": 25000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 1,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-03",
+      "titel": "Antwoordsuggesties voor de klantenservice tijdens het gesprek",
+      "domein": "klantbeheer",
+      "probleem": "Medewerkers zoeken tijdens het gesprek in verschillende systemen en documenten naar het juiste antwoord. Nieuwe medewerkers hebben een lange inwerktijd.",
+      "oplossingsrichting": "Een assistent die meeleest en direct de relevante beleidsregel, contractafspraak of processtap toont, met bronvermelding.",
+      "themas": [
+        "dienstverlening",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-eerstejaars"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-kennisverloop"
+      ],
+      "benodigde_data": [
+        "Kennisbank",
+        "Beleidsdocumenten",
+        "Huurovereenkomst",
+        "Klantdossier"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Zonder actueel gehouden kennisbank levert dit verkeerde antwoorden op.",
+        "Medewerker blijft verantwoordelijk voor wat er gezegd wordt."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 45000,
+            "minuten_per_geval": 5,
+            "reductie_pct": 20,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 55000,
+        "jaarlijks": 30000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 1,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-04",
+      "titel": "Proactieve statusupdates over lopende meldingen",
+      "domein": "klantbeheer",
+      "probleem": "Een groot deel van het klantcontact bestaat uit de vraag 'waar blijft het?'. Dat contact voegt niets toe en irriteert beide kanten.",
+      "oplossingsrichting": "Automatisch berichten sturen bij elke statuswijziging van een melding, reparatie of aanvraag, in de taal van de bewoner, via het kanaal dat hij gebruikt.",
+      "themas": [
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-gangbewoner",
+        "p-eerstejaars"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-onderhoudsketen"
+      ],
+      "benodigde_data": [
+        "Order en reparatieverzoek",
+        "Relatie",
+        "Contactvoorkeur en taal"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Alleen waardevol als de onderliggende statussen kloppen; anders verhoogt het juist het aantal contacten."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 30000,
+            "minuten_per_geval": 5,
+            "reductie_pct": 50,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 45000,
+        "jaarlijks": 12000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 5,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 5,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 1,
+        "compliance": 1,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-05",
+      "titel": "Capaciteitsvoorspelling voor de instroompiek",
+      "domein": "klantbeheer",
+      "probleem": "In augustus en september pieken verhuur, sleuteluitgifte en klantcontact tegelijk. De bezetting wordt op gevoel en op vorig jaar gepland.",
+      "oplossingsrichting": "Voorspellen van contact- en mutatievolume per week en per stad, en die prognose gebruiken voor roostering en inhuur.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-internationaal"
+      ],
+      "uitdagingen": [
+        "u-mutatiepiek",
+        "u-klantcontactdruk"
+      ],
+      "benodigde_data": [
+        "Historisch contactvolume",
+        "Opzeggingen en aanbiedingen",
+        "Studentenaantallen en inschrijvingen"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Vraagt minimaal twee tot drie jaar betrouwbare historie."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 2000,
+            "kosten_per_geval": 45,
+            "reductie_pct": 25
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 50000,
+        "jaarlijks": 15000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 1,
+        "compliance": 1,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-06",
+      "titel": "Automatische vastlegging en samenvatting van klantgesprekken",
+      "domein": "klantbeheer",
+      "probleem": "Na elk gesprek moet een medewerker handmatig een notitie maken. Dat kost tijd en de kwaliteit van dossiervorming wisselt sterk.",
+      "oplossingsrichting": "Gesprek en afspraken automatisch samenvatten in het klantdossier, met de medewerker als eindredacteur.",
+      "themas": [
+        "dienstverlening",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-betaalproblemen"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-kennisverloop"
+      ],
+      "benodigde_data": [
+        "Gespreksopname of transcript",
+        "Klantdossier"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Opnemen van gesprekken vraagt een expliciete grondslag en informatieplicht richting de bewoner.",
+        "Medewerker moet de samenvatting kunnen corrigeren vóór opslag."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 45000,
+            "minuten_per_geval": 3,
+            "reductie_pct": 60,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 45000,
+        "jaarlijks": 30000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 3,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 2
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 1,
+        "compliance": 3,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-07",
+      "titel": "Slimme matching van woningzoekende en beschikbare eenheid",
+      "domein": "vastgoedbemiddeling",
+      "probleem": "Aanbiedingen worden vaak geweigerd omdat de eenheid niet past bij de zoeker. Elke weigering kost een ronde en dus leegstandsdagen.",
+      "oplossingsrichting": "Voorspellen welke kandidaat een aanbod waarschijnlijk accepteert op basis van voorkeuren, studieplaats, verblijfsduur en historisch gedrag, en de aanbiedingsvolgorde daarop inrichten binnen de regels van het verdeelmodel.",
+      "themas": [
+        "beschikbaarheid",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-eerstejaars",
+        "p-internationaal"
+      ],
+      "uitdagingen": [
+        "u-leegstandsdagen",
+        "u-mutatiepiek"
+      ],
+      "benodigde_data": [
+        "Inschrijving en woonwens",
+        "Aanbieding en reactie",
+        "Eenheid",
+        "Verhuurhistorie"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Mag de volgorde van het verdeelmodel niet doorkruisen; rechtvaardigheid gaat vóór snelheid.",
+        "Uitlegbaar houden: een afgewezen kandidaat moet kunnen begrijpen waarom."
+      ],
+      "drivers": [
+        {
+          "type": "leegstandsreductie",
+          "waarden": {
+            "mutaties_per_jaar": 18000,
+            "leegstandsdagen_per_mutatie": 10,
+            "reductie_pct": 15,
+            "dagopbrengst": 15
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 90000,
+        "jaarlijks": 30000,
+        "capaciteit": 5
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 2
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-08",
+      "titel": "Volledig digitale opzegging, oplevering en sleuteloverdracht",
+      "domein": "vastgoedbemiddeling",
+      "probleem": "Opzeggen, inspecteren, sleutels inleveren en afrekenen kost meerdere contactmomenten en handmatige stappen, achttienduizend keer per jaar.",
+      "oplossingsrichting": "Eén digitale keten: opzeggen in het portaal, zelfinspectie met foto's, automatische eindafrekening en sleuteloverdracht via een slim slot of afhaalpunt.",
+      "themas": [
+        "bedrijfsvoering",
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-internationaal",
+        "p-afstudeerder"
+      ],
+      "uitdagingen": [
+        "u-mutatiepiek",
+        "u-leegstandsdagen"
+      ],
+      "benodigde_data": [
+        "Huurovereenkomst",
+        "Inspectie",
+        "Sleutel",
+        "Betaalgegevens"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Zelfinspectie vraagt duidelijke normen, anders verschuift discussie naar de eindafrekening.",
+        "Fysieke sleutelvervanging is een investering per complex."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 18000,
+            "minuten_per_geval": 35,
+            "reductie_pct": 30,
+            "uurtarief": 65
+          }
+        },
+        {
+          "type": "leegstandsreductie",
+          "waarden": {
+            "mutaties_per_jaar": 18000,
+            "leegstandsdagen_per_mutatie": 10,
+            "reductie_pct": 10,
+            "dagopbrengst": 15
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 250000,
+        "jaarlijks": 60000,
+        "capaciteit": 9
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 2,
+        "verandervermogen": 2,
+        "afhankelijkheden": 2,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 3,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-09",
+      "titel": "Voorspellen van opzeggingen per complex",
+      "domein": "vastgoedbemiddeling",
+      "probleem": "Opzeggingen komen als verrassing binnen, terwijl studiejaar, contractvorm en verblijfsduur sterke voorspellers zijn. Daardoor start de nieuwe verhuur te laat.",
+      "oplossingsrichting": "Een prognose van te verwachten opzeggingen per complex en per week, zodat werving en mutatieonderhoud vooruit gepland kunnen worden.",
+      "themas": [
+        "beschikbaarheid",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-afstudeerder"
+      ],
+      "uitdagingen": [
+        "u-mutatiepiek",
+        "u-leegstandsdagen"
+      ],
+      "benodigde_data": [
+        "Huurovereenkomst en contractvorm",
+        "Verhuurhistorie",
+        "Studiegegevens voor zover beschikbaar"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Voorspellen op persoonsniveau is gevoelig; werk op complex- en cohortniveau."
+      ],
+      "drivers": [
+        {
+          "type": "leegstandsreductie",
+          "waarden": {
+            "mutaties_per_jaar": 18000,
+            "leegstandsdagen_per_mutatie": 10,
+            "reductie_pct": 12,
+            "dagopbrengst": 15
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 60000,
+        "jaarlijks": 18000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 3,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 3
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 4,
+        "compliance": 1,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-10",
+      "titel": "Geautomatiseerde aanbiedings- en acceptatieketen",
+      "domein": "vastgoedbemiddeling",
+      "probleem": "Tussen 'eenheid is vrij' en 'contract is getekend' zitten veel handmatige stappen: aanbieden, herinneren, controleren, contract opmaken, ondertekenen.",
+      "oplossingsrichting": "De hele keten automatiseren met digitale ondertekening, automatische herinnering en directe doorstroom naar de volgende kandidaat bij weigering of stilte.",
+      "themas": [
+        "bedrijfsvoering",
+        "beschikbaarheid"
+      ],
+      "personas": [
+        "p-eerstejaars",
+        "p-internationaal"
+      ],
+      "uitdagingen": [
+        "u-leegstandsdagen",
+        "u-mutatiepiek"
+      ],
+      "benodigde_data": [
+        "Inschrijving",
+        "Aanbieding",
+        "Huurovereenkomst",
+        "Identiteits- en inkomenstoets"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Reactietermijnen bepalen het effect meer dan de techniek: kort de doorlooptijd in het beleid ook echt in."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 18000,
+            "minuten_per_geval": 25,
+            "reductie_pct": 40,
+            "uurtarief": 65
+          }
+        },
+        {
+          "type": "leegstandsreductie",
+          "waarden": {
+            "mutaties_per_jaar": 18000,
+            "leegstandsdagen_per_mutatie": 10,
+            "reductie_pct": 10,
+            "dagopbrengst": 15
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 120000,
+        "jaarlijks": 35000,
+        "capaciteit": 6
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 3,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-11",
+      "titel": "Fraudesignalering bij inschrijving en toewijzing",
+      "domein": "vastgoedbemiddeling",
+      "probleem": "Vervalste inschrijfbewijzen, onjuiste inkomensgegevens en dubbele inschrijvingen kosten eenheden die eerlijk wachtende studenten mislopen.",
+      "oplossingsrichting": "Automatische signalering van afwijkende patronen in aanmeldingen en documenten, met altijd een menselijke beoordeling vóór er een gevolg aan wordt verbonden.",
+      "themas": [
+        "beschikbaarheid"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-woonfraude"
+      ],
+      "benodigde_data": [
+        "Inschrijving",
+        "Identiteitsdocumenten",
+        "Inkomens- en studiebewijs"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Hoog risico op ongelijke behandeling: monitor op bias en leg de menselijke beoordeling vast.",
+        "Een signaal is nooit een besluit."
+      ],
+      "drivers": [
+        {
+          "type": "extra_opbrengst",
+          "waarden": {
+            "extra_eenheden": 40,
+            "jaaropbrengst_per_eenheid": 5400
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 1
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 3,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-12",
+      "titel": "Digitale onboarding voor internationale bewoners",
+      "domein": "klantbeheer",
+      "probleem": "Internationale studenten arriveren zonder kennis van het Nederlandse huursysteem, vaak buiten kantoortijden en met vragen die per land verschillen.",
+      "oplossingsrichting": "Een begeleide digitale onboarding vanaf het moment van accepteren: wat te regelen, wanneer, in welke taal, met automatische herinneringen en een checklist tot en met inschrijving bij de gemeente.",
+      "themas": [
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-internationaal",
+        "p-promovendus"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-mutatiepiek"
+      ],
+      "benodigde_data": [
+        "Huurovereenkomst",
+        "Relatie en taalvoorkeur",
+        "Aankomstdatum"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Inhoud moet actueel blijven; verouderde instructies kosten meer contact dan ze besparen."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 9000,
+            "minuten_per_geval": 15,
+            "reductie_pct": 35,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 55000,
+        "jaarlijks": 15000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 5,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 3,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-13",
+      "titel": "Automatische diagnose van reparatieverzoeken uit tekst en foto",
+      "domein": "vastgoedonderhoud",
+      "probleem": "Bewoners omschrijven een defect in eigen woorden. Een verkeerde diagnose bij de melding levert de verkeerde vakman, een tweede bezoek en een ontevreden bewoner op.",
+      "oplossingsrichting": "De melding met foto automatisch classificeren naar defectsoort, urgentie en benodigde discipline, en direct de juiste order en materiaallijst voorstellen.",
+      "themas": [
+        "bedrijfsvoering",
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-gangbewoner",
+        "p-eerstejaars"
+      ],
+      "uitdagingen": [
+        "u-onderhoudsketen",
+        "u-klantcontactdruk"
+      ],
+      "benodigde_data": [
+        "Reparatieverzoek en foto's",
+        "Eenheid en installatiegegevens",
+        "Historische orders en uitkomsten"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Vraagt goed gelabelde historie; zonder terugkoppeling op de werkelijke oorzaak leert het model niet.",
+        "Bewoner moet de diagnose kunnen corrigeren."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 25000,
+            "minuten_per_geval": 8,
+            "reductie_pct": 35,
+            "uurtarief": 65
+          }
+        },
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 3000,
+            "kosten_per_geval": 110,
+            "reductie_pct": 30
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 100000,
+        "jaarlijks": 35000,
+        "capaciteit": 5
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 1,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-14",
+      "titel": "Voorspellend onderhoud op installaties",
+      "domein": "vastgoedonderhoud",
+      "probleem": "Cv-ketels, liften en ventilatie vallen uit op het slechtste moment. Storingen worden pas bekend als de bewoner belt.",
+      "oplossingsrichting": "Uitval voorspellen op basis van leeftijd, storingshistorie en waar aanwezig sensordata, en vervanging plannen vóór het misgaat.",
+      "themas": [
+        "bedrijfsvoering",
+        "duurzaamheid"
+      ],
+      "personas": [
+        "p-gangbewoner",
+        "p-promovendus"
+      ],
+      "uitdagingen": [
+        "u-onderhoudsketen"
+      ],
+      "benodigde_data": [
+        "Installatiegegevens en leeftijd",
+        "Storings- en orderhistorie",
+        "Sensormetingen"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Alleen zinvol als de installatieregistratie op orde is.",
+        "Sensoren vragen een aparte investering en beheerorganisatie."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 4000,
+            "kosten_per_geval": 180,
+            "reductie_pct": 20
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 130000,
+        "jaarlijks": 45000,
+        "capaciteit": 6
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 2,
+        "verandervermogen": 3,
+        "afhankelijkheden": 2,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 2,
+        "compliance": 2,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-15",
+      "titel": "Slim clusteren en plannen van onderhoudsafspraken",
+      "domein": "vastgoedonderhoud",
+      "probleem": "Vakmensen rijden heen en weer tussen complexen en steden. Afspraken worden per melding gepland, niet per gebouw.",
+      "oplossingsrichting": "Werkorders automatisch clusteren per complex en route, met afspraakvoorstellen die passen bij de beschikbaarheid van de bewoner.",
+      "themas": [
+        "bedrijfsvoering",
+        "duurzaamheid"
+      ],
+      "personas": [
+        "p-gangbewoner"
+      ],
+      "uitdagingen": [
+        "u-onderhoudsketen",
+        "u-mutatiepiek"
+      ],
+      "benodigde_data": [
+        "Order",
+        "Eenheid en complex",
+        "Beschikbaarheid vakman en bewoner"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Winst zit in reistijd en no-shows; meet beide vooraf."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 25000,
+            "kosten_per_geval": 22,
+            "reductie_pct": 25
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 80000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 3,
+        "compliance": 1,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-16",
+      "titel": "Conditiemeting ondersteund door beeldherkenning",
+      "domein": "vastgoedonderhoud",
+      "probleem": "Conditiemetingen zijn arbeidsintensief, subjectief en verouderen snel. De meerjarenbegroting rust op verouderde aannames.",
+      "oplossingsrichting": "Foto's en inspectiebeelden automatisch beoordelen op gebreken en die uitkomsten laten doorwerken in de meerjarenonderhoudsbegroting.",
+      "themas": [
+        "bedrijfsvoering",
+        "duurzaamheid"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-datakwaliteit",
+        "u-verduurzaming"
+      ],
+      "benodigde_data": [
+        "Inspectiebeelden",
+        "Conditiescores",
+        "Meerjarenonderhoudsbegroting"
+      ],
+      "volwassenheid": "verkennend",
+      "aandachtspunten": [
+        "Beeldherkenning vervangt de inspecteur niet; het versnelt en standaardiseert zijn oordeel."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 1200,
+            "minuten_per_geval": 120,
+            "reductie_pct": 30,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 110000,
+        "jaarlijks": 30000,
+        "capaciteit": 5
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 2,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 3,
+        "compliance": 2,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-17",
+      "titel": "Vocht- en schimmelsignalering met sensoren",
+      "domein": "vastgoedonderhoud",
+      "probleem": "Vocht en schimmel in kleine, intensief bewoonde eenheden worden pas gemeld als de schade er al is, en leiden tot discussie over de oorzaak.",
+      "oplossingsrichting": "Sensoren op luchtvochtigheid en temperatuur in risicocomplexen, met automatische signalering en gericht ventilatieadvies aan de bewoner.",
+      "themas": [
+        "duurzaamheid",
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-gangbewoner",
+        "p-eerstejaars"
+      ],
+      "uitdagingen": [
+        "u-onderhoudsketen",
+        "u-verduurzaming"
+      ],
+      "benodigde_data": [
+        "Sensormetingen",
+        "Eenheid en bouwkundige kenmerken",
+        "Klachtenhistorie"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Meten in de woning raakt de privacy van de bewoner: alleen klimaatdata, expliciet uitgelegd, en niet herleidbaar tot gedrag.",
+        "Zonder opvolging leidt meten alleen tot meer meldingen."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 900,
+            "kosten_per_geval": 750,
+            "reductie_pct": 30
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 160000,
+        "jaarlijks": 40000,
+        "capaciteit": 5
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 2,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 2
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 5,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 3,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-18",
+      "titel": "Automatische controle van onderhoudsfacturen",
+      "domein": "vastgoedonderhoud",
+      "probleem": "Facturen van aannemers worden steekproefsgewijs gecontroleerd tegen order en contractafspraken. Afwijkingen blijven onopgemerkt.",
+      "oplossingsrichting": "Elke factuur automatisch matchen met order, tarieflijst en opgeleverd werk, en alleen afwijkingen ter beoordeling voorleggen.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-bedrijfslasten",
+        "u-onderhoudsketen"
+      ],
+      "benodigde_data": [
+        "Inkoopfactuur",
+        "Order",
+        "Contract en tarieflijst"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Vraagt gestandaardiseerde tarieflijsten in het contract; zonder dat is er niets om tegen te matchen."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 25000,
+            "minuten_per_geval": 6,
+            "reductie_pct": 60,
+            "uurtarief": 65
+          }
+        },
+        {
+          "type": "dervingsreductie",
+          "waarden": {
+            "huidige_post_per_jaar": 400000,
+            "reductie_pct": 15
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 20000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 3,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-19",
+      "titel": "Datagedreven portefeuillekeuzes per stad",
+      "domein": "vastgoedsturing",
+      "probleem": "Keuzes over bijbouwen, transformeren of afstoten leunen op losse rapporten en aannames die per stad verschillen.",
+      "oplossingsrichting": "Eén dashboard dat vraag, aanbod, exploitatie, conditie en verduurzamingsopgave per stad en complex naast elkaar zet, als basis voor het portefeuilleplan.",
+      "themas": [
+        "beschikbaarheid",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-promovendus"
+      ],
+      "uitdagingen": [
+        "u-bouwproductie",
+        "u-datakwaliteit"
+      ],
+      "benodigde_data": [
+        "Eenheid en complex",
+        "Exploitatiegegevens",
+        "Conditie en label",
+        "Studentenprognoses en gemeentelijke data"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Staat of valt met datakwaliteit; overweeg het datafundament eerst.",
+        "Een dashboard is pas waardevol als het aan een besluitvormingsritme hangt."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 240,
+            "minuten_per_geval": 240,
+            "reductie_pct": 40,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 120000,
+        "jaarlijks": 40000,
+        "capaciteit": 6
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 2,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 5,
+        "compliance": 3,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-20",
+      "titel": "Scenario-analyse van studentenaantallen en behoefte",
+      "domein": "vastgoedsturing",
+      "probleem": "De vraagontwikkeling is onzeker: internationaliseringsbeleid, numerus fixus en studiekeuze bewegen sterk. Toch wordt met één prognose gerekend.",
+      "oplossingsrichting": "Meerdere scenario's doorrekenen per stad, met zichtbare gevolgen voor bezetting, exploitatie en investeringsruimte.",
+      "themas": [
+        "beschikbaarheid"
+      ],
+      "personas": [
+        "p-internationaal"
+      ],
+      "uitdagingen": [
+        "u-bouwproductie"
+      ],
+      "benodigde_data": [
+        "Studentenprognoses",
+        "Inschrijvingen en wachtrij",
+        "Bezettingshistorie"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Externe prognoses zijn zelf onzeker; toon de bandbreedte, niet één lijn."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 4,
+            "kosten_per_geval": 60000,
+            "reductie_pct": 25
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 20000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 2,
+        "maatschappelijk": 5,
+        "compliance": 3,
+        "risicoreductie": 5
+      }
+    },
+    {
+      "id": "uc-21",
+      "titel": "Optimale volgorde van verduurzaming",
+      "domein": "vastgoedsturing",
+      "probleem": "De verduurzamingsopgave is groter dan het budget. De volgorde bepaalt hoeveel CO2, woonlastenverlaging en comfort je per euro koopt.",
+      "oplossingsrichting": "Complexen rangschikken op effect per euro, met woonlasten voor de bewoner en overlast tijdens de ingreep als expliciete factoren.",
+      "themas": [
+        "duurzaamheid",
+        "betaalbaarheid"
+      ],
+      "personas": [
+        "p-promovendus",
+        "p-gangbewoner"
+      ],
+      "uitdagingen": [
+        "u-verduurzaming"
+      ],
+      "benodigde_data": [
+        "Energielabel en verbruik",
+        "Conditie en MJOB",
+        "Huur- en servicekosten",
+        "Complexkenmerken"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Puur optimaliseren op euro's kan complexen met kwetsbare bewoners structureel achteraan zetten; bouw een rechtvaardigheidstoets in."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 1,
+            "kosten_per_geval": 900000,
+            "reductie_pct": 10
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 90000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 2,
+        "maatschappelijk": 5,
+        "compliance": 4,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-22",
+      "titel": "Eenduidig vastgoedgegevensbeeld op VERA-standaard",
+      "domein": "informatievoorziening",
+      "probleem": "Eenheid-, contract- en onderhoudsgegevens leven in verschillende systemen met eigen definities. Elke rapportage begint met handmatig repareren.",
+      "oplossingsrichting": "Eén centraal gegevensbeeld op basis van de VERA-standaard, met gestandaardiseerde koppelvlakken naar de bronsystemen.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-datakwaliteit",
+        "u-leveranciersafhankelijkheid"
+      ],
+      "benodigde_data": [
+        "Alle kernbronsystemen",
+        "VERA-gegevensmodel"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Dit is een fundament: het levert zelf weinig zichtbare waarde op, maar bepaalt de haalbaarheid van bijna alle andere use cases.",
+        "Vraagt medewerking van leveranciers; leg koppelvlakken vast in contracten."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 2000,
+            "minuten_per_geval": 45,
+            "reductie_pct": 50,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 300000,
+        "jaarlijks": 80000,
+        "capaciteit": 12
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 2,
+        "verandervermogen": 2,
+        "afhankelijkheden": 5,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 4,
+        "risicoreductie": 5
+      }
+    },
+    {
+      "id": "uc-23",
+      "titel": "Automatische toets van programma van eisen aan beleid en regelgeving",
+      "domein": "vastgoedontwikkeling",
+      "probleem": "Bij elk project wordt handmatig nagelopen of het ontwerp voldoet aan eigen beleid, bouwregels en afspraken met de gemeente.",
+      "oplossingsrichting": "Documenten automatisch toetsen aan een geactualiseerde set eisen, met een overzicht van afwijkingen en de bron van elke eis.",
+      "themas": [
+        "bedrijfsvoering",
+        "beschikbaarheid"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-bouwproductie",
+        "u-verantwoording"
+      ],
+      "benodigde_data": [
+        "Programma's van eisen",
+        "Beleidskaders",
+        "Regelgeving en prestatieafspraken"
+      ],
+      "volwassenheid": "verkennend",
+      "aandachtspunten": [
+        "De toets ondersteunt, maar vervangt de verantwoordelijkheid van de projectleider niet."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 60,
+            "minuten_per_geval": 360,
+            "reductie_pct": 35,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 65000,
+        "jaarlijks": 20000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 2,
+        "compliance": 4,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-24",
+      "titel": "Vroegtijdige risicosignalering in bouwprojecten",
+      "domein": "vastgoedrealisatie",
+      "probleem": "Vertraging en budgetoverschrijding worden zichtbaar in de kwartaalrapportage, als bijsturen al duur is geworden.",
+      "oplossingsrichting": "Voortgang, meerwerk, planning en signalen uit projectcorrespondentie continu monitoren en afwijkingen vroeg melden.",
+      "themas": [
+        "bedrijfsvoering",
+        "beschikbaarheid"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-bouwproductie",
+        "u-verantwoording"
+      ],
+      "benodigde_data": [
+        "Projectplanning en budget",
+        "Meerwerkregistratie",
+        "Projectcorrespondentie"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Signalen zijn pas nuttig met een afgesproken opvolgroute; anders wordt het genegeerd."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 12,
+            "kosten_per_geval": 80000,
+            "reductie_pct": 15
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 85000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 3,
+        "compliance": 3,
+        "risicoreductie": 5
+      }
+    },
+    {
+      "id": "uc-25",
+      "titel": "Doorzoekbaar maken van contracten, bestekken en vergunningen",
+      "domein": "informatiebeheer",
+      "probleem": "Afspraken staan verspreid in duizenden documenten. Wie een clausule zoekt, is een halve dag kwijt of belt iemand die het toevallig weet.",
+      "oplossingsrichting": "Een doorzoekbare laag over het documentarchief die vragen in gewone taal beantwoordt met verwijzing naar de exacte passage.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-kennisverloop",
+        "u-leveranciersafhankelijkheid"
+      ],
+      "benodigde_data": [
+        "Contracten",
+        "Bestekken",
+        "Vergunningen",
+        "Documentarchief"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Toegangsrechten moeten meelopen; niet iedereen mag elk contract inzien.",
+        "Antwoorden altijd met bronverwijzing, nooit zonder."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 3000,
+            "minuten_per_geval": 25,
+            "reductie_pct": 50,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 30000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 3
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 1,
+        "compliance": 3,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-26",
+      "titel": "Vroegsignalering van overlast op complexniveau",
+      "domein": "wonen-leefbaarheid",
+      "probleem": "Overlastmeldingen worden per geval afgehandeld, terwijl het patroon op complex- of gangniveau ligt. Ingrijpen gebeurt pas als het escaleert.",
+      "oplossingsrichting": "Meldingen, reparaties, schoonmaak en opzeggingen samen bekijken per complex, en een complexbeeld tonen dat opbouwende spanning zichtbaar maakt.",
+      "themas": [
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-gangbewoner"
+      ],
+      "uitdagingen": [
+        "u-overlast"
+      ],
+      "benodigde_data": [
+        "Meldingen en klachten",
+        "Orders",
+        "Complex- en eenheidgegevens",
+        "Opzeggingen"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Werk op complexniveau, niet op persoonsniveau: profilering van bewoners is hier de grens.",
+        "Betrek de bewonerscommissie bij het ontwerp."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 400,
+            "kosten_per_geval": 900,
+            "reductie_pct": 25
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 20000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 2
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 5,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 4,
+        "compliance": 2,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-27",
+      "titel": "Signaleren van onrechtmatige bewoning en onderhuur",
+      "domein": "wonen-leefbaarheid",
+      "probleem": "Kamers worden doorverhuurd of bewoond door iemand anders dan de huurder. Dat kost beschikbare eenheden in een markt met een lange wachtrij.",
+      "oplossingsrichting": "Afwijkende patronen signaleren, bijvoorbeeld in verbruik, betaalgedrag, sleutelgebruik of inschrijvingen, met altijd een huisbezoek of gesprek vóór er een gevolg aan wordt verbonden.",
+      "themas": [
+        "beschikbaarheid"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-woonfraude"
+      ],
+      "benodigde_data": [
+        "Huurovereenkomst",
+        "Betaalgegevens",
+        "Verbruiksdata",
+        "BRP-signalen voor zover toegestaan"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Dit is de meest privacygevoelige use case in de bibliotheek. Grondslag, noodzakelijkheid en proportionaliteit moeten vooraf juridisch getoetst zijn.",
+        "Risico op ongelijke behandeling; monitor uitkomsten op bias en houd een menselijk besluit verplicht.",
+        "Overweeg of het doel ook met minder ingrijpende middelen bereikt kan worden."
+      ],
+      "drivers": [
+        {
+          "type": "extra_opbrengst",
+          "waarden": {
+            "extra_eenheden": 60,
+            "jaaropbrengst_per_eenheid": 5400
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 80000,
+        "jaarlijks": 30000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 1
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 2,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-28",
+      "titel": "Complexbeeld voor de sociaal beheerder",
+      "domein": "wonen-leefbaarheid",
+      "probleem": "De beheerder heeft geen samenhangend beeld van wat er in zijn complexen speelt; informatie zit verspreid over systemen en collega's.",
+      "oplossingsrichting": "Eén mobiel complexbeeld met openstaande meldingen, geplande werkzaamheden, signalen en contactpersonen, bruikbaar tijdens de ronde.",
+      "themas": [
+        "dienstverlening",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-gangbewoner"
+      ],
+      "uitdagingen": [
+        "u-overlast",
+        "u-kennisverloop"
+      ],
+      "benodigde_data": [
+        "Complex en eenheid",
+        "Meldingen",
+        "Orders",
+        "Contactgegevens"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Toon alleen wat de beheerder voor zijn taak nodig heeft; niet het volledige klantdossier."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 6000,
+            "minuten_per_geval": 12,
+            "reductie_pct": 35,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 65000,
+        "jaarlijks": 20000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 3,
+        "compliance": 2,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-29",
+      "titel": "Continu meten van woonbeleving in plaats van één jaarlijks onderzoek",
+      "domein": "klantbeheer",
+      "probleem": "De woonbeleving wordt één keer per jaar gemeten. Het gemiddelde is degelijk, maar te laat en te grof om op te sturen.",
+      "oplossingsrichting": "Korte feedback op natuurlijke momenten in de reis (na intrek, na een reparatie, bij vertrek), automatisch geanalyseerd op thema en complex.",
+      "themas": [
+        "dienstverlening"
+      ],
+      "personas": [
+        "p-eerstejaars",
+        "p-gangbewoner",
+        "p-internationaal"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-overlast"
+      ],
+      "benodigde_data": [
+        "Klantreisgebeurtenissen",
+        "Feedbackantwoorden",
+        "Complex en eenheid"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Alleen vragen als je ook opvolgt; onbeantwoorde feedback verlaagt het vertrouwen.",
+        "Enquêtemoeheid is reëel: houd het kort en beperk de frequentie."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 1,
+            "kosten_per_geval": 90000,
+            "reductie_pct": 40
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 50000,
+        "jaarlijks": 25000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 4,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 2,
+        "compliance": 2,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-30",
+      "titel": "Vroegsignalering van betaalachterstand met passend contact",
+      "domein": "financien-primair",
+      "probleem": "Als een achterstand zichtbaar wordt in het incassoproces, loopt het probleem vaak al maanden. Formele brieven werken averechts bij jonge huurders.",
+      "oplossingsrichting": "Vroege signalen uit betaalgedrag omzetten in een persoonlijk, laagdrempelig contact met een concreet aanbod voor een betaalregeling, in de taal en het kanaal van de bewoner.",
+      "themas": [
+        "betaalbaarheid"
+      ],
+      "personas": [
+        "p-betaalproblemen"
+      ],
+      "uitdagingen": [
+        "u-betaalachterstand"
+      ],
+      "benodigde_data": [
+        "Betaalgegevens",
+        "Huurovereenkomst",
+        "Contactvoorkeur",
+        "Historie betaalregelingen"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Voorkom dat het signaal een stempel wordt: het doel is helpen, niet sneller opzeggen.",
+        "Grondslag en bewaartermijn expliciet vastleggen; betaalgedrag is gevoelige informatie."
+      ],
+      "drivers": [
+        {
+          "type": "dervingsreductie",
+          "waarden": {
+            "huidige_post_per_jaar": 1500000,
+            "reductie_pct": 20
+          }
+        },
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 700,
+            "kosten_per_geval": 450,
+            "reductie_pct": 30
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 85000,
+        "jaarlijks": 30000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 3,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 3
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 5,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 5,
+        "compliance": 4,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-31",
+      "titel": "Automatische afhandeling van betaal- en toeslagmutaties",
+      "domein": "financien-primair",
+      "probleem": "Terugboekingen, deelbetalingen, huurtoeslagwijzigingen en borgafrekeningen worden grotendeels handmatig uitgezocht en verwerkt.",
+      "oplossingsrichting": "Mutaties automatisch matchen en boeken, met alleen de uitzonderingen naar een medewerker.",
+      "themas": [
+        "bedrijfsvoering",
+        "betaalbaarheid"
+      ],
+      "personas": [
+        "p-internationaal",
+        "p-betaalproblemen"
+      ],
+      "uitdagingen": [
+        "u-bedrijfslasten",
+        "u-betaalachterstand"
+      ],
+      "benodigde_data": [
+        "Bankmutaties",
+        "Huurovereenkomst",
+        "Betaalgegevens",
+        "Toeslaggegevens"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Betalingen uit het buitenland en van derden zijn de lastigste categorie; ontwerp daar bewust voor."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 36000,
+            "minuten_per_geval": 7,
+            "reductie_pct": 55,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 75000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 3,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 2,
+        "compliance": 3,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-32",
+      "titel": "Gerichte incasso-inzet op basis van verwachte uitkomst",
+      "domein": "financien-primair",
+      "probleem": "Elk dossier doorloopt hetzelfde standaardtraject, ongeacht de kans dat het werkt. Dure stappen worden ook gezet waar ze niets opleveren.",
+      "oplossingsrichting": "Per dossier de meest kansrijke aanpak voorstellen: persoonlijk contact, regeling, doorverwijzing naar schuldhulp of formeel traject.",
+      "themas": [
+        "betaalbaarheid",
+        "bedrijfsvoering"
+      ],
+      "personas": [
+        "p-betaalproblemen"
+      ],
+      "uitdagingen": [
+        "u-betaalachterstand"
+      ],
+      "benodigde_data": [
+        "Incassohistorie",
+        "Betaalgegevens",
+        "Contacthistorie"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Voorkom dat kwetsbare huurders systematisch in het duurste of hardste spoor belanden; toets de uitkomsten op rechtvaardigheid.",
+        "Menselijk besluit verplicht bij elke escalatie."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 1800,
+            "kosten_per_geval": 320,
+            "reductie_pct": 25
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 25000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 2
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 3,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-33",
+      "titel": "Automatische verwerking van inkoopfacturen",
+      "domein": "financien-ondersteunend",
+      "probleem": "Tienduizenden inkoopfacturen per jaar worden handmatig gecodeerd, gematcht en gefiatteerd.",
+      "oplossingsrichting": "Facturen automatisch herkennen, coderen en matchen met order en contract, met een boekingsvoorstel dat alleen bij twijfel wordt voorgelegd.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-bedrijfslasten"
+      ],
+      "benodigde_data": [
+        "Inkoopfactuur",
+        "Order",
+        "Grootboek en kostenplaatsen",
+        "Contract"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Interne beheersing blijft leidend: fiattering en functiescheiding moeten aantoonbaar in stand blijven."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 40000,
+            "minuten_per_geval": 5,
+            "reductie_pct": 60,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 25000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 1,
+        "compliance": 3,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-34",
+      "titel": "Continu inzicht in bedrijfslasten per eenheid",
+      "domein": "planning-control",
+      "probleem": "Bedrijfslasten per eenheid komen pas achteraf en op totaalniveau in beeld, terwijl sturing per proces en per stad nodig is.",
+      "oplossingsrichting": "Kosten doorlopend toerekenen aan processen, complexen en steden, met de Aedes-benchmarkdefinities als referentie.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-bedrijfslasten",
+        "u-verantwoording"
+      ],
+      "benodigde_data": [
+        "Grootboek",
+        "Kostenplaatsen",
+        "Eenheid en complex",
+        "Benchmarkdefinities"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Toerekeningsregels bepalen de uitkomst: leg ze vast en houd ze stabiel, anders is elke trend onbruikbaar."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 300,
+            "minuten_per_geval": 180,
+            "reductie_pct": 45,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 90000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 3,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 2,
+        "compliance": 4,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-35",
+      "titel": "Ondersteuning bij jaarrekening en externe verantwoording",
+      "domein": "financien-ondersteunend",
+      "probleem": "dVi, dPi, jaarrekening, benchmark en prestatieafspraken vragen elk hun eigen aanlevering uit dezelfde bron, elk jaar opnieuw handwerk.",
+      "oplossingsrichting": "Aanleveringen genereren vanuit één gecontroleerde gegevensset, met automatische controles op volledigheid en aansluiting.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-verantwoording",
+        "u-datakwaliteit"
+      ],
+      "benodigde_data": [
+        "Grootboek",
+        "Vastgoedgegevens",
+        "Contract- en huurgegevens",
+        "Taxonomie dVi/dPi"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Vraagt een betrouwbaar datafundament; overweeg volgorde ten opzichte van use case 22."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 120,
+            "minuten_per_geval": 240,
+            "reductie_pct": 40,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 80000,
+        "jaarlijks": 20000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 3,
+        "verandervermogen": 4,
+        "afhankelijkheden": 2,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 5,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-36",
+      "titel": "Automatische bewaking van datakwaliteit",
+      "domein": "informatievoorziening",
+      "probleem": "Fouten in eenheid-, contract- en relatiegegevens worden pas ontdekt als een proces vastloopt of een rapportage niet klopt.",
+      "oplossingsrichting": "Continu controleren op ontbrekende, inconsistente en verouderde gegevens, met een eigenaar per regel en een werkvoorraad om ze op te lossen.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-datakwaliteit"
+      ],
+      "benodigde_data": [
+        "Alle kernbronsystemen",
+        "Datakwaliteitsregels",
+        "VERA-definities"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Zonder eigenaarschap per gegevenssoort blijft de werkvoorraad liggen; dit is meer een organisatievraagstuk dan een technisch vraagstuk."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 5000,
+            "minuten_per_geval": 12,
+            "reductie_pct": 45,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 25000,
+        "capaciteit": 4
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 3,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 4,
+        "risicoreductie": 5
+      }
+    },
+    {
+      "id": "uc-37",
+      "titel": "Kader voor verantwoord gebruik van AI en huurdersdata",
+      "domein": "risico-compliance",
+      "probleem": "Initiatieven met huurdersdata stranden laat in het traject op privacy, uitlegbaarheid of bias, omdat de toets pas aan het eind plaatsvindt.",
+      "oplossingsrichting": "Eén vaste toets aan de voorkant: grondslag, noodzakelijkheid, uitlegbaarheid, menselijke tussenkomst en monitoring, met een eigenaar en een besluitmoment.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-avg",
+        "u-verandervermogen"
+      ],
+      "benodigde_data": [
+        "Verwerkingsregister",
+        "Beleidskaders",
+        "Use-caseportfolio"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Dit levert geen euro's op, maar bepaalt of de use cases met de meeste waarde überhaupt door kunnen gaan.",
+        "Een kader dat alleen op papier bestaat, vertraagt zonder te beschermen."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 4,
+            "kosten_per_geval": 45000,
+            "reductie_pct": 50
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 35000,
+        "jaarlijks": 20000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 5,
+        "technische_complexiteit": 5,
+        "verandervermogen": 4,
+        "afhankelijkheden": 5,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 5,
+        "risicoreductie": 5
+      }
+    },
+    {
+      "id": "uc-38",
+      "titel": "Standaard koppelvlakken op VERA in leverancierscontracten",
+      "domein": "inkoop",
+      "probleem": "Nieuwe initiatieven stranden op wat het primaire systeem toelaat of op wat de leverancier per koppeling rekent.",
+      "oplossingsrichting": "VERA-koppelvlakken als eis opnemen bij aanbesteding en contractverlenging, zodat data ontsloten kan worden zonder maatwerk per keer.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-leveranciersafhankelijkheid",
+        "u-datakwaliteit"
+      ],
+      "benodigde_data": [
+        "Contractenoverzicht",
+        "Applicatielandschap",
+        "VERA-koppelvlakspecificaties"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Effect komt pas bij het volgende contractmoment; plan naar die momenten toe."
+      ],
+      "drivers": [
+        {
+          "type": "vermeden_kosten",
+          "waarden": {
+            "gevallen_per_jaar": 6,
+            "kosten_per_geval": 35000,
+            "reductie_pct": 40
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 25000,
+        "jaarlijks": 10000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 5,
+        "technische_complexiteit": 5,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 2,
+        "compliance": 3,
+        "risicoreductie": 5
+      }
+    },
+    {
+      "id": "uc-39",
+      "titel": "Interne zoekassistent op beleid, processen en werkinstructies",
+      "domein": "hrm",
+      "probleem": "Proceskennis zit in hoofden en verspreide documenten. Bij verloop aan de balie en in het beheer verdwijnt die kennis.",
+      "oplossingsrichting": "Een assistent die vragen van medewerkers beantwoordt vanuit beleid, processen en werkinstructies, met bronvermelding en respect voor toegangsrechten.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-kennisverloop"
+      ],
+      "benodigde_data": [
+        "Beleid en werkinstructies",
+        "Procesbeschrijvingen",
+        "Intranet"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Verouderde documenten leiden tot verouderde antwoorden; koppel dit aan documenteigenaarschap."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 25000,
+            "minuten_per_geval": 9,
+            "reductie_pct": 40,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 55000,
+        "jaarlijks": 30000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 5,
+        "maatschappelijk": 1,
+        "compliance": 2,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-40",
+      "titel": "Sneller inwerken van tijdelijke en nieuwe medewerkers",
+      "domein": "hrm",
+      "probleem": "Rond de instroompiek werkt de organisatie met tijdelijke krachten die snel productief moeten zijn, terwijl inwerken tijd van vaste medewerkers kost.",
+      "oplossingsrichting": "Een gestructureerd digitaal inwerkpad per rol, met oefensituaties en directe toegang tot de juiste werkinstructie tijdens het werk.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-kennisverloop",
+        "u-mutatiepiek"
+      ],
+      "benodigde_data": [
+        "Werkinstructies",
+        "Rolprofielen",
+        "Leerplatform"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Meet de tijd tot productiviteit vooraf, anders is het effect niet aantoonbaar."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 60,
+            "minuten_per_geval": 1200,
+            "reductie_pct": 30,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 45000,
+        "jaarlijks": 15000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 5,
+        "verandervermogen": 4,
+        "afhankelijkheden": 5,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 2,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 1,
+        "compliance": 1,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-41",
+      "titel": "Automatisch samenstellen van bestuurs- en RvC-rapportages",
+      "domein": "planning-control",
+      "probleem": "Elke rapportagecyclus kost dagen aan verzamelen, controleren en opmaken, met steeds dezelfde cijfers uit dezelfde bronnen.",
+      "oplossingsrichting": "Rapportages genereren uit één gecontroleerde gegevensset, waarbij de controller de duiding schrijft in plaats van de cijfers verzamelt.",
+      "themas": [
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-verantwoording",
+        "u-datakwaliteit"
+      ],
+      "benodigde_data": [
+        "Grootboek",
+        "Prestatie-indicatoren",
+        "Vastgoed- en verhuurgegevens"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "De waarde zit in betere duiding en snellere besluitvorming, niet alleen in bespaarde uren."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 40,
+            "minuten_per_geval": 600,
+            "reductie_pct": 45,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 70000,
+        "jaarlijks": 20000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 2,
+        "compliance": 4,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-42",
+      "titel": "Monitoren van prestatieafspraken met gemeenten",
+      "domein": "besturing",
+      "probleem": "Afspraken met negen gemeenten worden vastgelegd, maar de voortgang wordt pas bij de evaluatie samengesteld.",
+      "oplossingsrichting": "Voortgang per afspraak en per gemeente continu volgen, zodat bijsturen mogelijk is binnen de looptijd in plaats van erna.",
+      "themas": [
+        "beschikbaarheid",
+        "bedrijfsvoering"
+      ],
+      "personas": [],
+      "uitdagingen": [
+        "u-verantwoording",
+        "u-bouwproductie"
+      ],
+      "benodigde_data": [
+        "Prestatieafspraken",
+        "Projectportefeuille",
+        "Verhuur- en toewijzingsgegevens"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Afspraken zijn vaak in vrije tekst geformuleerd; ze meetbaar maken is het echte werk."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 36,
+            "minuten_per_geval": 420,
+            "reductie_pct": 40,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 55000,
+        "jaarlijks": 18000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 5
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 1,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 5,
+        "compliance": 4,
+        "risicoreductie": 3
+      }
+    },
+    {
+      "id": "uc-43",
+      "titel": "Beter benutten van bestaand bezit door slimmer indelen",
+      "domein": "vastgoedsturing",
+      "probleem": "Nieuwbouw haalt de opgave niet alleen. Tegelijk staan er eenheden ondergebruikt of ongeschikt ingedeeld voor de huidige vraag.",
+      "oplossingsrichting": "Per complex analyseren waar herindeling, splitsing, transformatie of tijdelijke verhuur extra eenheden oplevert, met de kosten en de gevolgen voor de zittende bewoners in beeld.",
+      "themas": [
+        "beschikbaarheid"
+      ],
+      "personas": [
+        "p-promovendus",
+        "p-afstudeerder"
+      ],
+      "uitdagingen": [
+        "u-bouwproductie",
+        "u-leegstandsdagen"
+      ],
+      "benodigde_data": [
+        "Eenheid en plattegronden",
+        "Bezettings- en verhuurhistorie",
+        "Bouwkundige conditie",
+        "Regelgeving en bestemmingsplan"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Meer eenheden per complex kan de leefbaarheid onder druk zetten; neem dat expliciet mee in de afweging."
+      ],
+      "drivers": [
+        {
+          "type": "extra_opbrengst",
+          "waarden": {
+            "extra_eenheden": 150,
+            "jaaropbrengst_per_eenheid": 5400
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 110000,
+        "jaarlijks": 25000,
+        "capaciteit": 5
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 2,
+        "technische_complexiteit": 3,
+        "verandervermogen": 2,
+        "afhankelijkheden": 3,
+        "juridisch_ethisch": 4
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 2,
+        "maatschappelijk": 5,
+        "compliance": 2,
+        "risicoreductie": 2
+      }
+    },
+    {
+      "id": "uc-44",
+      "titel": "Ondersteuning bij huurrechtelijke dossiers en campuscontracten",
+      "domein": "juridisch",
+      "probleem": "Rond aflopende campuscontracten, ontruimingen en geschillen wordt per dossier handmatig uitgezocht welke regels, uitzonderingen en eerdere besluiten gelden.",
+      "oplossingsrichting": "Een assistent die per dossier de geldende contractvorm, wettelijke termijnen, eerdere vergelijkbare besluiten en het beleidskader op een rij zet, met bronverwijzing, als voorbereiding op het besluit van de jurist.",
+      "themas": [
+        "bedrijfsvoering",
+        "beschikbaarheid"
+      ],
+      "personas": [
+        "p-afstudeerder"
+      ],
+      "uitdagingen": [
+        "u-woonfraude",
+        "u-kennisverloop"
+      ],
+      "benodigde_data": [
+        "Huurovereenkomst en contractvorm",
+        "Dossierhistorie",
+        "Beleidskaders",
+        "Jurisprudentie en wetgeving"
+      ],
+      "volwassenheid": "opkomend",
+      "aandachtspunten": [
+        "Een juridisch besluit blijft mensenwerk: de assistent bereidt voor, hij beslist niet.",
+        "Ongelijke behandeling ligt op de loer bij coulancebeslissingen; leg de afwegingsgrond vast."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 900,
+            "minuten_per_geval": 60,
+            "reductie_pct": 30,
+            "uurtarief": 65
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 60000,
+        "jaarlijks": 22000,
+        "capaciteit": 3
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 3,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 3
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 3,
+        "medewerkerswaarde": 4,
+        "maatschappelijk": 3,
+        "compliance": 4,
+        "risicoreductie": 4
+      }
+    },
+    {
+      "id": "uc-45",
+      "titel": "Meertalige bewonerscommunicatie in begrijpelijke taal",
+      "domein": "communicatie",
+      "probleem": "Brieven, portaalteksten en complexberichten zijn geschreven in beleidstaal en deels alleen in het Nederlands. Bewoners lezen ze niet of begrijpen ze verkeerd, wat weer contact oplevert.",
+      "oplossingsrichting": "Alle uitgaande bewonerscommunicatie automatisch omzetten naar begrijpelijk taalniveau en naar het Engels, met een vaste redactionele controle vóór verzending.",
+      "themas": [
+        "dienstverlening",
+        "betaalbaarheid"
+      ],
+      "personas": [
+        "p-internationaal",
+        "p-eerstejaars",
+        "p-betaalproblemen"
+      ],
+      "uitdagingen": [
+        "u-klantcontactdruk",
+        "u-betaalachterstand"
+      ],
+      "benodigde_data": [
+        "Briefsjablonen en portaalteksten",
+        "Taalvoorkeur per bewoner",
+        "Contactmomenten"
+      ],
+      "volwassenheid": "bewezen",
+      "aandachtspunten": [
+        "Juridisch bindende teksten mogen niet zomaar herschreven worden; scheid informatieve en formele passages.",
+        "Een vertaalfout in een aanmaning of opzegging heeft directe gevolgen: menselijke eindredactie blijft nodig."
+      ],
+      "drivers": [
+        {
+          "type": "tijdsbesparing",
+          "waarden": {
+            "volume_per_jaar": 20000,
+            "minuten_per_geval": 4,
+            "reductie_pct": 30,
+            "uurtarief": 65
+          }
+        },
+        {
+          "type": "dervingsreductie",
+          "waarden": {
+            "huidige_post_per_jaar": 1500000,
+            "reductie_pct": 5
+          }
+        }
+      ],
+      "kosten": {
+        "eenmalig": 50000,
+        "jaarlijks": 20000,
+        "capaciteit": 2
+      },
+      "haalbaarheid_indicatie": {
+        "databeschikbaarheid": 4,
+        "technische_complexiteit": 4,
+        "verandervermogen": 4,
+        "afhankelijkheden": 4,
+        "juridisch_ethisch": 3
+      },
+      "kwalitatief_indicatie": {
+        "huurderswaarde": 5,
+        "medewerkerswaarde": 3,
+        "maatschappelijk": 4,
+        "compliance": 3,
+        "risicoreductie": 3
+      }
+    }
+  ]
+}

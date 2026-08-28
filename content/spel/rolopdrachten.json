@@ -1,0 +1,12 @@
+{
+  "toelichting": "Privé-opdracht per rol. Alleen zichtbaar voor de speler zelf, tot de onthulling in de opbrengstfase. Doel: perspectieven borgen die anders stil wegvallen, zonder rollenspel.",
+  "onthulling": "Bij de opbrengst wordt elke opdracht getoond met de vraag: is dit gelukt, en zo nee, wat zegt dat over ons portfolio?",
+  "opdrachten": [
+    { "id": "ro-bestuurder", "rol": "bestuurder", "opdracht": "Zorg dat elke use case in het eindportfolio herleidbaar is tot een strategisch thema uit ons eigen jaarverslag.", "controle": "elke_usecase_heeft_thema" },
+    { "id": "ro-manager-wonen", "rol": "manager-wonen", "opdracht": "Zorg dat minstens twee use cases in het eindportfolio de bewoner direct merkbaar raken.", "controle": "minimaal_twee_hoge_huurderswaarde" },
+    { "id": "ro-manager-vastgoed", "rol": "manager-vastgoed", "opdracht": "Zorg dat er iets in het portfolio zit dat binnen zes maanden daadwerkelijk kan landen, niet alleen meerjarige trajecten.", "controle": "minimaal_een_horizon_nu" },
+    { "id": "ro-manager-financien", "rol": "manager-financien", "opdracht": "Zorg dat minstens de helft van het portfolio is doorgerekend, niet alleen op gevoel gescoord.", "controle": "helft_doorgerekend" },
+    { "id": "ro-informatiemanager", "rol": "informatiemanager", "opdracht": "Zorg dat geen enkele use case het portfolio in gaat zonder benoemde databron.", "controle": "elke_usecase_heeft_databron" },
+    { "id": "ro-huurdersvertegenwoordiger", "rol": "huurdersvertegenwoordiger", "opdracht": "Zorg dat elke use case die persoonsgegevens gebruikt een expliciet vastgelegde aanname of aandachtspunt over privacy heeft.", "controle": "privacy_aandachtspunt_vastgelegd" }
+  ]
+}

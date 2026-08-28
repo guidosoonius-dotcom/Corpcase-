@@ -1,0 +1,56 @@
+{
+  "toelichting": "De facilitator kiest bij het starten een modus. De modus bepaalt kaartaantallen, verplichte velden, timers en de investeringsruimte.",
+  "modi": [
+    {
+      "id": "kort",
+      "naam": "Kort",
+      "duur_minuten": 75,
+      "omschrijving": "Past in een regulier MT-overleg. Signaalkaarten zijn voorgeselecteerd, waardebepaling mag met de scorekaart.",
+      "max_usecases": 8,
+      "min_signalen_per_speler": 2,
+      "max_signalen_per_speler": 4,
+      "businesscase_verplicht_aantal": 0,
+      "aantal_realiteitschecks": 1,
+      "roadmap_horizonnen": ["nu", "volgend"],
+      "timers_minuten": { "verkennen": 8, "identificatie": 20, "waardebepaling": 15, "prioritering": 15, "roadmap": 12 }
+    },
+    {
+      "id": "halve-dag",
+      "naam": "Halve dag",
+      "duur_minuten": 180,
+      "omschrijving": "Volledige flow met ruimte voor discussie. Minimaal twee use cases echt doorgerekend.",
+      "max_usecases": 15,
+      "min_signalen_per_speler": 3,
+      "max_signalen_per_speler": 8,
+      "businesscase_verplicht_aantal": 2,
+      "aantal_realiteitschecks": 2,
+      "roadmap_horizonnen": ["nu", "volgend", "later"],
+      "timers_minuten": { "verkennen": 20, "identificatie": 45, "waardebepaling": 40, "prioritering": 35, "roadmap": 30 }
+    },
+    {
+      "id": "hele-dag",
+      "naam": "Hele dag",
+      "duur_minuten": 360,
+      "omschrijving": "Alle fases met doorrekening per use case en een uitgewerkte roadmap met randvoorwaarden per horizon.",
+      "max_usecases": 25,
+      "min_signalen_per_speler": 4,
+      "max_signalen_per_speler": 12,
+      "businesscase_verplicht_aantal": 5,
+      "aantal_realiteitschecks": 3,
+      "roadmap_horizonnen": ["nu", "volgend", "later"],
+      "randvoorwaarden_verplicht": true,
+      "timers_minuten": { "verkennen": 35, "identificatie": 80, "waardebepaling": 90, "prioritering": 70, "roadmap": 60 }
+    }
+  ],
+  "horizonnen": [
+    { "id": "nu", "naam": "Nu", "periode": "0 tot 6 maanden", "vraag": "Wat starten we dit halfjaar?" },
+    { "id": "volgend", "naam": "Volgend", "periode": "6 tot 18 maanden", "vraag": "Wat bereiden we voor zodat het daarna kan?" },
+    { "id": "later", "naam": "Later", "periode": "18 maanden en verder", "vraag": "Wat houden we op de agenda maar starten we bewust nog niet?" }
+  ],
+  "kwadranten": [
+    { "id": "quick-wins", "naam": "Snel doen", "waarde": "hoog", "haalbaarheid": "hoog", "advies": "Start hier. Levert snel bewijs en vertrouwen op." },
+    { "id": "strategisch", "naam": "Strategisch investeren", "waarde": "hoog", "haalbaarheid": "laag", "advies": "De moeite waard, maar vraagt eerst een fundament of een besluit." },
+    { "id": "vulwerk", "naam": "Meenemen", "waarde": "laag", "haalbaarheid": "hoog", "advies": "Alleen doen als er ruimte over is of het meelift met iets anders." },
+    { "id": "vermijden", "naam": "Niet nu", "waarde": "laag", "haalbaarheid": "laag", "advies": "Bewust laten liggen. Leg vast waarom, zodat het gesprek niet elk jaar opnieuw begint." }
+  ]
+}

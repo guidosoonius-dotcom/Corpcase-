@@ -1,0 +1,11 @@
+{
+  "toelichting": "Rollen die spelers kiezen bij het joinen. De lens stuurt welke signaalkaarten een speler als eerste ziet; de rolopdracht is privé tot de onthulling.",
+  "rollen": [
+    { "id": "bestuurder", "naam": "Bestuurder", "lens": "Strategie en maatschappelijke opgave", "kijkt_naar": ["besturing", "vastgoedsturing", "planning-control"], "vraag": "Draagt dit bij aan waar wij als corporatie voor staan?" },
+    { "id": "manager-wonen", "naam": "Manager Wonen / Klant", "lens": "De bewoner en de dienstverlening", "kijkt_naar": ["klantbeheer", "vastgoedbemiddeling", "wonen-leefbaarheid"], "vraag": "Merkt de bewoner hier iets van, en is dat beter?" },
+    { "id": "manager-vastgoed", "naam": "Manager Vastgoed", "lens": "Het bezit en het onderhoud", "kijkt_naar": ["vastgoedonderhoud", "vastgoedontwikkeling", "vastgoedrealisatie", "vastgoedsturing"], "vraag": "Kunnen we dit uitvoeren met de mensen en partners die we hebben?" },
+    { "id": "manager-financien", "naam": "Manager Financiën / Control", "lens": "Geld, risico en verantwoording", "kijkt_naar": ["financien-primair", "financien-ondersteunend", "planning-control", "risico-compliance"], "vraag": "Wat kost het, wat levert het op, en durven we dat te verdedigen?" },
+    { "id": "informatiemanager", "naam": "Informatiemanager / IT", "lens": "Data, systemen en haalbaarheid", "kijkt_naar": ["informatievoorziening", "informatiebeheer", "inkoop"], "vraag": "Hebben we de data en de koppelvlakken hiervoor?" },
+    { "id": "huurdersvertegenwoordiger", "naam": "Huurders- of bewonersvertegenwoordiger", "lens": "Het bewonersbelang", "kijkt_naar": ["wonen-leefbaarheid", "klantbeheer", "risico-compliance"], "vraag": "Zou ik dit aan een bewoner kunnen uitleggen?" }
+  ]
+}

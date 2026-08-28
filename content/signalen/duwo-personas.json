@@ -1,0 +1,85 @@
+{
+  "organisatie_id": "duwo",
+  "lens": "huurder",
+  "toelichting": "Huurderspersona's van een studentenhuisvester. Elke persona draagt een reis en een frustratie; spelers kijken door hun ogen naar de dienstverlening.",
+  "kaarten": [
+    {
+      "id": "p-eerstejaars",
+      "titel": "Sanne — eerstejaars uit Nederland",
+      "profiel": "18 jaar, eerste keer uit huis, woont op een gang met gedeelde keuken. Regelt alles op de telefoon, belt nooit.",
+      "reis": "Inschrijven, wachten, aanbod krijgen, snel beslissen, verhuizen, wennen aan het delen van voorzieningen.",
+      "frustraties": [
+        "Onduidelijk wanneer er iets komt en waar ze in de rij staat.",
+        "Moet een aanbod binnen enkele dagen accepteren zonder de plek gezien te hebben.",
+        "Weet niet bij wie ze moet zijn als de keuken vies is of de buurman herrie maakt."
+      ],
+      "signaal": "De eerste 90 dagen bepalen het beeld van de verhuurder, en juist daar is het contact het meest ongestructureerd.",
+      "thema": "dienstverlening"
+    },
+    {
+      "id": "p-internationaal",
+      "titel": "Mateo — internationale student, blijft één semester",
+      "profiel": "Exchange-student, spreekt geen Nederlands, arriveert een week voor de start van het collegejaar, vertrekt na vijf maanden.",
+      "reis": "Vanuit het buitenland regelen, aankomst, sleutel ophalen, inschrijven bij de gemeente, na één semester weer opzeggen.",
+      "frustraties": [
+        "Brieven, contracten en portaalteksten zijn deels in het Nederlands.",
+        "Kent het Nederlandse systeem van huurtoeslag, borg en servicekosten niet.",
+        "Aankomst valt buiten kantoortijden; vragen komen 's avonds en in het weekend."
+      ],
+      "signaal": "Kortverblijvers doorlopen de hele keten twee keer zo snel: elke inefficiëntie in de keten telt bij hen dubbel.",
+      "thema": "dienstverlening"
+    },
+    {
+      "id": "p-promovendus",
+      "titel": "Aisha — promovenda met partner",
+      "profiel": "29 jaar, PhD-kandidaat, komt met partner uit het buitenland, blijft drie tot vier jaar, hoger inkomen dan een student.",
+      "reis": "Zoekt een zelfstandige woning, wil zekerheid over de langere termijn, stelt hogere eisen aan comfort en geluid.",
+      "frustraties": [
+        "Aanbod is ingericht op korte verblijven en kleine eenheden.",
+        "Wil weten waar ze na afloop van het contract terechtkan.",
+        "Merkt de gevolgen van een slecht geïsoleerd complex in de energierekening."
+      ],
+      "signaal": "Een groeiende groep bewoners past niet in het standaard studentenprofiel waarop processen zijn ingericht.",
+      "thema": "beschikbaarheid"
+    },
+    {
+      "id": "p-afstudeerder",
+      "titel": "Joost — afstudeerder met aflopend campuscontract",
+      "profiel": "24 jaar, studie bijna klaar, moet volgens het campuscontract binnen afzienbare tijd de woning verlaten.",
+      "reis": "Krijgt een bericht dat het contract eindigt, zoekt vervangende woonruimte in een krappe markt, stelt de opzegging uit.",
+      "frustraties": [
+        "Vindt geen betaalbaar alternatief en voelt zich weggestuurd.",
+        "Ervaart de handhaving als onpersoonlijk en juridisch.",
+        "Weet niet welke uitzonderingen of coulanceregels er bestaan."
+      ],
+      "signaal": "Doorstroming is de goedkoopste bron van beschikbaarheid, maar raakt direct aan de menselijke maat.",
+      "thema": "beschikbaarheid"
+    },
+    {
+      "id": "p-betaalproblemen",
+      "titel": "Kevin — student met betaalachterstand",
+      "profiel": "21 jaar, bijbaan weggevallen, twee maanden huur achter, reageert niet op brieven.",
+      "reis": "Eerste herinnering, aanmaning, incassotraject, mogelijk ontruiming — of een betaalregeling als hij op tijd bereikt wordt.",
+      "frustraties": [
+        "Schaamte: hij opent de post niet meer.",
+        "Communicatie is formeel en juridisch, niet uitnodigend.",
+        "Weet niet dat er een regeling mogelijk is."
+      ],
+      "signaal": "Vroeg contact voorkomt een duur en pijnlijk traject; de signalen zijn er vaak al weken eerder in de data.",
+      "thema": "betaalbaarheid"
+    },
+    {
+      "id": "p-gangbewoner",
+      "titel": "Lisa — bewoner van een gang met overlast",
+      "profiel": "20 jaar, deelt keuken en douche met zeven anderen, ervaart geluidsoverlast en vervuiling.",
+      "reis": "Meldt het, hoort niets terug, meldt het nog eens, geeft het op en meldt zich af bij de volgende enquête met een laag cijfer.",
+      "frustraties": [
+        "Meldingen verdwijnen in een systeem zonder terugkoppeling.",
+        "Onduidelijk wie verantwoordelijk is: medebewoners, schoonmaak of de verhuurder.",
+        "Problemen op complexniveau worden als individuele klachten behandeld."
+      ],
+      "signaal": "Leefbaarheid in gedeelde woonvormen is een complexvraagstuk, maar wordt administratief per melding afgehandeld.",
+      "thema": "dienstverlening"
+    }
+  ]
+}

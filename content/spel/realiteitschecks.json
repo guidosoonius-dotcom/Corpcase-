@@ -1,0 +1,13 @@
+{
+  "toelichting": "Scenariokaarten die na de eerste prioritering worden getrokken. Het team toetst of de prioritering standhoudt en legt per check een besluit vast: portfolio aanpassen of onderbouwd handhaven. Beide uitkomsten zijn goed; niet beslissen is de enige verkeerde uitkomst.",
+  "checks": [
+    { "id": "rc-budget", "titel": "Het budget wordt gehalveerd", "scenario": "De begroting voor volgend jaar staat onder druk. Jullie investeringsruimte gaat met de helft omlaag. Wat blijft er staan en wat valt af?", "raakt": ["prioritering", "roadmap"], "zwaarte": 3 },
+    { "id": "rc-rvc", "titel": "De RvC vraagt naar het rendement", "scenario": "De raad van commissarissen vraagt bij twee use cases hoe jullie aan de euro's komen en wanneer ze terugverdiend zijn. Kunnen jullie dat nu uitleggen?", "raakt": ["waardebepaling"], "zwaarte": 2 },
+    { "id": "rc-avg", "titel": "Bezwaar van de functionaris gegevensbescherming", "scenario": "Bij de use case met de hoogste waarde ligt een bezwaar: onvoldoende grondslag voor het gebruik van huurdersdata. Aanpassen, uitstellen of laten vallen?", "raakt": ["prioritering", "identificatie"], "zwaarte": 3 },
+    { "id": "rc-leverancier", "titel": "De leverancier werkt niet mee", "scenario": "Jullie primaire systeemleverancier levert het benodigde koppelvlak pas over achttien maanden, of tegen een prijs die niet past. Wat betekent dat voor de roadmap?", "raakt": ["roadmap", "haalbaarheid"], "zwaarte": 3 },
+    { "id": "rc-capaciteit", "titel": "De sleutelpersoon valt weg", "scenario": "De informatiemanager vertrekt en is een half jaar niet vervangen. Welke use cases kunnen door en welke staan feitelijk stil?", "raakt": ["roadmap", "haalbaarheid"], "zwaarte": 2 },
+    { "id": "rc-huurder", "titel": "Een bewoner stelt de vraag", "scenario": "Een bewoner vraagt in de bewonerscommissie: 'wat doen jullie eigenlijk met mijn gegevens?' Kunnen jullie het portfolio in gewone taal uitleggen zonder dat het ongemakkelijk wordt?", "raakt": ["identificatie", "waardebepaling"], "zwaarte": 2 },
+    { "id": "rc-piek", "titel": "De instroompiek valt zwaarder uit", "scenario": "Er komen dit jaar aanzienlijk meer bewoners dan verwacht en de piek begint twee weken eerder. Helpt jullie portfolio daar volgend seizoen al bij, of pas over twee jaar?", "raakt": ["roadmap"], "zwaarte": 2 },
+    { "id": "rc-mislukking", "titel": "De eerste use case mislukt", "scenario": "De use case die jullie als eerste startten, levert na een jaar niet op wat beloofd was. Wat hadden jullie vooraf moeten afspreken om dat op tijd te zien?", "raakt": ["waardebepaling", "roadmap"], "zwaarte": 3 }
+  ]
+}

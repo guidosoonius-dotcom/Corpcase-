@@ -1,0 +1,27 @@
+{
+  "toelichting": "Taxonomie van CORA-hoofdbedrijfsfuncties, gebruikt als domein-lens en dekkingsmeter in de game. Namen zijn gebaseerd op het CORA-bedrijfsfunctiemodel (sturend/primair/ondersteunend). Zie content/BRONNEN.md: exacte CORA 5-benamingen moeten nog tegen coraveraonline.nl worden geverifieerd.",
+  "bron": "https://www.coraveraonline.nl/index.php/Bedrijfsfuncties",
+  "geverifieerd": false,
+  "domeinen": [
+    { "id": "besturing", "naam": "Besturing", "soort": "sturend", "omschrijving": "Strategievorming, beleid en koersbepaling van de corporatie." },
+    { "id": "planning-control", "naam": "Planning & Control", "soort": "sturend", "omschrijving": "Begroten, monitoren, verantwoorden en bijsturen op doelen." },
+    { "id": "risico-compliance", "naam": "Risicomanagement & Compliance", "soort": "sturend", "omschrijving": "Beheersen van risico's, governance, wet- en regelgeving waaronder AVG." },
+
+    { "id": "vastgoedsturing", "naam": "Vastgoedsturing", "soort": "primair", "omschrijving": "Portefeuille- en assetmanagement: welk bezit, waar, in welke kwaliteit." },
+    { "id": "vastgoedontwikkeling", "naam": "Vastgoedontwikkeling", "soort": "primair", "omschrijving": "Initiatief, haalbaarheid en ontwerp van nieuwbouw en transformatie." },
+    { "id": "vastgoedrealisatie", "naam": "Vastgoedrealisatie", "soort": "primair", "omschrijving": "Realiseren van bouw-, renovatie- en verduurzamingsprojecten." },
+    { "id": "vastgoedonderhoud", "naam": "Vastgoedonderhoud", "soort": "primair", "omschrijving": "Dagelijks, mutatie- en planmatig onderhoud en instandhouding." },
+    { "id": "vastgoedbemiddeling", "naam": "Vastgoedbemiddeling", "soort": "primair", "omschrijving": "Woonruimteverdeling: inschrijven, aanbieden, matchen, toewijzen en verhuren." },
+    { "id": "klantbeheer", "naam": "Klantbeheer", "soort": "primair", "omschrijving": "Klantcontact, contractbeheer en dienstverlening aan bewoners." },
+    { "id": "wonen-leefbaarheid", "naam": "Wonen & Leefbaarheid", "soort": "primair", "omschrijving": "Woonbegeleiding, overlast, veiligheid en leefbaarheid in complexen." },
+    { "id": "financien-primair", "naam": "Financiën primair", "soort": "primair", "omschrijving": "Huurincasso, woonlasten, betaalregelingen en debiteurenbeheer." },
+
+    { "id": "financien-ondersteunend", "naam": "Financiën ondersteunend", "soort": "ondersteunend", "omschrijving": "Administratie, inkoopfacturen, jaarrekening en externe verantwoording." },
+    { "id": "informatievoorziening", "naam": "Informatievoorziening & ICT", "soort": "ondersteunend", "omschrijving": "Applicaties, koppelvlakken, datafundament, datakwaliteit en beveiliging." },
+    { "id": "inkoop", "naam": "Inkoop & Contractmanagement", "soort": "ondersteunend", "omschrijving": "Aanbesteden, leveranciers- en ketenpartnermanagement." },
+    { "id": "hrm", "naam": "HRM", "soort": "ondersteunend", "omschrijving": "Werving, ontwikkeling, capaciteit en inzetbaarheid van medewerkers." },
+    { "id": "juridisch", "naam": "Juridische zaken", "soort": "ondersteunend", "omschrijving": "Contracten, geschillen, huurrecht en juridische advisering." },
+    { "id": "communicatie", "naam": "Communicatie", "soort": "ondersteunend", "omschrijving": "Interne en externe communicatie, huurderscommunicatie en participatie." },
+    { "id": "informatiebeheer", "naam": "Informatie- & documentbeheer", "soort": "ondersteunend", "omschrijving": "Archivering, dossiervorming, bewaartermijnen en vindbaarheid." }
+  ]
+}
