@@ -57,17 +57,17 @@ export function Roadmap({
             return (
               <section key={horizon.id}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <h2 className="text-sm font-semibold text-[--color-inkt]">
+                  <h2 className="text-sm font-semibold text-inkt">
                     {horizon.naam}{" "}
-                    <span className="font-normal text-[--color-inkt-licht]">
+                    <span className="font-normal text-inkt-licht">
                       · {horizon.periode}
                     </span>
                   </h2>
-                  <span className="text-xs tabular-nums text-[--color-inkt-licht]">
+                  <span className="text-xs tabular-nums text-inkt-licht">
                     {items.length}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-[--color-inkt-licht]">{horizon.vraag}</p>
+                <p className="mt-0.5 text-xs text-inkt-licht">{horizon.vraag}</p>
 
                 <ul className="mt-2 space-y-2">
                   {items.map((item) => {
@@ -87,7 +87,7 @@ export function Roadmap({
                     );
                   })}
                   {items.length === 0 ? (
-                    <li className="rounded-[--radius-kaart] border border-dashed border-[--color-rand-sterk] px-3 py-4 text-center text-xs text-[--color-inkt-licht]">
+                    <li className="rounded-kaart border border-dashed border-rand-sterk px-3 py-4 text-center text-xs text-inkt-licht">
                       Nog niets in deze horizon.
                     </li>
                   ) : null}
@@ -98,7 +98,7 @@ export function Roadmap({
 
           {nogNietGeplaatst.length > 0 ? (
             <section>
-              <h2 className="text-sm font-semibold text-[--color-inkt]">Nog te plaatsen</h2>
+              <h2 className="text-sm font-semibold text-inkt">Nog te plaatsen</h2>
               <ul className="mt-2 space-y-2">
                 {nogNietGeplaatst.map((beeld) => (
                   <li key={beeld.usecase.id}>
@@ -163,11 +163,11 @@ function RoadmapKaart({
   return (
     <Kaart aandacht={Boolean(item)} className="p-4">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-sm font-medium leading-snug text-[--color-inkt]">
+        <h3 className="text-sm font-medium leading-snug text-inkt">
           {beeld.usecase.titel}
         </h3>
         {beeld.businessCase?.netto_baat ? (
-          <span className="shrink-0 text-xs font-medium tabular-nums text-[--color-waarde]">
+          <span className="shrink-0 text-xs font-medium tabular-nums text-waarde">
             {formatteerBandbreedte(beeld.businessCase.netto_baat)}
           </span>
         ) : null}
@@ -200,7 +200,7 @@ function RoadmapKaart({
       {item ? (
         <div className="mt-3 space-y-2.5">
           <label className="block">
-            <span className="block text-[11px] text-[--color-inkt-zacht]">
+            <span className="block text-[11px] text-inkt-zacht">
               Wat moet er eerst geregeld zijn?
             </span>
             <textarea
@@ -213,7 +213,7 @@ function RoadmapKaart({
 
           {anderen.length > 0 ? (
             <div>
-              <p className="text-[11px] text-[--color-inkt-zacht]">Hangt af van</p>
+              <p className="text-[11px] text-inkt-zacht">Hangt af van</p>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {anderen.map((ander) => {
                   const actief = item.afhankelijk_van.includes(ander.usecase.id);
@@ -230,8 +230,8 @@ function RoadmapKaart({
                       }
                       className={`rounded border px-2 py-1 text-[11px] transition-colors ${
                         actief
-                          ? "border-[--color-accent] bg-[--color-accent-zacht] text-[--color-accent-diep]"
-                          : "border-[--color-rand] text-[--color-inkt-licht]"
+                          ? "border-accent bg-accent-zacht text-accent-diep"
+                          : "border-rand text-inkt-licht"
                       }`}
                     >
                       {ander.usecase.titel}

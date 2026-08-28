@@ -28,18 +28,18 @@ export function Sessiebalk({
   const score = teamscore(state);
 
   return (
-    <header className="border-b border-[--color-rand] bg-[--color-vlak]">
+    <header className="border-b border-rand bg-vlak">
       <div className="mx-auto w-full max-w-4xl px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-xs text-[--color-inkt-licht]">{state.sessie.titel}</p>
-            <p className="truncate text-sm font-semibold text-[--color-inkt]">
+            <p className="truncate text-xs text-inkt-licht">{state.sessie.titel}</p>
+            <p className="truncate text-sm font-semibold text-inkt">
               {mijnRol?.naam ?? ik?.naam ?? "Deelnemer"}
             </p>
           </div>
           <div className="shrink-0 text-right">
-            <p className="text-xs text-[--color-inkt-licht]">Teamscore</p>
-            <p className="text-sm font-semibold tabular-nums text-[--color-accent]">
+            <p className="text-xs text-inkt-licht">Teamscore</p>
+            <p className="text-sm font-semibold tabular-nums text-accent">
               {score.totaal}
             </p>
           </div>
@@ -62,12 +62,12 @@ export function Sessiebalk({
             <button
               type="button"
               onClick={() => setOpdrachtZichtbaar((z) => !z)}
-              className="text-xs font-medium text-[--color-accent] hover:underline"
+              className="text-xs font-medium text-accent hover:underline"
             >
               {opdrachtZichtbaar ? "Verberg mijn opdracht" : "Toon mijn opdracht (alleen voor jou)"}
             </button>
             {opdrachtZichtbaar ? (
-              <p className="mt-1.5 rounded-[--radius-kaart] border-l-2 border-[--color-accent] bg-[--color-accent-zacht] px-3 py-2 text-xs leading-relaxed text-[--color-accent-diep]">
+              <p className="mt-1.5 rounded-kaart border-l-2 border-accent bg-accent-zacht px-3 py-2 text-xs leading-relaxed text-accent-diep">
                 {opdracht.opdracht}
               </p>
             ) : null}
@@ -81,9 +81,9 @@ export function Sessiebalk({
 function stijlVoorFase(fase: Fase, huidig: Fase): string {
   const index = FASES.indexOf(fase);
   const huidigIndex = FASES.indexOf(huidig);
-  if (index === huidigIndex) return "bg-[--color-accent] text-white";
-  if (index < huidigIndex) return "bg-[--color-papier] text-[--color-inkt-licht]";
-  return "text-[--color-inkt-licht]";
+  if (index === huidigIndex) return "bg-accent text-white";
+  if (index < huidigIndex) return "bg-papier text-inkt-licht";
+  return "text-inkt-licht";
 }
 
 export function Aanwezigen({ state }: { state: SessieState }) {

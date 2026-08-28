@@ -76,7 +76,7 @@ export function Bijdragen({
 
   return (
     <div>
-      <h4 className="text-xs font-semibold text-[--color-inkt]">Samen scherper maken</h4>
+      <h4 className="text-xs font-semibold text-inkt">Samen scherper maken</h4>
 
       {bijdragen.length > 0 ? (
         <ul className="mt-2 space-y-2">
@@ -87,18 +87,18 @@ export function Bijdragen({
             return (
               <li
                 key={b.id}
-                className={`rounded-[--radius-kaart] border bg-[--color-vlak] px-3 py-2 ${
-                  isOpenVraag ? "border-[--color-aandacht]" : "border-[--color-rand]"
+                className={`rounded-kaart border bg-vlak px-3 py-2 ${
+                  isOpenVraag ? "border-aandacht" : "border-rand"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <Etiket toon={SOORT_TOON[b.soort]}>{SOORT_LABEL[b.soort]}</Etiket>
-                  <span className="text-[11px] text-[--color-inkt-licht]">
+                  <span className="text-[11px] text-inkt-licht">
                     {naamVan(b.deelnemer_id)}
                   </span>
                   {b.opgelost ? <Etiket toon="waarde">opgelost</Etiket> : null}
                 </div>
-                <p className="mt-1 text-sm leading-relaxed text-[--color-inkt-zacht]">{b.tekst}</p>
+                <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">{b.tekst}</p>
 
                 {isOpenVraag ? (
                   <div className="mt-1.5 flex flex-wrap gap-2">
@@ -109,7 +109,7 @@ export function Bijdragen({
                           setSoort("assist");
                           setBeantwoordt(b.id);
                         }}
-                        className="text-xs font-medium text-[--color-accent] hover:underline"
+                        className="text-xs font-medium text-accent hover:underline"
                       >
                         Hier antwoord op geven
                       </button>
@@ -117,7 +117,7 @@ export function Bijdragen({
                     <button
                       type="button"
                       onClick={() => void doe(() => opslag.markeerOpgelost(identiteit, b.id))}
-                      className="text-xs font-medium text-[--color-inkt-licht] hover:underline"
+                      className="text-xs font-medium text-inkt-licht hover:underline"
                     >
                       Markeer als opgelost
                     </button>
@@ -128,7 +128,7 @@ export function Bijdragen({
           })}
         </ul>
       ) : (
-        <p className="mt-1.5 text-xs text-[--color-inkt-licht]">
+        <p className="mt-1.5 text-xs text-inkt-licht">
           Nog niets. Weet je iets niet? Zet er een hulpvraag bij; iemand anders weet het vaak wel.
         </p>
       )}
@@ -143,10 +143,10 @@ export function Bijdragen({
                 setSoort(s);
                 if (s !== "assist") setBeantwoordt(null);
               }}
-              className={`flex-1 rounded-[--radius-kaart] border px-2 py-2 text-xs font-medium transition-colors ${
+              className={`flex-1 rounded-kaart border px-2 py-2 text-xs font-medium transition-colors ${
                 soort === s
-                  ? "border-[--color-accent] bg-[--color-accent] text-white"
-                  : "border-[--color-rand-sterk] bg-[--color-vlak] text-[--color-inkt-zacht]"
+                  ? "border-accent bg-accent text-white"
+                  : "border-rand-sterk bg-vlak text-inkt-zacht"
               }`}
             >
               {SOORT_LABEL[s]}
@@ -155,12 +155,12 @@ export function Bijdragen({
         </div>
 
         {beantwoordt ? (
-          <p className="text-[11px] text-[--color-inkt-licht]">
+          <p className="text-[11px] text-inkt-licht">
             Je antwoordt op een hulpvraag.{" "}
             <button
               type="button"
               onClick={() => setBeantwoordt(null)}
-              className="font-medium text-[--color-accent] hover:underline"
+              className="font-medium text-accent hover:underline"
             >
               Losmaken
             </button>

@@ -145,6 +145,8 @@ export const dimensieSchema = z.object({
   id: z.string().min(1),
   naam: z.string().min(1),
   vraag: z.string().min(1),
+  /** Kerndimensies staan altijd in beeld; de rest zit achter een knop. */
+  kern: z.boolean().optional(),
 });
 
 export const driversBestandSchema = z.object({

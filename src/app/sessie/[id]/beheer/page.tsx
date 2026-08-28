@@ -24,7 +24,7 @@ export default function BeheerPagina() {
   useAanwezigheid(sessieId, identiteit);
   const [gekopieerd, setGekopieerd] = useState(false);
 
-  if (laden) return <main className="p-8 text-sm text-[--color-inkt-licht]">Laden…</main>;
+  if (laden) return <main className="p-8 text-sm text-inkt-licht">Laden…</main>;
 
   if (!state || !identiteit) {
     return (
@@ -99,11 +99,11 @@ export default function BeheerPagina() {
 
       <section className="mt-6">
         <Kaart className="p-4">
-          <h2 className="text-sm font-semibold text-[--color-inkt]">Meedoen</h2>
-          <p className="mt-3 font-mono text-4xl font-semibold tracking-[0.2em] text-[--color-accent]">
+          <h2 className="text-sm font-semibold text-inkt">Meedoen</h2>
+          <p className="mt-3 font-mono text-4xl font-semibold tracking-[0.2em] text-accent">
             {state.sessie.join_code}
           </p>
-          <p className="mt-2 text-xs text-[--color-inkt-licht]">
+          <p className="mt-2 text-xs text-inkt-licht">
             Deelnemers gaan naar deze site en kiezen &lsquo;Deelnemen met een code&rsquo;.
           </p>
           <div className="mt-3">
@@ -115,7 +115,7 @@ export default function BeheerPagina() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold text-[--color-inkt]">Fase</h2>
+        <h2 className="text-sm font-semibold text-inkt">Fase</h2>
         <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
           {FASES.map((fase, index) => (
             <Knop
@@ -125,7 +125,7 @@ export default function BeheerPagina() {
               disabled={!ikBenFacilitator}
               className="justify-start"
             >
-              <span className="tabular-nums text-[--color-inkt-licht]">{index}</span>
+              <span className="tabular-nums text-inkt-licht">{index}</span>
               {FASE_LABELS[fase]}
             </Knop>
           ))}
@@ -140,7 +140,7 @@ export default function BeheerPagina() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold text-[--color-inkt]">Wie is er</h2>
+        <h2 className="text-sm font-semibold text-inkt">Wie is er</h2>
         <ul className="mt-2 space-y-1.5">
           {state.deelnemers.map((deelnemer) => {
             const selecties = state.selecties.filter((s) => s.deelnemer_id === deelnemer.id).length;
@@ -150,13 +150,13 @@ export default function BeheerPagina() {
             return (
               <li
                 key={deelnemer.id}
-                className="flex items-center justify-between gap-3 rounded-[--radius-kaart] border border-[--color-rand] bg-[--color-vlak] px-3 py-2"
+                className="flex items-center justify-between gap-3 rounded-kaart border border-rand bg-vlak px-3 py-2"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-[--color-inkt]">
+                  <p className="truncate text-sm font-medium text-inkt">
                     {deelnemer.naam}
                   </p>
-                  <p className="text-xs text-[--color-inkt-licht]">
+                  <p className="text-xs text-inkt-licht">
                     {rol(deelnemer.rol_id)?.naam ?? deelnemer.rol_id}
                   </p>
                 </div>
@@ -174,7 +174,7 @@ export default function BeheerPagina() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold text-[--color-inkt]">Waar het hapert</h2>
+        <h2 className="text-sm font-semibold text-inkt">Waar het hapert</h2>
         <div className="mt-2 space-y-2">
           {gedekt.domeinenOngedekt.length > 6 ? (
             <Melding>
@@ -192,8 +192,9 @@ export default function BeheerPagina() {
           {beelden.filter((b) => b.volledigheid < 1).length > 0 &&
           state.sessie.fase === "waardebepaling" ? (
             <Melding>
-              {beelden.filter((b) => b.volledigheid < 1).length} use cases zijn nog niet volledig
-              gewaardeerd.
+              {beelden.filter((b) => b.volledigheid < 1).length === 1
+                ? "Eén use case is nog niet volledig gewaardeerd."
+                : `${beelden.filter((b) => b.volledigheid < 1).length} use cases zijn nog niet volledig gewaardeerd.`}
             </Melding>
           ) : null}
 
@@ -205,13 +206,13 @@ export default function BeheerPagina() {
 
           {vragen.length > 0 ? (
             <Kaart className="p-3.5">
-              <h3 className="text-xs font-semibold text-[--color-inkt]">
+              <h3 className="text-xs font-semibold text-inkt">
                 Open hulpvragen ({vragen.length})
               </h3>
               <ul className="mt-1.5 space-y-1.5">
                 {vragen.map(({ bijdrage, vrager, usecase }) => (
-                  <li key={bijdrage.id} className="text-xs leading-relaxed text-[--color-inkt-zacht]">
-                    <span className="font-medium text-[--color-inkt]">
+                  <li key={bijdrage.id} className="text-xs leading-relaxed text-inkt-zacht">
+                    <span className="font-medium text-inkt">
                       {vrager?.naam ?? "Iemand"}
                     </span>{" "}
                     bij {usecase?.titel ?? "een use case"}: {bijdrage.tekst}

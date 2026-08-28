@@ -63,12 +63,18 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   await facilitator.getByRole("button", { name: "Volgende fase: Verkennen" }).click();
 
   await expect(wonen.getByRole("heading", { name: "Wat herken je?" })).toBeVisible();
+  // De kaarten staan per lens gefilterd, zoals een deelnemer ze ook doorloopt.
+  await wonen.getByRole("button", { name: "Jaarverslag", exact: true }).click();
   await wonen.getByRole("button", { name: /Circa 18.000 verhuizingen/ }).click();
+  await wonen.getByRole("button", { name: "Huurder", exact: true }).click();
   await wonen.getByRole("button", { name: /Mateo — internationale student/ }).click();
+
+  await it.getByRole("button", { name: "Uitdaging", exact: true }).click();
   await it.getByRole("button", { name: /Data staat in silo's/ }).click();
 
   // Peter ziet op de kaart die Marieke markeerde dat een collega dit ook herkent. Dat is het
   // punt van de gezamenlijke verkenning: je ziet waar jullie beeld samenvalt.
+  await it.getByRole("button", { name: "Jaarverslag", exact: true }).click();
   await expect(
     it.getByRole("button", { name: /Circa 18\.000 verhuizingen/ }),
   ).toContainText(/collega/, { timeout: 20_000 });

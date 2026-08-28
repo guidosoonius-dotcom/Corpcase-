@@ -28,45 +28,45 @@ export function Lobby({
 
       {mijnRol ? (
         <Kaart className="p-4">
-          <h2 className="text-sm font-semibold text-[--color-inkt]">Jouw bril: {mijnRol.naam}</h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+          <h2 className="text-sm font-semibold text-inkt">Jouw bril: {mijnRol.naam}</h2>
+          <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
             {mijnRol.lens}. De vraag die jij bewaakt: <em>{mijnRol.vraag}</em>
           </p>
         </Kaart>
       ) : null}
 
       <Kaart className="p-4">
-        <h2 className="text-sm font-semibold text-[--color-inkt]">Waar we naar kijken</h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+        <h2 className="text-sm font-semibold text-inkt">Waar we naar kijken</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
           {org.naam} — {org.pitch}
         </p>
         <dl className="mt-3 grid grid-cols-2 gap-3">
           {org.kengetallen.slice(0, 4).map((k) => (
             <div key={k.id}>
-              <dt className="text-xs leading-snug text-[--color-inkt-licht]">{k.label}</dt>
-              <dd className="text-sm font-semibold tabular-nums text-[--color-inkt]">
+              <dt className="text-xs leading-snug text-inkt-licht">{k.label}</dt>
+              <dd className="text-sm font-semibold tabular-nums text-inkt">
                 {k.notatie ?? k.waarde.toLocaleString("nl-NL")}
               </dd>
             </div>
           ))}
         </dl>
-        <p className="mt-3 text-xs leading-relaxed text-[--color-inkt-licht]">
+        <p className="mt-3 text-xs leading-relaxed text-inkt-licht">
           Deze cijfers komen uit publieke bronnen en zijn nog niet tegen het originele jaarverslag
           geverifieerd. Ze zijn er om het gesprek te starten.
         </p>
       </Kaart>
 
       <Kaart className="p-4">
-        <h2 className="text-sm font-semibold text-[--color-inkt]">
+        <h2 className="text-sm font-semibold text-inkt">
           Speelduur: {modus.naam.toLowerCase()}
         </h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+        <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
           {modus.omschrijving}
         </p>
       </Kaart>
 
       <div>
-        <h2 className="text-sm font-semibold text-[--color-inkt]">
+        <h2 className="text-sm font-semibold text-inkt">
           Aan tafel ({state.deelnemers.length})
         </h2>
         <div className="mt-2">

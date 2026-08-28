@@ -17,8 +17,8 @@ export function Kaart({
 }) {
   return (
     <div
-      className={`rounded-[--radius-kaart] border bg-[--color-vlak] ${
-        aandacht ? "border-[--color-accent]" : "border-[--color-rand]"
+      className={`rounded-kaart border bg-vlak ${
+        aandacht ? "border-accent" : "border-rand"
       } ${className}`}
     >
       {children}
@@ -45,11 +45,11 @@ export function Knop({
 }) {
   const stijlen: Record<string, string> = {
     primair:
-      "bg-[--color-accent] text-white hover:bg-[--color-accent-diep] disabled:bg-[--color-rand-sterk]",
-    rand: "border border-[--color-rand-sterk] bg-[--color-vlak] text-[--color-inkt] hover:border-[--color-accent]",
-    stil: "text-[--color-inkt-zacht] hover:bg-[--color-papier]",
+      "bg-accent text-white hover:bg-accent-diep disabled:bg-rand-sterk",
+    rand: "border border-rand-sterk bg-vlak text-inkt hover:border-accent",
+    stil: "text-inkt-zacht hover:bg-papier",
     gevaar:
-      "border border-[--color-risico] bg-[--color-vlak] text-[--color-risico] hover:bg-[--color-risico-zacht]",
+      "border border-risico bg-vlak text-risico hover:bg-risico-zacht",
   };
 
   return (
@@ -58,7 +58,7 @@ export function Knop({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`inline-flex items-center justify-center gap-2 rounded-[--radius-kaart] px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${stijlen[soort]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-kaart px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${stijlen[soort]} ${className}`}
     >
       {children}
     </button>
@@ -76,15 +76,15 @@ export function Veld({
 }) {
   return (
     <label className="block">
-      <span className="block text-sm font-medium text-[--color-inkt]">{label}</span>
-      {hint ? <span className="mt-0.5 block text-xs text-[--color-inkt-licht]">{hint}</span> : null}
+      <span className="block text-sm font-medium text-inkt">{label}</span>
+      {hint ? <span className="mt-0.5 block text-xs text-inkt-licht">{hint}</span> : null}
       <div className="mt-1.5">{children}</div>
     </label>
   );
 }
 
 export const invoerStijl =
-  "w-full rounded-[--radius-kaart] border border-[--color-rand-sterk] bg-[--color-vlak] px-3 py-2.5 text-base text-[--color-inkt] outline-none transition-colors placeholder:text-[--color-inkt-licht] focus:border-[--color-accent]";
+  "w-full rounded-kaart border border-rand-sterk bg-vlak px-3 py-2.5 text-base text-inkt outline-none transition-colors placeholder:text-inkt-licht focus:border-accent";
 
 export function Etiket({
   children,
@@ -94,11 +94,11 @@ export function Etiket({
   toon?: "neutraal" | "accent" | "waarde" | "aandacht" | "risico";
 }) {
   const stijlen: Record<string, string> = {
-    neutraal: "bg-[--color-papier] text-[--color-inkt-zacht] border-[--color-rand]",
-    accent: "bg-[--color-accent-zacht] text-[--color-accent-diep] border-[--color-accent-zacht]",
-    waarde: "bg-[--color-waarde-zacht] text-[--color-waarde] border-[--color-waarde-zacht]",
-    aandacht: "bg-[--color-aandacht-zacht] text-[--color-aandacht] border-[--color-aandacht-zacht]",
-    risico: "bg-[--color-risico-zacht] text-[--color-risico] border-[--color-risico-zacht]",
+    neutraal: "bg-papier text-inkt-zacht border-rand",
+    accent: "bg-accent-zacht text-accent-diep border-accent-zacht",
+    waarde: "bg-waarde-zacht text-waarde border-waarde-zacht",
+    aandacht: "bg-aandacht-zacht text-aandacht border-aandacht-zacht",
+    risico: "bg-risico-zacht text-risico border-risico-zacht",
   };
   return (
     <span
@@ -117,12 +117,12 @@ export function Melding({
   toon?: "aandacht" | "risico" | "accent";
 }) {
   const stijlen: Record<string, string> = {
-    aandacht: "border-[--color-aandacht] bg-[--color-aandacht-zacht] text-[--color-aandacht]",
-    risico: "border-[--color-risico] bg-[--color-risico-zacht] text-[--color-risico]",
-    accent: "border-[--color-accent] bg-[--color-accent-zacht] text-[--color-accent-diep]",
+    aandacht: "border-aandacht bg-aandacht-zacht text-aandacht",
+    risico: "border-risico bg-risico-zacht text-risico",
+    accent: "border-accent bg-accent-zacht text-accent-diep",
   };
   return (
-    <div className={`rounded-[--radius-kaart] border-l-2 px-3 py-2 text-sm ${stijlen[toon]}`}>
+    <div className={`rounded-kaart border-l-2 px-3 py-2 text-sm ${stijlen[toon]}`}>
       {children}
     </div>
   );
@@ -143,15 +143,15 @@ export function Kop({
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
         {boven ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[--color-inkt-licht]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
             {boven}
           </p>
         ) : null}
-        <h1 className="mt-1 text-xl font-semibold leading-tight text-[--color-inkt] sm:text-2xl">
+        <h1 className="mt-1 text-xl font-semibold leading-tight text-inkt sm:text-2xl">
           {titel}
         </h1>
         {onder ? (
-          <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">{onder}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">{onder}</p>
         ) : null}
       </div>
       {rechts ? <div className="shrink-0 niet-printen">{rechts}</div> : null}
@@ -161,7 +161,7 @@ export function Kop({
 
 export function Leeg({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-[--radius-kaart] border border-dashed border-[--color-rand-sterk] px-4 py-8 text-center text-sm text-[--color-inkt-licht]">
+    <div className="rounded-kaart border border-dashed border-rand-sterk px-4 py-8 text-center text-sm text-inkt-licht">
       {children}
     </div>
   );
@@ -187,10 +187,10 @@ export function Schaal({
           title={labels?.[n]}
           aria-label={labels?.[n] ?? `Score ${n}`}
           aria-pressed={waarde === n}
-          className={`flex h-11 flex-1 items-center justify-center rounded-[--radius-kaart] border text-sm font-medium tabular-nums transition-colors ${
+          className={`flex h-11 flex-1 items-center justify-center rounded-kaart border text-sm font-medium tabular-nums transition-colors ${
             waarde === n
-              ? "border-[--color-accent] bg-[--color-accent] text-white"
-              : "border-[--color-rand-sterk] bg-[--color-vlak] text-[--color-inkt-zacht] hover:border-[--color-accent]"
+              ? "border-accent bg-accent text-white"
+              : "border-rand-sterk bg-vlak text-inkt-zacht hover:border-accent"
           }`}
         >
           {n}

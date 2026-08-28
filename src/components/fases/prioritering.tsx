@@ -99,26 +99,26 @@ function Budgetbalk({
 
   return (
     <Kaart className="p-4">
-      <h2 className="text-sm font-semibold text-[--color-inkt]">Wat past er nog in?</h2>
+      <h2 className="text-sm font-semibold text-inkt">Wat past er nog in?</h2>
       <div className="mt-3 space-y-3">
         {regels.map((regel) => {
           const aandeel = regel.totaal > 0 ? Math.min(regel.besteed / regel.totaal, 1) : 0;
           return (
             <div key={regel.id}>
               <div className="flex items-baseline justify-between gap-3 text-xs">
-                <span className="text-[--color-inkt-zacht]">{regel.label}</span>
+                <span className="text-inkt-zacht">{regel.label}</span>
                 <span
                   className={`font-medium tabular-nums ${
-                    regel.over ? "text-[--color-risico]" : "text-[--color-inkt]"
+                    regel.over ? "text-risico" : "text-inkt"
                   }`}
                 >
                   {regel.toon(regel.besteed)} van {regel.toon(regel.totaal)}
                 </span>
               </div>
-              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[--color-rand]">
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-rand">
                 <div
                   className={`h-full rounded-full transition-all ${
-                    regel.over ? "bg-[--color-risico]" : "bg-[--color-accent]"
+                    regel.over ? "bg-risico" : "bg-accent"
                   }`}
                   style={{ width: `${aandeel * 100}%` }}
                 />
@@ -204,7 +204,7 @@ function Toewijzen({
     <Kaart aandacht={uitgelicht || inPortfolio} className={afgevallen ? "opacity-60" : ""}>
       <div className="px-4 py-3">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-sm font-medium leading-snug text-[--color-inkt]">
+          <h3 className="text-sm font-medium leading-snug text-inkt">
             {beeld.usecase.titel}
           </h3>
           {beeld.kwadrant ? (
@@ -224,7 +224,7 @@ function Toewijzen({
 
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
           {beeld.businessCase?.netto_baat ? (
-            <span className="text-xs font-medium tabular-nums text-[--color-waarde]">
+            <span className="text-xs font-medium tabular-nums text-waarde">
               {formatteerBandbreedte(beeld.businessCase.netto_baat)} per jaar
             </span>
           ) : null}
@@ -251,7 +251,7 @@ function Toewijzen({
         {inPortfolio ? (
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             <label className="block">
-              <span className="block text-[11px] text-[--color-inkt-zacht]">
+              <span className="block text-[11px] text-inkt-zacht">
                 Toegekend budget (EUR)
               </span>
               <input
@@ -263,7 +263,7 @@ function Toewijzen({
               />
             </label>
             <label className="block">
-              <span className="block text-[11px] text-[--color-inkt-zacht]">
+              <span className="block text-[11px] text-inkt-zacht">
                 Verandercapaciteit (mensmaanden)
               </span>
               <input
@@ -311,8 +311,8 @@ function Realiteitschecks({
 
   return (
     <section>
-      <h2 className="text-sm font-semibold text-[--color-inkt]">Realiteitscheck</h2>
-      <p className="mt-1 text-sm leading-relaxed text-[--color-inkt-zacht]">
+      <h2 className="text-sm font-semibold text-inkt">Realiteitscheck</h2>
+      <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
         Houdt jullie keuze stand als het tegenzit? Aanpassen mag, handhaven ook — alleen niet
         beslissen is geen optie.
       </p>
@@ -356,14 +356,14 @@ function Check({
   return (
     <Kaart aandacht={Boolean(bestaand)} className="p-4">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-sm font-medium leading-snug text-[--color-inkt]">{check.titel}</h3>
+        <h3 className="text-sm font-medium leading-snug text-inkt">{check.titel}</h3>
         {bestaand ? (
           <Etiket toon={bestaand.besluit === "aanpassen" ? "aandacht" : "waarde"}>
             {bestaand.besluit === "aanpassen" ? "aangepast" : "gehandhaafd"}
           </Etiket>
         ) : null}
       </div>
-      <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">{check.scenario}</p>
+      <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">{check.scenario}</p>
 
       <textarea
         className={`${invoerStijl} mt-3 min-h-16 !text-sm`}

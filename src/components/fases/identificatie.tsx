@@ -68,10 +68,10 @@ export function Identificatie({
             key={id}
             type="button"
             onClick={() => setTab(id)}
-            className={`shrink-0 rounded-[--radius-kaart] border px-3 py-2 text-xs font-medium transition-colors ${
+            className={`shrink-0 rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
               tab === id
-                ? "border-[--color-accent] bg-[--color-accent] text-white"
-                : "border-[--color-rand-sterk] bg-[--color-vlak] text-[--color-inkt-zacht]"
+                ? "border-accent bg-accent text-white"
+                : "border-rand-sterk bg-vlak text-inkt-zacht"
             }`}
           >
             {label}
@@ -119,24 +119,24 @@ function Dekkingsmeter({
   return (
     <Kaart className="p-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-semibold text-[--color-inkt]">Breedte van het gesprek</h2>
-        <span className="text-sm font-semibold tabular-nums text-[--color-accent]">
+        <h2 className="text-sm font-semibold text-inkt">Breedte van het gesprek</h2>
+        <span className="text-sm font-semibold tabular-nums text-accent">
           {gedekt}/{totaal}
         </span>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[--color-rand]">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-rand">
         <div
-          className="h-full rounded-full bg-[--color-accent] transition-all"
+          className="h-full rounded-full bg-accent transition-all"
           style={{ width: `${(gedekt / totaal) * 100}%` }}
         />
       </div>
       {namen.length > 0 ? (
-        <p className="mt-2 text-xs leading-relaxed text-[--color-inkt-licht]">
+        <p className="mt-2 text-xs leading-relaxed text-inkt-licht">
           Nog niet geraakt: {namen.slice(0, 6).join(", ")}
           {namen.length > 6 ? ` en ${namen.length - 6} meer` : ""}.
         </p>
       ) : (
-        <p className="mt-2 text-xs text-[--color-inkt-licht]">
+        <p className="mt-2 text-xs text-inkt-licht">
           Alle CORA-domeinen zijn geraakt. Breder wordt het niet.
         </p>
       )}
@@ -223,7 +223,7 @@ function Bibliotheek({
         onChange={(e) => setZoek(e.target.value)}
         placeholder="Zoeken in de bibliotheek…"
       />
-      <p className="text-xs text-[--color-inkt-licht]">
+      <p className="text-xs text-inkt-licht">
         Bovenaan staat wat aansluit op de signalen die jullie hebben gemarkeerd.
       </p>
 
@@ -232,12 +232,12 @@ function Bibliotheek({
           <li key={kaart.id}>
             <Kaart className="p-4">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-sm font-medium leading-snug text-[--color-inkt]">
+                <h3 className="text-sm font-medium leading-snug text-inkt">
                   {kaart.titel}
                 </h3>
                 <Etiket>{coraDomein(kaart.domein)?.naam ?? kaart.domein}</Etiket>
               </div>
-              <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+              <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
                 {kaart.probleem}
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -344,7 +344,7 @@ function EigenKaart({
             {gemarkeerd.map((s) => (
               <label
                 key={s.id}
-                className="keuze flex cursor-pointer items-start gap-2.5 rounded-[--radius-kaart] border border-[--color-rand] px-3 py-2"
+                className="keuze flex cursor-pointer items-start gap-2.5 rounded-kaart border border-rand px-3 py-2"
               >
                 <input
                   type="checkbox"
@@ -358,7 +358,7 @@ function EigenKaart({
                     )
                   }
                 />
-                <span className="text-sm leading-snug text-[--color-inkt-zacht]">{s.titel}</span>
+                <span className="text-sm leading-snug text-inkt-zacht">{s.titel}</span>
               </label>
             ))}
           </div>
@@ -399,12 +399,12 @@ export function UsecaseKaart({
     <Kaart className="overflow-hidden">
       <div className="px-4 py-3">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-sm font-medium leading-snug text-[--color-inkt]">{usecase.titel}</h3>
+          <h3 className="text-sm font-medium leading-snug text-inkt">{usecase.titel}</h3>
           <Etiket>{coraDomein(usecase.domein)?.naam ?? usecase.domein}</Etiket>
         </div>
 
         {usecase.probleem && !compact ? (
-          <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+          <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
             {usecase.probleem}
           </p>
         ) : null}
@@ -425,18 +425,18 @@ export function UsecaseKaart({
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="mt-2.5 text-xs font-medium text-[--color-accent] hover:underline"
+          className="mt-2.5 text-xs font-medium text-accent hover:underline"
         >
           {open ? "Inklappen" : "Openen en meehelpen"}
         </button>
       </div>
 
       {open ? (
-        <div className="space-y-4 border-t border-[--color-rand] bg-[--color-papier] px-4 py-3">
+        <div className="space-y-4 border-t border-rand bg-papier px-4 py-3">
           {usecase.oplossingsrichting ? (
             <div>
-              <h4 className="text-xs font-semibold text-[--color-inkt]">Oplossingsrichting</h4>
-              <p className="mt-1 text-sm leading-relaxed text-[--color-inkt-zacht]">
+              <h4 className="text-xs font-semibold text-inkt">Oplossingsrichting</h4>
+              <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
                 {usecase.oplossingsrichting}
               </p>
             </div>
@@ -444,7 +444,7 @@ export function UsecaseKaart({
 
           {usecase.benodigde_data.length > 0 ? (
             <div>
-              <h4 className="text-xs font-semibold text-[--color-inkt]">Benodigde gegevens</h4>
+              <h4 className="text-xs font-semibold text-inkt">Benodigde gegevens</h4>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {usecase.benodigde_data.map((d) => (
                   <Etiket key={d}>{d}</Etiket>
@@ -455,10 +455,10 @@ export function UsecaseKaart({
 
           {usecase.aandachtspunten.length > 0 ? (
             <div>
-              <h4 className="text-xs font-semibold text-[--color-inkt]">Aandachtspunten</h4>
+              <h4 className="text-xs font-semibold text-inkt">Aandachtspunten</h4>
               <ul className="mt-1 space-y-1">
                 {usecase.aandachtspunten.map((a) => (
-                  <li key={a} className="text-xs leading-relaxed text-[--color-inkt-zacht]">
+                  <li key={a} className="text-xs leading-relaxed text-inkt-zacht">
                     — {a}
                   </li>
                 ))}
@@ -468,10 +468,10 @@ export function UsecaseKaart({
 
           {onderbouwing.length > 0 ? (
             <div>
-              <h4 className="text-xs font-semibold text-[--color-inkt]">Komt voort uit</h4>
+              <h4 className="text-xs font-semibold text-inkt">Komt voort uit</h4>
               <ul className="mt-1 space-y-1">
                 {onderbouwing.map((s) => (
-                  <li key={s.id} className="text-xs leading-relaxed text-[--color-inkt-zacht]">
+                  <li key={s.id} className="text-xs leading-relaxed text-inkt-zacht">
                     — {s.titel}
                   </li>
                 ))}

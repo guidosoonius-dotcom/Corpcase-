@@ -27,14 +27,14 @@ export default function SpelerPagina() {
   useAanwezigheid(sessieId, identiteit);
 
   if (laden) {
-    return <main className="p-8 text-sm text-[--color-inkt-licht]">Laden…</main>;
+    return <main className="p-8 text-sm text-inkt-licht">Laden…</main>;
   }
 
   if (!identiteit) {
     return (
       <main className="mx-auto w-full max-w-md px-5 py-12">
-        <h1 className="text-xl font-semibold text-[--color-inkt]">Je doet nog niet mee</h1>
-        <p className="mt-2 text-sm leading-relaxed text-[--color-inkt-zacht]">
+        <h1 className="text-xl font-semibold text-inkt">Je doet nog niet mee</h1>
+        <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
           Deze browser hoort niet bij deze sessie. Vraag de facilitator om de code en doe mee.
         </p>
         <div className="mt-5">

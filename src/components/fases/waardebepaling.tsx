@@ -104,7 +104,7 @@ function Waarderen({
     <Kaart aandacht={beeld.volledigheid >= 1} className="overflow-hidden">
       <div className="px-4 py-3">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-sm font-medium leading-snug text-[--color-inkt]">
+          <h3 className="text-sm font-medium leading-snug text-inkt">
             {beeld.usecase.titel}
           </h3>
           <Etiket toon={beeld.volledigheid >= 1 ? "waarde" : "aandacht"}>
@@ -119,16 +119,16 @@ function Waarderen({
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="mt-2.5 text-xs font-medium text-[--color-accent] hover:underline"
+          className="mt-2.5 text-xs font-medium text-accent hover:underline"
         >
           {open ? "Inklappen" : "Waarderen"}
         </button>
       </div>
 
       {open ? (
-        <div className="space-y-5 border-t border-[--color-rand] bg-[--color-papier] px-4 py-4">
+        <div className="space-y-5 border-t border-rand bg-papier px-4 py-4">
           <div>
-            <p className="text-xs font-semibold text-[--color-inkt]">Hoe diep gaan we?</p>
+            <p className="text-xs font-semibold text-inkt">Hoe diep gaan we?</p>
             <div className="mt-1.5 flex gap-1.5">
               {(
                 [
@@ -183,7 +183,7 @@ function Samenvatting({ beeld }: { beeld: UsecaseBeeld }) {
   if (bc?.netto_baat) {
     return (
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-semibold tabular-nums text-[--color-waarde]">
+        <span className="text-sm font-semibold tabular-nums text-waarde">
           {formatteerBandbreedte(bc.netto_baat)} per jaar
         </span>
         {bc.terugverdientijd_maanden ? (
@@ -203,7 +203,7 @@ function Samenvatting({ beeld }: { beeld: UsecaseBeeld }) {
     );
   }
 
-  return <p className="text-xs text-[--color-inkt-licht]">Nog niet gewaardeerd.</p>;
+  return <p className="text-xs text-inkt-licht">Nog niet gewaardeerd.</p>;
 }
 
 function Scorekaart({
@@ -218,8 +218,8 @@ function Scorekaart({
     <div className="space-y-3">
       {waardeModel.scorekaart_dimensies.map((d) => (
         <div key={d.id}>
-          <p className="text-xs font-medium text-[--color-inkt]">{d.naam}</p>
-          <p className="mt-0.5 text-[11px] leading-snug text-[--color-inkt-licht]">{d.vraag}</p>
+          <p className="text-xs font-medium text-inkt">{d.naam}</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-inkt-licht">{d.vraag}</p>
           <div className="mt-1.5">
             <Schaal
               waarde={scores[d.id] ?? null}
@@ -232,6 +232,14 @@ function Scorekaart({
   );
 }
 
+/**
+ * Een groep dimensies om op te scoren.
+ *
+ * Alleen de kerndimensies staan open. Tien schaalrijen achter elkaar is op een telefoon te veel
+ * tikwerk, zeker als een team vijftien use cases langsgaat; wie meer diepgang wil, klapt de rest
+ * uit. Ingevulde niet-kerndimensies blijven wel meteen zichtbaar, anders zou werk lijken te
+ * verdwijnen.
+ */
 function Dimensies({
   titel,
   dimensies,
@@ -239,24 +247,42 @@ function Dimensies({
   onZet,
 }: {
   titel: string;
-  dimensies: { id: string; naam: string; vraag: string }[];
+  dimensies: { id: string; naam: string; vraag: string; kern?: boolean }[];
   scores: Record<string, number>;
   onZet: (id: string, waarde: number) => void;
 }) {
+  const [allesTonen, setAllesTonen] = useState(false);
+
+  const extra = dimensies.filter((d) => !d.kern);
+  const zichtbaar = allesTonen
+    ? dimensies
+    : dimensies.filter((d) => d.kern || scores[d.id] !== undefined);
+  const verborgen = dimensies.length - zichtbaar.length;
+
   return (
     <div>
-      <p className="text-xs font-semibold text-[--color-inkt]">{titel}</p>
+      <p className="text-xs font-semibold text-inkt">{titel}</p>
       <div className="mt-2 space-y-3">
-        {dimensies.map((d) => (
+        {zichtbaar.map((d) => (
           <div key={d.id}>
-            <p className="text-xs font-medium text-[--color-inkt]">{d.naam}</p>
-            <p className="mt-0.5 text-[11px] leading-snug text-[--color-inkt-licht]">{d.vraag}</p>
+            <p className="text-xs font-medium text-inkt">{d.naam}</p>
+            <p className="mt-0.5 text-[11px] leading-snug text-inkt-licht">{d.vraag}</p>
             <div className="mt-1.5">
               <Schaal waarde={scores[d.id] ?? null} onKies={(n) => onZet(d.id, n)} />
             </div>
           </div>
         ))}
       </div>
+
+      {extra.length > 0 && verborgen > 0 ? (
+        <button
+          type="button"
+          onClick={() => setAllesTonen(true)}
+          className="mt-2 text-xs font-medium text-accent hover:underline"
+        >
+          Nog {verborgen} {verborgen === 1 ? "dimensie" : "dimensies"} tonen
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -330,7 +356,7 @@ function BusinessCaseInvoer({
           <Knop soort="rand" onClick={startVanuitBibliotheek}>
             Begin met de ordegroottes uit de bibliotheek
           </Knop>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-[--color-inkt-licht]">
+          <p className="mt-1.5 text-[11px] leading-relaxed text-inkt-licht">
             Dat zijn aannames, geen cijfers van jullie. Pas ze aan zodra iemand aan tafel het beter
             weet — dat gesprek ís de oefening.
           </p>
@@ -345,33 +371,33 @@ function BusinessCaseInvoer({
         return (
           <div
             key={`${driver.type}-${index}`}
-            className="rounded-[--radius-kaart] border border-[--color-rand] bg-[--color-vlak] p-3"
+            className="rounded-kaart border border-rand bg-vlak p-3"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <p className="text-xs font-semibold text-[--color-inkt]">{definitie.naam}</p>
-                <p className="mt-0.5 font-mono text-[10px] leading-snug text-[--color-inkt-licht]">
+                <p className="text-xs font-semibold text-inkt">{definitie.naam}</p>
+                <p className="mt-0.5 font-mono text-[10px] leading-snug text-inkt-licht">
                   {definitie.formule}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => void verwijderDriver(index)}
-                className="shrink-0 text-[11px] text-[--color-inkt-licht] hover:text-[--color-risico]"
+                className="shrink-0 text-[11px] text-inkt-licht hover:text-risico"
               >
                 weghalen
               </button>
             </div>
 
-            <p className="mt-1.5 text-[11px] leading-relaxed text-[--color-inkt-zacht]">
+            <p className="mt-1.5 text-[11px] leading-relaxed text-inkt-zacht">
               {definitie.toelichting}
             </p>
 
             <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
               {definitie.velden.map((veld) => (
                 <label key={veld.id} className="block">
-                  <span className="block text-[11px] text-[--color-inkt-zacht]">
-                    {veld.label} <span className="text-[--color-inkt-licht]">({veld.eenheid})</span>
+                  <span className="block text-[11px] text-inkt-zacht">
+                    {veld.label} <span className="text-inkt-licht">({veld.eenheid})</span>
                   </span>
                   <input
                     type="number"
@@ -392,11 +418,11 @@ function BusinessCaseInvoer({
             </div>
 
             {uitkomst?.status === "berekend" ? (
-              <p className="mt-2 text-xs font-medium tabular-nums text-[--color-waarde]">
+              <p className="mt-2 text-xs font-medium tabular-nums text-waarde">
                 {formatteerEuro(uitkomst.jaarlijkse_baat)} per jaar
               </p>
             ) : uitkomst?.status === "onbekend" ? (
-              <p className="mt-2 text-xs text-[--color-aandacht]">
+              <p className="mt-2 text-xs text-aandacht">
                 Nog onbekend: vul {uitkomst.ontbrekende_velden.join(", ")} in.
               </p>
             ) : null}
@@ -405,7 +431,7 @@ function BusinessCaseInvoer({
       })}
 
       <div>
-        <p className="text-xs font-semibold text-[--color-inkt]">Waar komt de waarde vandaan?</p>
+        <p className="text-xs font-semibold text-inkt">Waar komt de waarde vandaan?</p>
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {waardeModel.drivertypes.map((d) => (
             <Knop
@@ -421,7 +447,7 @@ function BusinessCaseInvoer({
       </div>
 
       <div>
-        <p className="text-xs font-semibold text-[--color-inkt]">Wat kost het?</p>
+        <p className="text-xs font-semibold text-inkt">Wat kost het?</p>
         <div className="mt-1.5 grid gap-2 sm:grid-cols-3">
           {(
             [
@@ -431,8 +457,8 @@ function BusinessCaseInvoer({
             ] as const
           ).map(([veld, label, eenheid]) => (
             <label key={veld} className="block">
-              <span className="block text-[11px] text-[--color-inkt-zacht]">
-                {label} <span className="text-[--color-inkt-licht]">({eenheid})</span>
+              <span className="block text-[11px] text-inkt-zacht">
+                {label} <span className="text-inkt-licht">({eenheid})</span>
               </span>
               <input
                 type="number"
@@ -449,15 +475,15 @@ function BusinessCaseInvoer({
       </div>
 
       {beeld.businessCase?.bruto_baat ? (
-        <div className="rounded-[--radius-kaart] border border-[--color-waarde] bg-[--color-waarde-zacht] p-3">
-          <p className="text-xs text-[--color-waarde]">
+        <div className="rounded-kaart border border-waarde bg-waarde-zacht p-3">
+          <p className="text-xs text-waarde">
             Bruto baat {formatteerBandbreedte(beeld.businessCase.bruto_baat)} per jaar, min{" "}
             {formatteerEuro(kosten.jaarlijks)} jaarlijkse kosten.
           </p>
-          <p className="mt-1 text-sm font-semibold tabular-nums text-[--color-waarde]">
+          <p className="mt-1 text-sm font-semibold tabular-nums text-waarde">
             Netto {formatteerBandbreedte(beeld.businessCase.netto_baat)} per jaar
           </p>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-[--color-waarde]">
+          <p className="mt-1.5 text-[11px] leading-relaxed text-waarde">
             Een bandbreedte, geen bedrag. De onzekerheid staat op{" "}
             {state.sessie.onzekerheid_pct}% rond de verwachte waarde.
           </p>

@@ -45,11 +45,11 @@ function Formulier() {
 
   return (
     <main className="mx-auto w-full max-w-md px-5 py-10">
-      <Link href="/" className="text-sm text-[--color-inkt-licht] hover:text-[--color-accent]">
+      <Link href="/" className="text-sm text-inkt-licht hover:text-accent">
         ← Terug
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-[--color-inkt]">Meedoen</h1>
-      <p className="mt-2 text-sm leading-relaxed text-[--color-inkt-zacht]">
+      <h1 className="mt-4 text-2xl font-semibold text-inkt">Meedoen</h1>
+      <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
         Vul de code in die de facilitator deelt.
       </p>
 
@@ -100,7 +100,7 @@ function Formulier() {
 
 export default function DeelnemenPagina() {
   return (
-    <Suspense fallback={<main className="p-8 text-sm text-[--color-inkt-licht]">Laden…</main>}>
+    <Suspense fallback={<main className="p-8 text-sm text-inkt-licht">Laden…</main>}>
       <Formulier />
     </Suspense>
   );

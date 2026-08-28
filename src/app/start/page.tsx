@@ -49,11 +49,11 @@ export default function StartPagina() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-5 py-10">
-      <Link href="/" className="text-sm text-[--color-inkt-licht] hover:text-[--color-accent]">
+      <Link href="/" className="text-sm text-inkt-licht hover:text-accent">
         ← Terug
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-[--color-inkt]">Sessie starten</h1>
-      <p className="mt-2 text-sm leading-relaxed text-[--color-inkt-zacht]">
+      <h1 className="mt-4 text-2xl font-semibold text-inkt">Sessie starten</h1>
+      <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
         Je wordt facilitator én speler: je kiest een rol en doet gewoon mee. Alleen het openen en
         sluiten van de fases is van jou.
       </p>
@@ -70,8 +70,8 @@ export default function StartPagina() {
 
         <Veld label="Corporatie">
           <Kaart className="p-3">
-            <p className="text-sm font-medium text-[--color-inkt]">{org.naam}</p>
-            <p className="mt-1 text-xs leading-relaxed text-[--color-inkt-zacht]">{org.pitch}</p>
+            <p className="text-sm font-medium text-inkt">{org.naam}</p>
+            <p className="mt-1 text-xs leading-relaxed text-inkt-zacht">{org.pitch}</p>
           </Kaart>
         </Veld>
 
@@ -80,10 +80,10 @@ export default function StartPagina() {
             {speelmodi.modi.map((m) => (
               <label
                 key={m.id}
-                className={`keuze flex cursor-pointer items-start gap-3 rounded-[--radius-kaart] border p-3 transition-colors ${
+                className={`keuze flex cursor-pointer items-start gap-3 rounded-kaart border p-3 transition-colors ${
                   modusId === m.id
-                    ? "border-[--color-accent] bg-[--color-accent-zacht]"
-                    : "border-[--color-rand] bg-[--color-vlak] hover:border-[--color-rand-sterk]"
+                    ? "border-accent bg-accent-zacht"
+                    : "border-rand bg-vlak hover:border-rand-sterk"
                 }`}
               >
                 <input
@@ -94,10 +94,10 @@ export default function StartPagina() {
                   onChange={() => setModusId(m.id)}
                 />
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium text-[--color-inkt]">
+                  <span className="block text-sm font-medium text-inkt">
                     {m.naam} · {Math.round(m.duur_minuten / 15) * 15} minuten
                   </span>
-                  <span className="mt-0.5 block text-xs leading-relaxed text-[--color-inkt-zacht]">
+                  <span className="mt-0.5 block text-xs leading-relaxed text-inkt-zacht">
                     {m.omschrijving}
                   </span>
                 </span>
@@ -132,7 +132,7 @@ export default function StartPagina() {
           <Knop onClick={starten} disabled={bezig}>
             {bezig ? "Bezig…" : "Sessie starten"}
           </Knop>
-          <p className="text-xs text-[--color-inkt-licht]">
+          <p className="text-xs text-inkt-licht">
             Maximaal {modus.max_usecases} use cases in deze modus.
           </p>
         </div>

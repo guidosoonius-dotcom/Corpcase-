@@ -7,6 +7,8 @@ import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import { Etiket, Kaart, Knop, Kop, Melding } from "@/components/basis";
 
+const PER_PORTIE = 12;
+
 const LENS_LABELS: Record<SignaalKaart["lens"], string> = {
   jaarverslag: "Jaarverslag",
   huurder: "Huurder",
@@ -31,6 +33,9 @@ export function Verkennen({
   doe: (actie: () => Promise<unknown>) => Promise<void>;
 }) {
   const [lens, setLens] = useState<SignaalKaart["lens"] | "alle">("alle");
+  // Er zijn ruim veertig kaarten. Alles tegelijk tonen is op een telefoon een scrollmarathon
+  // waarin niemand nog kiest; per portie van twaalf blijft het een gesprek.
+  const [portie, setPortie] = useState(1);
   const modus = speelmodus(state.sessie.speelmodus);
   const ik = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
@@ -88,6 +93,11 @@ export function Verkennen({
     );
   }
 
+  // Al gekozen kaarten blijven altijd in beeld, ook als ze buiten de huidige portie vallen.
+  const zichtbaar = gesorteerd.filter(
+    (signaal, index) => index < portie * PER_PORTIE || gekozen.has(signaal.id),
+  );
+
   const genoeg = mijnSelecties.length >= modus.min_signalen_per_speler;
 
   return (
@@ -115,11 +125,14 @@ export function Verkennen({
           <button
             key={l}
             type="button"
-            onClick={() => setLens(l)}
-            className={`shrink-0 rounded-[--radius-kaart] border px-3 py-1.5 text-xs font-medium transition-colors ${
+            onClick={() => {
+              setLens(l);
+              setPortie(1);
+            }}
+            className={`shrink-0 rounded-kaart border px-3 py-1.5 text-xs font-medium transition-colors ${
               lens === l
-                ? "border-[--color-accent] bg-[--color-accent] text-white"
-                : "border-[--color-rand-sterk] bg-[--color-vlak] text-[--color-inkt-zacht]"
+                ? "border-accent bg-accent text-white"
+                : "border-rand-sterk bg-vlak text-inkt-zacht"
             }`}
           >
             {l === "alle" ? "Alles" : LENS_LABELS[l]}
@@ -128,7 +141,7 @@ export function Verkennen({
       </div>
 
       <ul className="space-y-2.5">
-        {gesorteerd.map((signaal) => {
+        {zichtbaar.map((signaal) => {
           const selectie = mijnSelecties.find((s) => s.signaal_id === signaal.id);
           const isGekozen = Boolean(selectie);
           const anderen = state.selecties.filter(
@@ -144,7 +157,7 @@ export function Verkennen({
                   className="block w-full px-4 py-3 text-left"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <span className="text-sm font-medium leading-snug text-[--color-inkt]">
+                    <span className="text-sm font-medium leading-snug text-inkt">
                       {signaal.titel}
                     </span>
                     <span className="mt-0.5 shrink-0">
@@ -153,13 +166,13 @@ export function Verkennen({
                       </Etiket>
                     </span>
                   </div>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+                  <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
                     {signaal.tekst}
                   </p>
                   {signaal.detail?.frustraties ? (
                     <ul className="mt-2 space-y-0.5">
                       {signaal.detail.frustraties.map((f) => (
-                        <li key={f} className="text-xs leading-relaxed text-[--color-inkt-licht]">
+                        <li key={f} className="text-xs leading-relaxed text-inkt-licht">
                           — {f}
                         </li>
                       ))}
@@ -167,7 +180,7 @@ export function Verkennen({
                   ) : null}
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {signaal.bron ? (
-                      <span className="text-[11px] text-[--color-inkt-licht]">
+                      <span className="text-[11px] text-inkt-licht">
                         Bron: {signaal.bron}
                         {signaal.geverifieerd === false ? " (nog te verifiëren)" : ""}
                       </span>
@@ -181,8 +194,8 @@ export function Verkennen({
                 </button>
 
                 {isGekozen ? (
-                  <div className="border-t border-[--color-rand] bg-[--color-papier] px-4 py-2.5">
-                    <p className="text-xs text-[--color-inkt-zacht]">Hoe hard speelt dit bij ons?</p>
+                  <div className="border-t border-rand bg-papier px-4 py-2.5">
+                    <p className="text-xs text-inkt-zacht">Hoe hard speelt dit bij ons?</p>
                     <div className="mt-1.5 flex gap-1.5">
                       {[
                         { n: 1, label: "Nauwelijks" },
@@ -206,6 +219,12 @@ export function Verkennen({
           );
         })}
       </ul>
+
+      {zichtbaar.length < gesorteerd.length ? (
+        <Knop soort="rand" onClick={() => setPortie((p) => p + 1)} className="w-full">
+          Nog {gesorteerd.length - zichtbaar.length} kaarten tonen
+        </Knop>
+      ) : null}
     </div>
   );
 }

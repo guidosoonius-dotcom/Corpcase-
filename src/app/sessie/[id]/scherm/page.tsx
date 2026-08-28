@@ -20,7 +20,7 @@ export default function SchermPagina() {
   const parameters = useParams<{ id: string }>();
   const { state, laden } = useSessie(parameters.id);
 
-  if (laden) return <main className="p-12 text-xl text-[--color-inkt-licht]">Laden…</main>;
+  if (laden) return <main className="p-12 text-xl text-inkt-licht">Laden…</main>;
 
   if (!state) {
     return (
@@ -47,14 +47,14 @@ export default function SchermPagina() {
     <main className="mx-auto w-full max-w-6xl px-8 py-8">
       <header className="flex items-baseline justify-between gap-6">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[--color-inkt-licht]">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-inkt-licht">
             {FASE_LABELS[state.sessie.fase]}
           </p>
-          <h1 className="mt-1 text-3xl font-semibold text-[--color-inkt]">{state.sessie.titel}</h1>
+          <h1 className="mt-1 text-3xl font-semibold text-inkt">{state.sessie.titel}</h1>
         </div>
         <div className="text-right">
-          <p className="text-sm text-[--color-inkt-licht]">Teamscore</p>
-          <p className="text-3xl font-semibold tabular-nums text-[--color-accent]">
+          <p className="text-sm text-inkt-licht">Teamscore</p>
+          <p className="text-3xl font-semibold tabular-nums text-accent">
             {score.totaal}
           </p>
         </div>
@@ -62,7 +62,7 @@ export default function SchermPagina() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[3fr_2fr]">
         <section>
-          <h2 className="text-base font-semibold text-[--color-inkt]">Waarde tegen haalbaarheid</h2>
+          <h2 className="text-base font-semibold text-inkt">Waarde tegen haalbaarheid</h2>
           <div className="mt-3">
             <Matrix beelden={beelden} hoogte={420} />
           </div>
@@ -70,17 +70,17 @@ export default function SchermPagina() {
 
         <section className="space-y-6">
           <div>
-            <h2 className="text-base font-semibold text-[--color-inkt]">Op tafel</h2>
+            <h2 className="text-base font-semibold text-inkt">Op tafel</h2>
             <ol className="mt-3 space-y-2">
               {beelden.slice(0, 8).map((beeld) => (
                 <li
                   key={beeld.usecase.id}
-                  className="flex items-baseline justify-between gap-4 border-b border-[--color-rand] pb-2"
+                  className="flex items-baseline justify-between gap-4 border-b border-rand pb-2"
                 >
-                  <span className="text-base leading-snug text-[--color-inkt]">
+                  <span className="text-base leading-snug text-inkt">
                     {beeld.usecase.titel}
                   </span>
-                  <span className="shrink-0 text-sm tabular-nums text-[--color-inkt-licht]">
+                  <span className="shrink-0 text-sm tabular-nums text-inkt-licht">
                     {beeld.businessCase?.netto_baat
                       ? formatteerBandbreedte(beeld.businessCase.netto_baat)
                       : beeld.positie
@@ -90,10 +90,10 @@ export default function SchermPagina() {
                 </li>
               ))}
               {beelden.length === 0 ? (
-                <li className="text-base text-[--color-inkt-licht]">Nog niets.</li>
+                <li className="text-base text-inkt-licht">Nog niets.</li>
               ) : null}
               {beelden.length > 8 ? (
-                <li className="text-sm text-[--color-inkt-licht]">
+                <li className="text-sm text-inkt-licht">
                   en {beelden.length - 8} meer
                 </li>
               ) : null}
@@ -101,14 +101,14 @@ export default function SchermPagina() {
           </div>
 
           {totaleBaat > 0 ? (
-            <div className="rounded-[--radius-kaart] border border-[--color-waarde] bg-[--color-waarde-zacht] p-4">
-              <p className="text-sm text-[--color-waarde]">
+            <div className="rounded-kaart border border-waarde bg-waarde-zacht p-4">
+              <p className="text-sm text-waarde">
                 Verwachte netto waarde van het doorgerekende deel
               </p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums text-[--color-waarde]">
+              <p className="mt-1 text-2xl font-semibold tabular-nums text-waarde">
                 {formatteerEuro(totaleBaat)} per jaar
               </p>
-              <p className="mt-1.5 text-xs leading-relaxed text-[--color-waarde]">
+              <p className="mt-1.5 text-xs leading-relaxed text-waarde">
                 Optelling van verwachte waarden, elk met een onzekerheid van{" "}
                 {state.sessie.onzekerheid_pct}%. Geen begroting.
               </p>
@@ -116,21 +116,21 @@ export default function SchermPagina() {
           ) : null}
 
           <div>
-            <h2 className="text-base font-semibold text-[--color-inkt]">Breedte</h2>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[--color-rand]">
+            <h2 className="text-base font-semibold text-inkt">Breedte</h2>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-rand">
               <div
-                className="h-full rounded-full bg-[--color-accent]"
+                className="h-full rounded-full bg-accent"
                 style={{
                   width: `${(gedekt.domeinenGedekt.length / cora.domeinen.length) * 100}%`,
                 }}
               />
             </div>
-            <p className="mt-2 text-sm text-[--color-inkt-zacht]">
+            <p className="mt-2 text-sm text-inkt-zacht">
               {gedekt.domeinenGedekt.length} van {cora.domeinen.length} domeinen ·{" "}
               {gedekt.personasGeraakt.length} van {personaSignalen.kaarten.length} huurderstypen
             </p>
             {gedekt.domeinenOngedekt.length > 0 ? (
-              <p className="mt-1 text-sm leading-relaxed text-[--color-inkt-licht]">
+              <p className="mt-1 text-sm leading-relaxed text-inkt-licht">
                 Nog niet geraakt:{" "}
                 {gedekt.domeinenOngedekt
                   .slice(0, 5)
@@ -144,15 +144,15 @@ export default function SchermPagina() {
 
           {state.sessie.fase === "prioritering" || state.sessie.fase === "roadmap" ? (
             <div>
-              <h2 className="text-base font-semibold text-[--color-inkt]">Wat past er nog in</h2>
-              <p className="mt-1.5 text-sm tabular-nums text-[--color-inkt-zacht]">
+              <h2 className="text-base font-semibold text-inkt">Wat past er nog in</h2>
+              <p className="mt-1.5 text-sm tabular-nums text-inkt-zacht">
                 {formatteerEuro(stand.besteed.geld_eur)} van{" "}
                 {formatteerEuro(state.sessie.budget_geld)} ·{" "}
                 {stand.besteed.verandercapaciteit_mensmaanden} van{" "}
                 {state.sessie.budget_capaciteit} mensmaanden
               </p>
               {stand.overschreden.geld || stand.overschreden.capaciteit ? (
-                <p className="mt-1.5 text-sm font-medium text-[--color-risico]">
+                <p className="mt-1.5 text-sm font-medium text-risico">
                   Het budget is overschreden.
                 </p>
               ) : null}
@@ -160,11 +160,11 @@ export default function SchermPagina() {
           ) : null}
 
           <div>
-            <h2 className="text-base font-semibold text-[--color-inkt]">Aan tafel</h2>
-            <p className="mt-1.5 text-sm leading-relaxed text-[--color-inkt-zacht]">
+            <h2 className="text-base font-semibold text-inkt">Aan tafel</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
               {state.deelnemers.map((d) => d.naam).join(" · ")}
             </p>
-            <p className="mt-2 text-sm text-[--color-inkt-licht]">
+            <p className="mt-2 text-sm text-inkt-licht">
               Speelduur: {modus.naam.toLowerCase()}
             </p>
           </div>
