@@ -43,3 +43,6 @@ next-env.d.ts
 # Lokale omgeving
 .env
 .env.local
+
+# De voorbeeldconfiguratie is bewust wel onderdeel van de repo.
+!.env.example
