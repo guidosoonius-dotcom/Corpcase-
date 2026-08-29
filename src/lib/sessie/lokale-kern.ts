@@ -106,6 +106,15 @@ function isFacilitator(dossier: Dossier, identiteit: Identiteit): boolean {
 }
 
 /**
+ * De echte beheercode reist alleen in `Identiteit.beheerCode`, nooit in een `SessieRij` die de
+ * browser bereikt — anders zou elke deelnemer hem op elke poll van `haalState` meekrijgen. Elke
+ * functie hieronder die een sessie teruggeeft aan de aanroeper stuurt hem hierdoorheen.
+ */
+function maskeerBeheercode(sessie: SessieRij): SessieRij {
+  return { ...sessie, beheer_code: null };
+}
+
+/**
  * Stilzwijgend niets doen als je geen facilitator bent, precies zoals een RLS-update die nul
  * rijen raakt. De aanroeper leest de state opnieuw en ziet dat er niets veranderd is.
  */
@@ -157,7 +166,7 @@ export function maakSessie(invoer: NieuweSessie): Toegang {
   const deelnemer = voegDeelnemerToe(dossier, invoer.facilitatorNaam, invoer.facilitatorRolId, true);
 
   return {
-    sessie,
+    sessie: maskeerBeheercode(sessie),
     deelnemer,
     identiteit: { deelnemerToken: deelnemer.token, beheerCode: sessie.beheer_code },
   };
@@ -185,11 +194,12 @@ function voegDeelnemerToe(
   return deelnemer;
 }
 
+/** Publieke opzoeking vóór het joinen; de beheercode gaat hier nooit in mee terug. */
 export function zoekSessie(code: string): SessieRij | null {
   const joinCode = normaliseerCode(code);
   if (!joinCode) return null;
   for (const dossier of dossiers.values()) {
-    if (dossier.sessie.join_code === joinCode) return dossier.sessie;
+    if (dossier.sessie.join_code === joinCode) return maskeerBeheercode(dossier.sessie);
   }
   return null;
 }
@@ -199,10 +209,29 @@ export function neemDeel(args: { code: string; naam: string; rolId: string }): T
   if (!sessie) throw new SessieFout("Geen sessie gevonden met deze code.");
   if (sessie.afgerond_op) throw new SessieFout("Deze sessie is al afgerond.");
 
+  // Het id is niet gemaskeerd, dus deze zoekt gewoon het echte dossier op.
   const dossier = vindDossier(sessie.id);
   const deelnemer = voegDeelnemerToe(dossier, args.naam, args.rolId, false);
 
   return { sessie, deelnemer, identiteit: { deelnemerToken: deelnemer.token } };
+}
+
+/** Zie de uitleg bij `Opslag.facilitatorInloggen`. */
+export function facilitatorInloggen(beheerCode: string): Toegang {
+  const code = normaliseerCode(beheerCode);
+  if (!code) throw new SessieFout("Onbekende beheercode.");
+
+  for (const dossier of dossiers.values()) {
+    if (dossier.sessie.beheer_code !== code) continue;
+    const facilitator = dossier.deelnemers.find((d) => d.is_facilitator);
+    if (!facilitator) throw new SessieFout("Geen facilitator gevonden bij deze sessie.");
+    return {
+      sessie: maskeerBeheercode(dossier.sessie),
+      deelnemer: facilitator,
+      identiteit: { deelnemerToken: facilitator.token, beheerCode: code },
+    };
+  }
+  throw new SessieFout("Onbekende beheercode.");
 }
 
 // Lezen ---------------------------------------------------------------------
@@ -213,7 +242,7 @@ export function haalState(identiteit: Identiteit, sessieId: string): SessieState
 
   const ids = new Set(dossier.usecases.map((u) => u.id));
   return {
-    sessie: dossier.sessie,
+    sessie: maskeerBeheercode(dossier.sessie),
     deelnemers: [...dossier.deelnemers],
     selecties: [...dossier.selecties],
     usecases: [...dossier.usecases],

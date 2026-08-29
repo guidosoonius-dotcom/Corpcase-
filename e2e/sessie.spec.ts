@@ -196,6 +196,47 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   await expect(facilitator.getByRole("heading", { name: "Waarde tegen haalbaarheid" })).toBeVisible();
 });
 
+test("de facilitator logt op een ander apparaat opnieuw in met de beheercode", async ({
+  browser,
+}) => {
+  const facilitator = await nieuweSpeler(browser);
+  const speler = await nieuweSpeler(browser);
+  const anderApparaat = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const sessieId = facilitator.url().match(/\/sessie\/([0-9a-f-]+)\//)![1];
+  const code = (await facilitator.getByLabel(/Sessiecode/).innerText()).trim();
+
+  await joinMet(speler, code, "Marieke", "Manager Wonen / Klant");
+
+  // Een gewone deelnemer die op het beheerscherm meekijkt, krijgt de beheercode nooit te zien —
+  // dat veld reist alleen naar wie zich al als facilitator bewees.
+  await speler.goto(`/sessie/${sessieId}/beheer`);
+  await expect(speler.getByText("Je kijkt mee")).toBeVisible();
+  await expect(speler.getByText("Beheertoegang")).toHaveCount(0);
+  // Terug naar haar eigen spelerscherm, waar de volgende controle de fase leest.
+  await speler.goto(`/sessie/${sessieId}`);
+
+  // De facilitator vindt zijn eigen beheercode terug om hem elders te gebruiken.
+  await facilitator.getByRole("button", { name: /Toon de beheercode/ }).click();
+  const beheerCode = (await facilitator.getByLabel(/Beheercode/).innerText()).trim();
+  expect(beheerCode).toHaveLength(10);
+
+  // Op een nieuwe browser — geen identiteit, geen localStorage — logt hij daarmee weer in.
+  await anderApparaat.goto("/facilitator");
+  await anderApparaat.getByLabel("Beheercode").fill(beheerCode);
+  await anderApparaat.getByRole("button", { name: "Inloggen" }).click();
+  await anderApparaat.waitForURL(`/sessie/${sessieId}/beheer`);
+  await expect(anderApparaat.getByText("Je kijkt mee")).toHaveCount(0);
+
+  // En kan van daaruit ook echt besturen: de fase verzetten komt bij alle browsers aan.
+  await anderApparaat.getByRole("button", { name: "Volgende fase: Verkennen" }).click();
+  await expect(speler.getByRole("heading", { name: "Wat herken je?" })).toBeVisible();
+});
+
 test("een speler navigeert zelf vooruit en krijgt een waarschuwing dat hij voorloopt", async ({
   browser,
 }) => {

@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { maakClient } from "@/lib/supabase/client";
 import {
+  facilitatorInloggen,
   haalState,
   maakSessie,
   neemDeel,
@@ -73,10 +74,13 @@ describe.skipIf(!heeftOmgeving)("toegangsmodel", () => {
   });
 
   it("maakt een sessie met een facilitator die meteen meespeelt", async () => {
-    const { sessie, deelnemer } = await nieuweSessie("Integratietest sessie");
+    const { sessie, deelnemer, identiteit } = await nieuweSessie("Integratietest sessie");
 
     expect(sessie.join_code).toHaveLength(6);
-    expect(sessie.beheer_code).toHaveLength(10);
+    // De echte beheercode reist alleen in `identiteit`, nooit in `sessie` — zie de test
+    // "laat de beheercode nergens lekken buiten de identiteit van de facilitator" hieronder.
+    expect(sessie.beheer_code).toBeNull();
+    expect(identiteit.beheerCode).toHaveLength(10);
     expect(sessie.fase).toBe("lobby");
     expect(deelnemer.is_facilitator).toBe(true);
     // De facilitator krijgt net als iedereen een privé-rolopdracht.
@@ -179,11 +183,70 @@ describe.skipIf(!heeftOmgeving)("toegangsmodel", () => {
 
     const gevonden = await zoekSessie(a.sessie.join_code);
     expect(gevonden?.id).toBe(a.sessie.id);
+    expect(gevonden?.beheer_code).toBeNull();
 
     // Met alleen de join-code zie je de sessie zelf, maar niet wat erin gebeurt.
     const metJoinCode = maakClient({ joinCode: a.sessie.join_code });
     const { data: usecases } = await metJoinCode.from("sessie_usecases").select("*");
     expect(usecases).toEqual([]);
+  });
+
+  /**
+   * De joincode is juist bedoeld om rond te sturen (whatsapp, mail). Deze test bewijst dat wie
+   * hem kent zich niet met een handgeschreven verzoek tot facilitator kan bevorderen: de
+   * publieke sleutel en de URL staan in een publieke repo, dus "de app vraagt de kolom nooit op"
+   * is geen verdediging — het moet op rijniveau in de database dichtzitten.
+   */
+  it("laat de beheercode nergens lekken buiten de identiteit van de facilitator", async () => {
+    const a = await nieuweSessie("Sessie met een gevoelige beheercode");
+    const speler = await neemDeel({
+      code: a.sessie.join_code,
+      naam: "Gewone speler",
+      rolId: "manager-vastgoed",
+    });
+
+    // Een gewone deelnemer krijgt hem nooit terug, ook niet via de volle sessiestate.
+    const state = await haalState(speler.identiteit, a.sessie.id);
+    expect(state.sessie.beheer_code).toBeNull();
+
+    // Rechtstreeks bij de basistabel met alleen de joincode: geen rij, dus ook geen kolom.
+    const metJoinCode = maakClient({ joinCode: a.sessie.join_code });
+    const { data: viaBasistabel } = await metJoinCode
+      .from("sessies")
+      .select("beheer_code")
+      .eq("id", a.sessie.id);
+    expect(viaBasistabel).toEqual([]);
+
+    // Ook met een geldig deelnemertoken blijft de basistabel dicht: alleen de facilitator komt er
+    // via `sessies_lezen` in.
+    const metToken = maakClient(speler.identiteit);
+    const { data: viaToken } = await metToken.from("sessies").select("beheer_code").eq("id", a.sessie.id);
+    expect(viaToken).toEqual([]);
+
+    // De publieke view heeft de kolom niet eens: die vraag is geen toegangsfout meer, maar een
+    // kolom die niet bestaat.
+    const { error: viaView } = await metToken
+      .from("sessies_publiek")
+      .select("beheer_code")
+      .eq("id", a.sessie.id);
+    expect(viaView).not.toBeNull();
+  });
+
+  it("laat de facilitator op een ander apparaat opnieuw inloggen met alleen de beheercode", async () => {
+    const a = await nieuweSessie("Sessie om opnieuw in te loggen");
+
+    const opnieuw = await facilitatorInloggen(a.identiteit.beheerCode!);
+    expect(opnieuw.deelnemer.id).toBe(a.deelnemer.id);
+    expect(opnieuw.identiteit.deelnemerToken).toBe(a.deelnemer.token);
+    expect(opnieuw.sessie.beheer_code).toBeNull();
+
+    // Die herwonnen identiteit besturen ook echt: de fase verzetten lukt ermee.
+    await zetFase(opnieuw.identiteit, a.sessie.id, "verkennen");
+    const state = await haalState(a.identiteit, a.sessie.id);
+    expect(state.sessie.fase).toBe("verkennen");
+
+    // Een onbekende code levert geen toegang op.
+    await expect(facilitatorInloggen("GEENGELDIGECODE")).rejects.toThrow();
   });
 
   it("staat fasebesturing alleen toe met de beheercode", async () => {

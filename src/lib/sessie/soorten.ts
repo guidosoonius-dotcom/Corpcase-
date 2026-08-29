@@ -135,6 +135,12 @@ export type Opslag = {
   maakSessie(invoer: NieuweSessie): Promise<Toegang>;
   zoekSessie(code: string): Promise<SessieRij | null>;
   neemDeel(args: { code: string; naam: string; rolId: string }): Promise<Toegang>;
+  /**
+   * Opnieuw toegang als facilitator, met alleen de beheercode — een ander apparaat, een nieuwe
+   * browser, of een collega die het overneemt. De facilitator is óók deelnemer, dus dit levert
+   * dezelfde `Toegang` op als bij het starten van de sessie.
+   */
+  facilitatorInloggen(beheerCode: string): Promise<Toegang>;
   haalState(identiteit: Identiteit, sessieId: string): Promise<SessieState>;
 
   zetFase(identiteit: Identiteit, sessieId: string, fase: Fase): Promise<void>;

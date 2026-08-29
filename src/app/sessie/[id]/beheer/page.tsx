@@ -20,7 +20,7 @@ import {
 import { Etiket, Kaart, Knop, Kop, Leeg, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
 import { organisatie } from "@/lib/content";
-import { KopieerIcoon, WaarschuwingIcoon } from "@/components/icoon";
+import { KopieerIcoon, OogDichtIcoon, OogIcoon, WaarschuwingIcoon } from "@/components/icoon";
 
 /**
  * Het scherm van de facilitator.
@@ -35,6 +35,8 @@ export default function BeheerPagina() {
   const { state, identiteit, laden, fout, doe } = useSessie(sessieId);
   useAanwezigheid(sessieId, identiteit);
   const [gekopieerd, setGekopieerd] = useState(false);
+  const [beheercodeZichtbaar, setBeheercodeZichtbaar] = useState(false);
+  const [beheercodeGekopieerd, setBeheercodeGekopieerd] = useState(false);
 
   if (laden) return <main className="p-8 text-sm text-inkt-licht">Laden…</main>;
 
@@ -74,6 +76,17 @@ export default function BeheerPagina() {
       window.setTimeout(() => setGekopieerd(false), 2500);
     } catch {
       setGekopieerd(false);
+    }
+  }
+
+  async function kopieerBeheercode() {
+    if (!identiteit!.beheerCode) return;
+    try {
+      await navigator.clipboard.writeText(identiteit!.beheerCode);
+      setBeheercodeGekopieerd(true);
+      window.setTimeout(() => setBeheercodeGekopieerd(false), 2500);
+    } catch {
+      setBeheercodeGekopieerd(false);
     }
   }
 
@@ -138,6 +151,60 @@ export default function BeheerPagina() {
           </div>
         </Kaart>
       </section>
+
+      {ikBenFacilitator ? (
+        <section className="mt-6">
+          <Kaart className="p-4">
+            <h2 className="display text-lg text-inkt">Beheertoegang</h2>
+            <p className="mt-1.5 text-xs leading-relaxed text-inkt-zacht">
+              Hiermee kom je als facilitator terug binnen — op een ander apparaat, een nieuwe
+              browser, of als je het aan een collega overdraagt. Anders dan de sessiecode: wie
+              deze heeft, kan de fase verzetten en de sessie verwijderen. Deel hem dus niet in het
+              groepsberichtje.
+            </p>
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setBeheercodeZichtbaar((z) => !z)}
+                className="inline-flex items-center gap-1 text-xs font-medium text-accent-diep hover:underline"
+              >
+                {beheercodeZichtbaar ? (
+                  <OogDichtIcoon className="h-3.5 w-3.5" />
+                ) : (
+                  <OogIcoon className="h-3.5 w-3.5" />
+                )}
+                {beheercodeZichtbaar ? "Verberg de beheercode" : "Toon de beheercode"}
+              </button>
+            </div>
+            {beheercodeZichtbaar ? (
+              identiteit.beheerCode ? (
+                <>
+                  <p
+                    className="mt-2 font-mono text-xl font-semibold tracking-[0.14em] text-accent-diep"
+                    aria-label={`Beheercode ${identiteit.beheerCode.split("").join(" ")}`}
+                  >
+                    {identiteit.beheerCode}
+                  </p>
+                  <p className="mt-1 text-xs text-inkt-licht">
+                    Inloggen kan op <code>/facilitator</code>.
+                  </p>
+                  <div className="mt-3">
+                    <Knop soort="rand" onClick={kopieerBeheercode}>
+                      {beheercodeGekopieerd ? null : <KopieerIcoon className="h-4 w-4" />}
+                      {beheercodeGekopieerd ? "Gekopieerd" : "Beheercode kopiëren"}
+                    </Knop>
+                  </div>
+                </>
+              ) : (
+                <p className="mt-2 text-xs text-inkt-licht">
+                  Deze browser kent de beheercode niet meer. Log opnieuw in via{" "}
+                  <code>/facilitator</code> met de code die je bij het starten kreeg.
+                </p>
+              )
+            ) : null}
+          </Kaart>
+        </section>
+      ) : null}
 
       <section className="mt-6">
         <h2 className="display text-lg text-inkt">Fase</h2>

@@ -47,6 +47,21 @@ function controleer<T>(resultaat: { data: T | null; error: { message: string } |
   return resultaat.data;
 }
 
+/**
+ * De basistabel `sessies` is met opzet alleen leesbaar met bewezen facilitatorstatus (policy
+ * `sessies_lezen`, `is_facilitator(id)`): een rijbeleid filtert rijen, geen kolommen, en de
+ * joincode is juist bedoeld om rond te sturen. Wie hem kende kon vroeger met één extra
+ * PostgREST-verzoek de beheercode van diezelfde rij meelezen en zich zo tot facilitator
+ * bevorderen. `sessies_publiek` is de view zonder die kolom, met de brede zichtbaarheid (deelnemer
+ * of joincode) er zelf in verwerkt; alles wat een sessie aflevert aan wie nog niet bewezen heeft
+ * facilitator te zijn, leest hiervandaan en nooit van `sessies` zelf.
+ */
+const SESSIE_PUBLIEK = "sessies_publiek";
+
+function maskeerBeheercode(sessie: SessieRij): SessieRij {
+  return { ...sessie, beheer_code: null };
+}
+
 // Aanmaken en joinen --------------------------------------------------------
 
 /**
@@ -95,7 +110,7 @@ export async function maakSessie(invoer: NieuweSessie): Promise<Toegang> {
   });
 
   return {
-    sessie,
+    sessie: maskeerBeheercode(sessie),
     deelnemer,
     identiteit: { deelnemerToken: deelnemer.token, beheerCode },
   };
@@ -136,13 +151,14 @@ export async function zoekSessie(code: string): Promise<SessieRij | null> {
 
   const client = maakClient({ joinCode });
   const { data, error } = await client
-    .from("sessies")
+    .from(SESSIE_PUBLIEK)
     .select("*")
     .eq("join_code", joinCode)
     .maybeSingle();
 
   if (error) throw new SessieFout(`Sessie zoeken: ${error.message}`);
-  return (data as SessieRij | null) ?? null;
+  if (!data) return null;
+  return { ...(data as Omit<SessieRij, "beheer_code">), beheer_code: null };
 }
 
 export async function neemDeel(args: {
@@ -164,6 +180,45 @@ export async function neemDeel(args: {
   });
 
   return { sessie, deelnemer, identiteit: { deelnemerToken: deelnemer.token } };
+}
+
+/**
+ * Toegang terugkrijgen met alleen de beheercode — een ander apparaat, een nieuwe browser, of een
+ * collega die het overneemt. De facilitator is óók gewoon deelnemer (`maakSessie` zet hem meteen
+ * neer), dus dit levert dezelfde `Toegang` op als bij het starten van de sessie: geen aparte
+ * "facilitator zonder deelnemer"-vorm die de rest van de applicatie apart zou moeten behandelen.
+ *
+ * Deze functie leest wél rechtstreeks van `sessies` (niet van `sessies_publiek`): `is_facilitator`
+ * accepteert de beheercode al als header, en dat is precies wat hier net bewezen wordt.
+ */
+export async function facilitatorInloggen(beheerCode: string): Promise<Toegang> {
+  const code = normaliseerCode(beheerCode);
+  if (code.length === 0) throw new SessieFout("Onbekende beheercode.");
+
+  const client = maakClient({ beheerCode: code });
+
+  const { data: sessie, error: sessieFout } = await client
+    .from("sessies")
+    .select("*")
+    .eq("beheer_code", code)
+    .maybeSingle();
+  if (sessieFout) throw new SessieFout(`Beheercode controleren: ${sessieFout.message}`);
+  if (!sessie) throw new SessieFout("Onbekende beheercode.");
+
+  const { data: deelnemer, error: deelnemerFout } = await client
+    .from("deelnemers")
+    .select("*")
+    .eq("sessie_id", (sessie as SessieRij).id)
+    .eq("is_facilitator", true)
+    .maybeSingle();
+  if (deelnemerFout) throw new SessieFout(`Facilitator ophalen: ${deelnemerFout.message}`);
+  if (!deelnemer) throw new SessieFout("Geen facilitator gevonden bij deze sessie.");
+
+  return {
+    sessie: maskeerBeheercode(sessie as SessieRij),
+    deelnemer: deelnemer as DeelnemerRij,
+    identiteit: { deelnemerToken: (deelnemer as DeelnemerRij).token, beheerCode: code },
+  };
 }
 
 // Lezen ---------------------------------------------------------------------
@@ -189,7 +244,7 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     besluiten,
     roadmap,
   ] = await Promise.all([
-    client.from("sessies").select("*").eq("id", sessieId).single(),
+    client.from(SESSIE_PUBLIEK).select("*").eq("id", sessieId).single(),
     client.from("deelnemers").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
     client.from("signaal_selecties").select("*").eq("sessie_id", sessieId),
     client.from("sessie_usecases").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
@@ -202,7 +257,7 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
   ]);
 
   return {
-    sessie: controleer(sessie, "Sessie laden") as SessieRij,
+    sessie: maskeerBeheercode(controleer(sessie, "Sessie laden") as SessieRij),
     deelnemers: controleer(deelnemers, "Deelnemers laden") as DeelnemerRij[],
     selecties: controleer(selecties, "Signaalselecties laden") as SignaalSelectieRij[],
     usecases: controleer(usecases, "Use cases laden") as SessieUsecaseRij[],
@@ -519,6 +574,7 @@ export const supabaseOpslag: Opslag = {
   maakSessie,
   zoekSessie,
   neemDeel,
+  facilitatorInloggen,
   haalState,
   zetFase,
   zetFaseDeadline,

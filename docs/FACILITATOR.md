@@ -25,7 +25,10 @@ dan niet ter plekke hun eerste gedachte moeten formuleren.
 
 Zet het beamerscherm (`/sessie/<id>/scherm`) op de grote schermen. Zelf werk je op
 `/sessie/<id>/beheer`; daar staan de join-code, de fasebesturing en het overzicht van waar het
-hapert.
+hapert. Bewaar ook de beheercode die daar onder "Beheertoegang" staat — daarmee kom je op een
+ander apparaat, in een nieuwe browser, of nadat je een collega het laat overnemen, weer als
+facilitator binnen via `/facilitator`. Anders dan de sessiecode is dit geen code om rond te
+sturen: wie hem heeft, kan de fase verzetten en de sessie verwijderen.
 
 **Jij zet de gezamenlijke stand.** Deelnemers volgen die automatisch mee, maar kunnen ook zelf
 door de fasetabs klikken — vooruitbladeren om te zien wat eraan komt, of terugbladeren naar iets

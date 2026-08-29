@@ -47,7 +47,14 @@ export type SessieRij = {
   speelmodus: string;
   fase: Fase;
   join_code: string;
-  beheer_code: string;
+  /**
+   * `null` betekent hier niet "geen beheercode", maar "niet aan jou getoond": elke plek die deze
+   * rij aflevert aan wie geen facilitator is, maskeert dit veld. De echte waarde reist alleen in
+   * `Identiteit.beheerCode`, nooit hierin — anders zou elke deelnemer hem op elke poll van
+   * `haalState` meekrijgen, en zou wie de sessiecode kent (die je juist wél rondstuurt) zich zo
+   * tot facilitator kunnen bevorderen.
+   */
+  beheer_code: string | null;
   budget_geld: number;
   budget_capaciteit: number;
   uitgangspunten: Record<string, number>;

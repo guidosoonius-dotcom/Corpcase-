@@ -51,6 +51,8 @@ export const lokaleOpslag: Opslag = {
   maakSessie: (invoer: NieuweSessie) => roep<Toegang>("maakSessie", {}, invoer),
   zoekSessie: (code: string) => roep<SessieRij | null>("zoekSessie", {}, { code }),
   neemDeel: (args) => roep<Toegang>("neemDeel", {}, args),
+  facilitatorInloggen: (beheerCode) =>
+    roep<Toegang>("facilitatorInloggen", {}, { beheerCode }),
   haalState: (identiteit, sessieId) =>
     roep<SessieState>("haalState", identiteit, { sessieId }),
 

@@ -41,6 +41,14 @@ export default function Home() {
           </Link>
         </div>
 
+        <p className="mt-4 text-xs text-inkt-licht">
+          Sessie al gestart en op een ander apparaat verder?{" "}
+          <Link href="/facilitator" className="font-medium text-accent-diep hover:underline">
+            Facilitator inloggen
+          </Link>
+          .
+        </p>
+
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
           {[
             { label: "Use cases", waarde: bibliotheek.usecases.length },

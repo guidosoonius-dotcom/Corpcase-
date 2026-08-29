@@ -35,6 +35,8 @@ const acties: Record<string, Handler> = {
   maakSessie: (_identiteit, a) => kern.maakSessie(als(a)),
   zoekSessie: (_identiteit, a) => kern.zoekSessie(als<{ code: string }>(a).code),
   neemDeel: (_identiteit, a) => kern.neemDeel(als(a)),
+  facilitatorInloggen: (_identiteit, a) =>
+    kern.facilitatorInloggen(als<{ beheerCode: string }>(a).beheerCode),
 
   haalState: (i, a) => kern.haalState(i, als<{ sessieId: string }>(a).sessieId),
 

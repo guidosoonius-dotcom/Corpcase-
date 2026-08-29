@@ -3,8 +3,8 @@
 -- Dit bestand beschrijft de eindtoestand van het schema en kan een leeg Supabase-project in één
 -- keer inrichten. De losse migraties zijn met de Supabase-tooling toegepast onder de namen
 -- corpcase_speltabellen, corpcase_rls_policies, corpcase_helpers_naar_intern_schema,
--- corpcase_fk_indexen en deelnemers_eigen_fase; dit bestand is daarvan het samengevoegde
--- resultaat.
+-- corpcase_fk_indexen, deelnemers_eigen_fase, sessies_beheercode_niet_publiek en
+-- sessies_publiek_alleen_lezen; dit bestand is daarvan het samengevoegde resultaat.
 --
 -- Twee ontwerpkeuzes die de rest verklaren:
 --
@@ -272,13 +272,13 @@ alter table allocaties enable row level security;
 alter table realiteitscheck_besluiten enable row level security;
 alter table roadmap_items enable row level security;
 
--- Vinden op join-code mag voordat je deelnemer bent; dat is de enige manier om te joinen.
+-- De basistabel is met opzet alleen leesbaar met bewezen facilitatorstatus. Een rijbeleid filtert
+-- rijen, geen kolommen: zou deze policy hier ook `is_deelnemer` of de joincode toelaten, dan kon
+-- iedereen die de joincode kent — die is juist bedoeld om rond te sturen — met een gericht
+-- `select=beheer_code`-verzoek de beheercode van diezelfde rij meelezen en zich zo tot
+-- facilitator bevorderen. De brede zichtbaarheid zit in de view `sessies_publiek` verderop.
 create policy sessies_lezen on sessies for select
-  using (
-    intern.is_deelnemer(id)
-    or join_code = intern.header_waarde('x-join-code')
-    or beheer_code = intern.header_waarde('x-beheer-code')
-  );
+  using (intern.is_facilitator(id));
 
 create policy sessies_aanmaken on sessies for insert with check (true);
 
@@ -334,3 +334,32 @@ create policy realiteitscheck_besluiten_alles on realiteitscheck_besluiten for a
 
 create policy roadmap_items_alles on roadmap_items for all
   using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
+
+-- Publieke aanzicht op sessies, zonder beheer_code ---------------------------
+--
+-- Postgres kent geen policies op views; deze bepaalt de zichtbaarheid daarom zelf in de
+-- WHERE-clausule (dezelfde voorwaarde als de oude, bredere `sessies_lezen`), met de rechten van
+-- de vieweigenaar zodat hij de nu striktere basistabel nog wel mag lezen. Dat maakt hem een
+-- "SECURITY DEFINER view" — de Supabase-linter meldt dat terecht als aandachtspunt, maar het is
+-- hier de bedoeling: zonder de eigenaarsrechten zou de view net zo min als een gewone deelnemer
+-- door de facilitator-only basistabel heen kunnen kijken.
+--
+-- Alleen SELECT-rechten: een view op één tabel zonder join of aggregatie is voor Postgres een
+-- "simple view" en kan automatisch updatable zijn, met de rechten van de eigenaar — dus zonder de
+-- expliciete revoke hieronder zouden schrijfacties via deze view rond de eigen RLS van `sessies`
+-- heen kunnen gaan. Nieuwe objecten in dit project krijgen bij aanmaken standaard bredere grants
+-- dan alleen select; die worden hier meteen teruggedraaid.
+create view sessies_publiek
+with (security_invoker = false)
+as
+select
+  id, titel, organisatie_id, speelmodus, fase, join_code, budget_geld, budget_capaciteit,
+  uitgangspunten, onzekerheid_pct, fase_deadline, aangemaakt_op, bijgewerkt_op, afgerond_op
+from sessies s
+where
+  intern.is_deelnemer(s.id)
+  or s.join_code = intern.header_waarde('x-join-code')
+  or intern.is_facilitator(s.id);
+
+grant select on sessies_publiek to anon, authenticated;
+revoke insert, update, delete, truncate, references, trigger on sessies_publiek from anon, authenticated;
