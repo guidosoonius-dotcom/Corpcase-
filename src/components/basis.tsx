@@ -45,7 +45,7 @@ export function Knop({
 }) {
   const stijlen: Record<string, string> = {
     primair:
-      "bg-accent text-white hover:bg-accent-diep disabled:bg-rand-sterk",
+      "bg-accent-sterk text-white hover:bg-accent-diep disabled:bg-rand-sterk",
     rand: "border border-rand-sterk bg-vlak text-inkt hover:border-accent",
     stil: "text-inkt-zacht hover:bg-papier",
     gevaar:
@@ -140,21 +140,21 @@ export function Kop({
   rechts?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
       <div className="min-w-0">
         {boven ? (
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
             {boven}
           </p>
         ) : null}
-        <h1 className="mt-1 text-xl font-semibold leading-tight text-inkt sm:text-2xl">
+        <h1 className="display mt-1 text-2xl leading-[1.15] text-inkt sm:text-3xl">
           {titel}
         </h1>
         {onder ? (
           <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">{onder}</p>
         ) : null}
       </div>
-      {rechts ? <div className="shrink-0 niet-printen">{rechts}</div> : null}
+      {rechts ? <div className="niet-printen shrink-0">{rechts}</div> : null}
     </div>
   );
 }
@@ -189,13 +189,85 @@ export function Schaal({
           aria-pressed={waarde === n}
           className={`flex h-11 flex-1 items-center justify-center rounded-kaart border text-sm font-medium tabular-nums transition-colors ${
             waarde === n
-              ? "border-accent bg-accent text-white"
-              : "border-rand-sterk bg-vlak text-inkt-zacht hover:border-accent"
+              ? "border-accent-sterk bg-accent-sterk text-white"
+              : "border-rand-sterk bg-vlak text-inkt-zacht hover:border-accent-sterk"
           }`}
         >
           {n}
         </button>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Een getal dat het beeld draagt in plaats van een bijschrift.
+ *
+ * Playfair met strakke letterafstand en tabulaire cijfers, zodat een oplopende teller niet
+ * zit te schuiven. Gebruikt voor de teamscore, de netto waarde en de tellers op de beamer.
+ */
+export function Cijfer({
+  waarde,
+  label,
+  toon = "inkt",
+  formaat = "groot",
+  achtervoegsel,
+}: {
+  waarde: string | number;
+  label?: string;
+  toon?: "inkt" | "accent" | "op-donker" | "gedempt";
+  formaat?: "normaal" | "groot" | "reusachtig";
+  achtervoegsel?: string;
+}) {
+  const kleuren: Record<string, string> = {
+    inkt: "text-inkt",
+    accent: "text-accent",
+    "op-donker": "text-accent-op-donker",
+    gedempt: "text-houtskool-zacht",
+  };
+
+  const formaten: Record<string, string> = {
+    normaal: "text-3xl",
+    groot: "text-5xl",
+    reusachtig: "text-6xl sm:text-7xl",
+  };
+
+  const labelkleur =
+    toon === "op-donker" || toon === "gedempt" ? "text-houtskool-zacht" : "text-inkt-licht";
+
+  return (
+    <div>
+      {label ? (
+        <p className={`text-xs leading-snug ${labelkleur}`}>{label}</p>
+      ) : null}
+      <p className={`cijfer mt-1 ${formaten[formaat]} ${kleuren[toon]}`}>
+        {waarde}
+        {achtervoegsel ? (
+          <span className="ml-1 align-baseline text-base font-normal">{achtervoegsel}</span>
+        ) : null}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Het donkere paneel: precies één per scherm, op de plek waar de beslissing valt.
+ *
+ * Bewust geen invoervelden hierbinnen — die blijven op wit staan, waar ze het vertrouwde
+ * formuliergedrag houden en het contrast van de cursor klopt.
+ */
+export function DonkerPaneel({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-kaart bg-houtskool text-white ${className}`}
+    >
+      {children}
     </div>
   );
 }

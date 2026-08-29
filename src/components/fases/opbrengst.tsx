@@ -4,7 +4,8 @@ import Link from "next/link";
 import { rol, rolopdrachten } from "@/lib/content";
 import { beoordeelRolopdracht, portfolio, teamscore } from "@/lib/sessie/afgeleid";
 import type { SessieState } from "@/lib/supabase/types";
-import { Etiket, Kaart, Knop, Kop } from "@/components/basis";
+import { Cijfer, DonkerPaneel, Etiket, Kaart, Knop, Kop } from "@/components/basis";
+import { Halftoon } from "@/components/decoratie";
 
 /**
  * Fase 6: de opbrengst, met de onthulling van de rolopdrachten.
@@ -24,23 +25,29 @@ export function Opbrengst({ state }: { state: SessieState }) {
         onder="Het portfolio, de roadmap en wat jullie onderweg expliciet hebben gemaakt."
       />
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-kaart border border-rand bg-rand sm:grid-cols-3">
-        {[
-          { label: "In het portfolio", waarde: inPortfolio.length },
-          { label: "Op de roadmap", waarde: state.roadmap.length },
-          { label: "Teamscore", waarde: score.totaal },
-        ].map((item) => (
-          <div key={item.label} className="bg-vlak p-3">
-            <p className="text-xs leading-snug text-inkt-licht">{item.label}</p>
-            <p className="mt-0.5 text-xl font-semibold tabular-nums text-inkt">
-              {item.waarde}
-            </p>
-          </div>
-        ))}
-      </div>
+      <DonkerPaneel className="p-5">
+        <div aria-hidden className="absolute -right-12 -top-16 h-52 w-52 text-white/[0.07]">
+            <Halftoon />
+        </div>
+        <div className="relative grid grid-cols-3 gap-4">
+          {[
+            { label: "In het portfolio", waarde: inPortfolio.length, uitgelicht: true },
+            { label: "Op de roadmap", waarde: state.roadmap.length, uitgelicht: false },
+            { label: "Teamscore", waarde: score.totaal, uitgelicht: false },
+          ].map((item) => (
+            <Cijfer
+              key={item.label}
+              label={item.label}
+              waarde={item.waarde}
+              toon={item.uitgelicht ? "op-donker" : "gedempt"}
+              formaat="reusachtig"
+            />
+          ))}
+        </div>
+      </DonkerPaneel>
 
       <section>
-        <h2 className="text-sm font-semibold text-inkt">Waar de teamscore vandaan komt</h2>
+        <h2 className="display text-lg text-inkt">Waar de teamscore vandaan komt</h2>
         <ul className="mt-2 space-y-1.5">
           {score.onderdelen.map((onderdeel) => (
             <li key={onderdeel.id} className="flex items-baseline justify-between gap-3">
@@ -54,7 +61,7 @@ export function Opbrengst({ state }: { state: SessieState }) {
       </section>
 
       <section>
-        <h2 className="text-sm font-semibold text-inkt">De opdrachten die niemand zag</h2>
+        <h2 className="display text-lg text-inkt">De opdrachten die niemand zag</h2>
         <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
           Elke rol had een eigen opdracht. Nu pas zichtbaar, met de vraag: is het gelukt?
         </p>

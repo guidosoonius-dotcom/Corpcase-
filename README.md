@@ -12,6 +12,7 @@ DUWO is de eerste voorbeeldcorporatie.
 
 **Live:** https://corpcase.vercel.app — elke push naar deze branch deployt automatisch.
 **Een sessie begeleiden:** zie [`docs/FACILITATOR.md`](docs/FACILITATOR.md).
+**Vormgeving en huisstijl per corporatie:** zie [`docs/ONTWERP.md`](docs/ONTWERP.md).
 
 ## Opzet
 

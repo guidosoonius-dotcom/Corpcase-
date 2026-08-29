@@ -9,6 +9,8 @@ import { opslag } from "@/lib/sessie/api";
 import { useAanwezigheid, useSessie } from "@/lib/sessie/gebruik";
 import { aanwezig, alleBeelden, budgetStand, dekking, openHulpvragen, teamscore } from "@/lib/sessie/afgeleid";
 import { Etiket, Kaart, Knop, Kop, Leeg, Melding } from "@/components/basis";
+import { Thema } from "@/components/thema";
+import { organisatie } from "@/lib/content";
 
 /**
  * Het scherm van de facilitator.
@@ -66,11 +68,14 @@ export default function BeheerPagina() {
   }
 
   return (
+    <Thema accent={organisatie(state.sessie.organisatie_id).thema.accent} className="flex-1">
     <main className="mx-auto w-full max-w-4xl px-4 py-6">
       <Kop
         boven="Facilitator"
         titel={state.sessie.titel}
-        onder={`${modus.naam} · ${state.deelnemers.length} deelnemers · teamscore ${score.totaal}`}
+        onder={`${modus.naam} · ${state.deelnemers.length} ${
+          state.deelnemers.length === 1 ? "deelnemer" : "deelnemers"
+        } · teamscore ${score.totaal}`}
         rechts={
           <div className="flex gap-2">
             <Link href={`/sessie/${sessieId}/scherm`} target="_blank">
@@ -99,8 +104,17 @@ export default function BeheerPagina() {
 
       <section className="mt-6">
         <Kaart className="p-4">
-          <h2 className="text-sm font-semibold text-inkt">Meedoen</h2>
-          <p className="mt-3 font-mono text-4xl font-semibold tracking-[0.2em] text-accent">
+          <h2 className="display text-lg text-inkt">Meedoen</h2>
+          <p
+            /*
+             * Bewust niet in de display-letter: deze code wordt overgetypt, en de hoge contrasten
+             * van een serif maken letters juist dubbelzinnig. Ruime letterafstand, tabulaire
+             * cijfers, en het alfabet zelf bevat al geen verwarrende tekens.
+             */
+            className="mt-3 font-mono text-4xl font-semibold tracking-[0.18em] text-accent-diep sm:text-5xl"
+            /* Letter voor letter, anders leest een schermlezer de code als een woord voor. */
+            aria-label={`Sessiecode ${state.sessie.join_code.split("").join(" ")}`}
+          >
             {state.sessie.join_code}
           </p>
           <p className="mt-2 text-xs text-inkt-licht">
@@ -115,7 +129,7 @@ export default function BeheerPagina() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold text-inkt">Fase</h2>
+        <h2 className="display text-lg text-inkt">Fase</h2>
         <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
           {FASES.map((fase, index) => (
             <Knop
@@ -140,7 +154,7 @@ export default function BeheerPagina() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold text-inkt">Wie is er</h2>
+        <h2 className="display text-lg text-inkt">Wie is er</h2>
         <ul className="mt-2 space-y-1.5">
           {state.deelnemers.map((deelnemer) => {
             const selecties = state.selecties.filter((s) => s.deelnemer_id === deelnemer.id).length;
@@ -174,7 +188,7 @@ export default function BeheerPagina() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold text-inkt">Waar het hapert</h2>
+        <h2 className="display text-lg text-inkt">Waar het hapert</h2>
         <div className="mt-2 space-y-2">
           {gedekt.domeinenOngedekt.length > 6 ? (
             <Melding>
@@ -231,5 +245,6 @@ export default function BeheerPagina() {
         </div>
       </section>
     </main>
+    </Thema>
   );
 }

@@ -3,25 +3,44 @@
 /*
  * Corpcase — visuele basis.
  *
- * Toon: boardroom, niet speelbord. Rustige neutralen, één ingehouden accent, veel wit.
- * De game draait op telefoons in een vergaderzaal en op een beamer, dus contrast en
- * raakvlakgrootte wegen zwaarder dan decoratie.
+ * Toon: een redactioneel instrument dat een dagdeel op tafel ligt bij een bestuur, niet een
+ * intern formulier. Warm papier, één accentkleur, en spaarzaam een houtskoolpaneel op de plek
+ * waar de beslissing valt.
+ *
+ * Elke kleur hieronder is doorgerekend op contrast; de waarden staan in
+ * src/lib/thema/__tests__/kleur.test.ts vastgelegd als test. De accentkleur wordt per corporatie
+ * overschreven door ThemaProvider, die de varianten afleidt uit één huisstijlkleur.
  */
 
 @theme {
-  --color-papier: #f6f7f8;
+  /* Ondergronden */
+  --color-papier: #faf7f3;
   --color-vlak: #ffffff;
-  --color-rand: #e2e5e9;
-  --color-rand-sterk: #c9cfd6;
+  --color-rand: #eae4dc;
+  --color-rand-sterk: #cfc7bc;
 
-  --color-inkt: #14181d;
-  --color-inkt-zacht: #4a545f;
-  --color-inkt-licht: #78838f;
+  /* Tekst — alle drie halen 4,5 of meer op papier */
+  --color-inkt: #22201e;
+  --color-inkt-zacht: #55504a;
+  --color-inkt-licht: #726a61;
 
-  --color-accent: #1f4e6b;
-  --color-accent-diep: #163a50;
-  --color-accent-zacht: #e8eff4;
+  /* Het donkere paneel */
+  --color-houtskool: #2b2926;
+  --color-houtskool-rand: #45413c;
+  --color-houtskool-zacht: #8e877e;
 
+  /*
+   * Accent. Standaard koraal; per corporatie overschreven.
+   * accent is alleen voor grote vormen (cijfers, cirkels, matrixpunten) — het haalt bewust niet
+   * de norm voor kleine tekst. Daarvoor zijn accent-diep en accent-sterk.
+   */
+  --color-accent: #e8524a;
+  --color-accent-sterk: #dd261c;
+  --color-accent-diep: #c32119;
+  --color-accent-op-donker: #ec736d;
+  --color-accent-zacht: #fae6e5;
+
+  /* Semantisch */
   --color-waarde: #1c6b52;
   --color-waarde-zacht: #e6f2ee;
   --color-aandacht: #8a5a13;
@@ -29,9 +48,9 @@
   --color-risico: #93332f;
   --color-risico-zacht: #fbeceb;
 
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --radius-kaart: 0.625rem;
@@ -64,6 +83,22 @@ label.keuze {
   touch-action: manipulation;
 }
 
+/*
+ * Display-tekst. Playfair heeft van zichzelf ruime letterafstand bij grote formaten; die wordt
+ * hier ingehaald zodat koppen als één geheel lezen in plaats van als losse letters.
+ */
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.cijfer {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 0.85;
+}
+
 /* Tabellen en matrixen mogen zelf scrollen; de pagina nooit horizontaal. */
 .scroll-x {
   overflow-x: auto;
@@ -81,5 +116,15 @@ label.keuze {
 
   .print-blok {
     break-inside: avoid;
+  }
+}
+
+/* Wie liever geen beweging ziet, krijgt hem ook niet. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

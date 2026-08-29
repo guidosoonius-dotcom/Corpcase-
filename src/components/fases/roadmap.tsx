@@ -57,7 +57,7 @@ export function Roadmap({
             return (
               <section key={horizon.id}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <h2 className="text-sm font-semibold text-inkt">
+                  <h2 className="display text-lg text-inkt">
                     {horizon.naam}{" "}
                     <span className="font-normal text-inkt-licht">
                       · {horizon.periode}
@@ -98,7 +98,7 @@ export function Roadmap({
 
           {nogNietGeplaatst.length > 0 ? (
             <section>
-              <h2 className="text-sm font-semibold text-inkt">Nog te plaatsen</h2>
+              <h2 className="display text-lg text-inkt">Nog te plaatsen</h2>
               <ul className="mt-2 space-y-2">
                 {nogNietGeplaatst.map((beeld) => (
                   <li key={beeld.usecase.id}>
@@ -167,7 +167,11 @@ function RoadmapKaart({
           {beeld.usecase.titel}
         </h3>
         {beeld.businessCase?.netto_baat ? (
-          <span className="shrink-0 text-xs font-medium tabular-nums text-waarde">
+          <span
+            className={`shrink-0 text-xs font-medium tabular-nums ${
+              (beeld.businessCase.netto_baat?.verwacht ?? 0) >= 0 ? "text-waarde" : "text-risico"
+            }`}
+          >
             {formatteerBandbreedte(beeld.businessCase.netto_baat)}
           </span>
         ) : null}

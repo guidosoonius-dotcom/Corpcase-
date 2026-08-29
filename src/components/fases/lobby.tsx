@@ -4,6 +4,7 @@ import { organisatie, rol, speelmodus } from "@/lib/content";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import { Kaart, Kop } from "@/components/basis";
+import { Cirkel } from "@/components/decoratie";
 import { Aanwezigen } from "@/components/sessiebalk";
 
 export function Lobby({
@@ -19,7 +20,8 @@ export function Lobby({
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 overflow-hidden">
+      <Cirkel hoek="rechtsboven" formaat={0.45} toon="zacht" />
       <Kop
         boven="Lobby"
         titel="Klaar om te beginnen"
@@ -28,7 +30,7 @@ export function Lobby({
 
       {mijnRol ? (
         <Kaart className="p-4">
-          <h2 className="text-sm font-semibold text-inkt">Jouw bril: {mijnRol.naam}</h2>
+          <h2 className="display text-lg text-inkt">Jouw bril: {mijnRol.naam}</h2>
           <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
             {mijnRol.lens}. De vraag die jij bewaakt: <em>{mijnRol.vraag}</em>
           </p>
@@ -36,7 +38,7 @@ export function Lobby({
       ) : null}
 
       <Kaart className="p-4">
-        <h2 className="text-sm font-semibold text-inkt">Waar we naar kijken</h2>
+        <h2 className="display text-lg text-inkt">Waar we naar kijken</h2>
         <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
           {org.naam} — {org.pitch}
         </p>
@@ -44,7 +46,7 @@ export function Lobby({
           {org.kengetallen.slice(0, 4).map((k) => (
             <div key={k.id}>
               <dt className="text-xs leading-snug text-inkt-licht">{k.label}</dt>
-              <dd className="text-sm font-semibold tabular-nums text-inkt">
+              <dd className="cijfer mt-0.5 text-2xl text-inkt">
                 {k.notatie ?? k.waarde.toLocaleString("nl-NL")}
               </dd>
             </div>
@@ -57,7 +59,7 @@ export function Lobby({
       </Kaart>
 
       <Kaart className="p-4">
-        <h2 className="text-sm font-semibold text-inkt">
+        <h2 className="display text-lg text-inkt">
           Speelduur: {modus.naam.toLowerCase()}
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
@@ -66,7 +68,7 @@ export function Lobby({
       </Kaart>
 
       <div>
-        <h2 className="text-sm font-semibold text-inkt">
+        <h2 className="display text-lg text-inkt">
           Aan tafel ({state.deelnemers.length})
         </h2>
         <div className="mt-2">

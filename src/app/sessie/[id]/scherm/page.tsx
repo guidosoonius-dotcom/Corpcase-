@@ -2,12 +2,20 @@
 
 import { useParams } from "next/navigation";
 import { FASE_LABELS } from "@/lib/supabase/types";
-import { cora, domein as coraDomein, personaSignalen, speelmodus } from "@/lib/content";
+import {
+  cora,
+  domein as coraDomein,
+  organisatie,
+  personaSignalen,
+  speelmodus,
+} from "@/lib/content";
 import { useSessie } from "@/lib/sessie/gebruik";
 import { alleBeelden, budgetStand, dekking, teamscore } from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import { Matrix } from "@/components/matrix";
-import { Melding } from "@/components/basis";
+import { Cijfer, DonkerPaneel, Melding } from "@/components/basis";
+import { Cirkel, Halftoon } from "@/components/decoratie";
+import { Thema } from "@/components/thema";
 
 /**
  * Het scherm op de beamer.
@@ -38,39 +46,38 @@ export default function SchermPagina() {
   const gedekt = dekking(state);
   const stand = budgetStand(state);
   const modus = speelmodus(state.sessie.speelmodus);
-  const totaleBaat = beelden.reduce(
-    (som, b) => som + (b.businessCase?.netto_baat?.verwacht ?? 0),
+  const doorgerekend = beelden.filter((b) => b.businessCase?.netto_baat);
+  const totaleBaat = doorgerekend.reduce(
+    (som, b) => som + (b.businessCase!.netto_baat!.verwacht ?? 0),
     0,
   );
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-8 py-8">
-      <header className="flex items-baseline justify-between gap-6">
+    <Thema accent={organisatie(state.sessie.organisatie_id).thema.accent} className="flex-1">
+    <main className="relative mx-auto w-full max-w-6xl overflow-hidden px-8 py-8">
+      <Cirkel hoek="rechtsboven" formaat={0.32} toon="zacht" />
+
+      <header className="relative flex items-baseline justify-between gap-6">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-inkt-licht">
             {FASE_LABELS[state.sessie.fase]}
           </p>
-          <h1 className="mt-1 text-3xl font-semibold text-inkt">{state.sessie.titel}</h1>
+          <h1 className="display mt-1 text-4xl leading-tight text-inkt">{state.sessie.titel}</h1>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-inkt-licht">Teamscore</p>
-          <p className="text-3xl font-semibold tabular-nums text-accent">
-            {score.totaal}
-          </p>
-        </div>
+        <Cijfer waarde={score.totaal} label="Teamscore" toon="accent" formaat="groot" />
       </header>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[3fr_2fr]">
         <section>
-          <h2 className="text-base font-semibold text-inkt">Waarde tegen haalbaarheid</h2>
+          <h2 className="display text-2xl text-inkt">Waarde tegen haalbaarheid</h2>
           <div className="mt-3">
-            <Matrix beelden={beelden} hoogte={420} />
+            <Matrix beelden={beelden} hoogte={420} donker />
           </div>
         </section>
 
         <section className="space-y-6">
           <div>
-            <h2 className="text-base font-semibold text-inkt">Op tafel</h2>
+            <h2 className="display text-2xl text-inkt">Op tafel</h2>
             <ol className="mt-3 space-y-2">
               {beelden.slice(0, 8).map((beeld) => (
                 <li
@@ -100,23 +107,33 @@ export default function SchermPagina() {
             </ol>
           </div>
 
-          {totaleBaat > 0 ? (
-            <div className="rounded-kaart border border-waarde bg-waarde-zacht p-4">
-              <p className="text-sm text-waarde">
-                Verwachte netto waarde van het doorgerekende deel
-              </p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums text-waarde">
-                {formatteerEuro(totaleBaat)} per jaar
-              </p>
-              <p className="mt-1.5 text-xs leading-relaxed text-waarde">
-                Optelling van verwachte waarden, elk met een onzekerheid van{" "}
-                {state.sessie.onzekerheid_pct}%. Geen begroting.
-              </p>
-            </div>
+          {doorgerekend.length > 0 ? (
+            <DonkerPaneel className="p-5">
+              <div aria-hidden className="absolute -right-10 -top-14 h-44 w-44 text-white/[0.07]">
+            <Halftoon />
+              </div>
+              <div className="relative">
+                <p className="text-sm text-houtskool-zacht">
+                  Verwachte netto waarde van het doorgerekende deel
+                </p>
+                <p
+                  className={`cijfer mt-2 text-5xl ${
+                    totaleBaat >= 0 ? "text-accent-op-donker" : "text-white"
+                  }`}
+                >
+                  {formatteerEuro(totaleBaat)}
+                </p>
+                <p className="mt-1 text-sm text-white">per jaar</p>
+                <p className="mt-3 border-t border-houtskool-rand pt-2.5 text-xs leading-relaxed text-houtskool-zacht">
+                  Optelling van verwachte waarden, elk met een onzekerheid van{" "}
+                  {state.sessie.onzekerheid_pct}%. Geen begroting.
+                </p>
+              </div>
+            </DonkerPaneel>
           ) : null}
 
           <div>
-            <h2 className="text-base font-semibold text-inkt">Breedte</h2>
+            <h2 className="display text-2xl text-inkt">Breedte</h2>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-rand">
               <div
                 className="h-full rounded-full bg-accent"
@@ -144,7 +161,7 @@ export default function SchermPagina() {
 
           {state.sessie.fase === "prioritering" || state.sessie.fase === "roadmap" ? (
             <div>
-              <h2 className="text-base font-semibold text-inkt">Wat past er nog in</h2>
+              <h2 className="display text-2xl text-inkt">Wat past er nog in</h2>
               <p className="mt-1.5 text-sm tabular-nums text-inkt-zacht">
                 {formatteerEuro(stand.besteed.geld_eur)} van{" "}
                 {formatteerEuro(state.sessie.budget_geld)} ·{" "}
@@ -160,7 +177,7 @@ export default function SchermPagina() {
           ) : null}
 
           <div>
-            <h2 className="text-base font-semibold text-inkt">Aan tafel</h2>
+            <h2 className="display text-2xl text-inkt">Aan tafel</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
               {state.deelnemers.map((d) => d.naam).join(" · ")}
             </p>
@@ -171,5 +188,6 @@ export default function SchermPagina() {
         </section>
       </div>
     </main>
+    </Thema>
   );
 }

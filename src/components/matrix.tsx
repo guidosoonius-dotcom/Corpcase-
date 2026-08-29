@@ -15,37 +15,48 @@ export function Matrix({
   hoogte = 320,
   geselecteerd,
   onKies,
+  donker = false,
 }: {
   beelden: UsecaseBeeld[];
   hoogte?: number;
   geselecteerd?: string | null;
   onKies?: (usecaseId: string) => void;
+  /** Donkere variant voor de beamer, waar de zaal vaak verduisterd is. */
+  donker?: boolean;
 }) {
   const geplaatst = beelden.filter((b) => b.positie !== null);
   const ontbreekt = beelden.length - geplaatst.length;
 
+  const vlak = donker ? "border-houtskool-rand bg-houtskool" : "border-rand bg-vlak";
+  const lijn = donker ? "bg-houtskool-rand" : "bg-rand";
+  const label = donker ? "text-houtskool-zacht" : "text-inkt-licht";
+  const punt = donker ? "border-houtskool" : "border-vlak";
+
   return (
     <div>
       <div
-        className="relative w-full rounded-kaart border border-rand bg-vlak"
+        className={`relative w-full rounded-kaart border ${vlak}`}
         style={{ height: hoogte }}
       >
         {/* Kwadrantscheiding op het midden van de schaal. */}
-        <div className="absolute inset-x-0 top-1/2 h-px bg-rand" />
-        <div className="absolute inset-y-0 left-1/2 w-px bg-rand" />
+        <div className={`absolute inset-x-0 top-1/2 h-px ${lijn}`} />
+        <div className={`absolute inset-y-0 left-1/2 w-px ${lijn}`} />
 
-        <span className="pointer-events-none absolute left-2 top-2 text-[10px] font-medium uppercase tracking-wide text-inkt-licht">
-          Strategisch investeren
-        </span>
-        <span className="pointer-events-none absolute right-2 top-2 text-[10px] font-medium uppercase tracking-wide text-inkt-licht">
-          Snel doen
-        </span>
-        <span className="pointer-events-none absolute bottom-2 left-2 text-[10px] font-medium uppercase tracking-wide text-inkt-licht">
-          Niet nu
-        </span>
-        <span className="pointer-events-none absolute bottom-2 right-2 text-[10px] font-medium uppercase tracking-wide text-inkt-licht">
-          Meenemen
-        </span>
+        {(
+          [
+            ["left-2 top-2", "Strategisch investeren"],
+            ["right-2 top-2", "Snel doen"],
+            ["bottom-2 left-2", "Niet nu"],
+            ["bottom-2 right-2", "Meenemen"],
+          ] as const
+        ).map(([plek, tekst]) => (
+          <span
+            key={tekst}
+            className={`pointer-events-none absolute ${plek} text-[10px] font-medium uppercase tracking-wide ${label}`}
+          >
+            {tekst}
+          </span>
+        ))}
 
         {geplaatst.map((beeld) => {
           const positie = beeld.positie!;
@@ -60,23 +71,32 @@ export function Matrix({
               type="button"
               onClick={() => onKies?.(beeld.usecase.id)}
               title={beeld.usecase.titel}
-              className={`absolute -translate-x-1/2 translate-y-1/2 rounded-full border-2 transition-all ${
-                actief
-                  ? "z-10 h-5 w-5 border-accent-diep bg-accent"
-                  : "h-3.5 w-3.5 border-vlak bg-accent hover:h-5 hover:w-5"
+              /*
+               * De knop is 44 bij 44 en onzichtbaar, zodat hij op een telefoon te raken is; de
+               * stip erin is het beeld. Zonder dit zou de globale regel die elke knop minstens
+               * 44 pixels hoog maakt de stip tot een streep uitrekken.
+               */
+              className={`absolute flex h-11 w-11 -translate-x-1/2 translate-y-1/2 items-center justify-center ${
+                actief ? "z-10" : ""
               }`}
               style={{ left: `${links}%`, bottom: `${onder}%` }}
               aria-label={beeld.usecase.titel}
-            />
+            >
+              <span
+                className={`block rounded-full border-2 bg-accent transition-all ${
+                  actief ? `h-5 w-5 border-accent-diep` : `h-3.5 w-3.5 ${punt}`
+                }`}
+              />
+            </button>
           );
         })}
       </div>
 
-      <div className="mt-1.5 flex justify-between text-[11px] text-inkt-licht">
+      <div className={`mt-1.5 flex justify-between text-[11px] ${label}`}>
         <span>← lastiger haalbaar</span>
         <span>makkelijker haalbaar →</span>
       </div>
-      <p className="mt-0.5 text-[11px] text-inkt-licht">
+      <p className={`mt-0.5 text-[11px] ${label}`}>
         Verticaal: meer waarde naar boven.{" "}
         {ontbreekt === 1
           ? "Eén use case staat er nog niet op omdat hij niet gewaardeerd is."

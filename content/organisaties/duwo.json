@@ -3,29 +3,129 @@
   "naam": "DUWO",
   "type": "Studentenhuisvester (toegelaten instelling)",
   "pitch": "Grootste studentenhuisvester van Nederland. Werkt voor studenten en promovendi in negen steden, met een groot aandeel internationale bewoners en een uitzonderlijk hoge mutatiegraad.",
+  "thema": {
+    "accent": "#E8524A",
+    "toelichting": "De accentkleur van de interface. Uit deze ene kleur worden de varianten voor knoppen, kleine tekst en donkere panelen afgeleid, met een gemeten contrasttoets. Vervang hem door de huisstijlkleur van de corporatie.",
+    "bron": "voorlopig; de huisstijlkleur van DUWO is nog niet vastgesteld",
+    "geverifieerd": false
+  },
   "jaarverslag": {
     "jaar": 2024,
     "titel": "Een eerlijk thuis voor elke student: beschikbaar, betaalbaar en duurzaam",
     "bron": "https://storage-customers.zig365.nl/duwo-ksp-web-hupo-portal-p-pub/user_upload/Jaarverslagen/Jaarverslag%202024%20PDF.pdf",
     "geverifieerd": false
   },
-  "steden": ["Amsterdam", "Amstelveen", "Delft", "Den Haag", "Deventer", "Haarlem", "Hoofddorp", "Leiden", "Wageningen"],
+  "steden": [
+    "Amsterdam",
+    "Amstelveen",
+    "Delft",
+    "Den Haag",
+    "Deventer",
+    "Haarlem",
+    "Hoofddorp",
+    "Leiden",
+    "Wageningen"
+  ],
   "kengetallen": [
-    { "id": "eenheden", "label": "Studentenkamers en -woningen", "waarde": 33000, "eenheid": "eenheden", "notatie": "ruim 33.000", "bron": "DUWO jaarverslag 2024 / duwo.nl", "geverifieerd": false },
-    { "id": "verhuizingen_per_jaar", "label": "Verhuizingen per jaar", "waarde": 18000, "eenheid": "verhuizingen/jaar", "notatie": "circa 18.000", "bron": "duwo.nl nieuwsbericht 'DUWO: 18.000 verhuizingen'", "geverifieerd": false },
-    { "id": "mutatiegraad", "label": "Mutatiegraad (afgeleid)", "waarde": 55, "eenheid": "%", "notatie": "circa 55%", "bron": "afgeleid: 18.000 verhuizingen / 33.000 eenheden", "geverifieerd": false },
-    { "id": "studenten_werkgebied", "label": "Studenten in het werkgebied", "waarde": 126000, "eenheid": "studenten", "notatie": "126.000 (was 127.500)", "bron": "DUWO jaarverslag 2024", "geverifieerd": false },
-    { "id": "tekort", "label": "Actueel tekort aan eenheden in het werkgebied", "waarde": 3600, "eenheid": "eenheden", "notatie": "3.600", "bron": "DUWO jaarverslag 2024", "geverifieerd": false },
-    { "id": "behoefte_2029", "label": "Verwachte behoefte in 2029", "waarde": 50000, "eenheid": "eenheden", "notatie": "50.000", "bron": "duwo.nl: 'In 2029 behoefte van 50.000 eenheden in werkgebied DUWO'", "geverifieerd": false },
-    { "id": "woonbeleving", "label": "Woonbeleving bewoners", "waarde": 7.2, "eenheid": "rapportcijfer", "notatie": "7,2 gemiddeld; elke locatie 7,1 of hoger", "bron": "DUWO Woonbelevingsonderzoek 2024", "geverifieerd": false },
-    { "id": "ambitie_den_haag", "label": "Groeiambitie Den Haag", "waarde": 5000, "eenheid": "eenheden", "notatie": "naar 5.000 eenheden", "bron": "DUWO jaarverslag 2024", "geverifieerd": false }
+    {
+      "id": "eenheden",
+      "label": "Studentenkamers en -woningen",
+      "waarde": 33000,
+      "eenheid": "eenheden",
+      "notatie": "ruim 33.000",
+      "bron": "DUWO jaarverslag 2024 / duwo.nl",
+      "geverifieerd": false
+    },
+    {
+      "id": "verhuizingen_per_jaar",
+      "label": "Verhuizingen per jaar",
+      "waarde": 18000,
+      "eenheid": "verhuizingen/jaar",
+      "notatie": "circa 18.000",
+      "bron": "duwo.nl nieuwsbericht 'DUWO: 18.000 verhuizingen'",
+      "geverifieerd": false
+    },
+    {
+      "id": "mutatiegraad",
+      "label": "Mutatiegraad (afgeleid)",
+      "waarde": 55,
+      "eenheid": "%",
+      "notatie": "circa 55%",
+      "bron": "afgeleid: 18.000 verhuizingen / 33.000 eenheden",
+      "geverifieerd": false
+    },
+    {
+      "id": "studenten_werkgebied",
+      "label": "Studenten in het werkgebied",
+      "waarde": 126000,
+      "eenheid": "studenten",
+      "notatie": "126.000 (was 127.500)",
+      "bron": "DUWO jaarverslag 2024",
+      "geverifieerd": false
+    },
+    {
+      "id": "tekort",
+      "label": "Actueel tekort aan eenheden in het werkgebied",
+      "waarde": 3600,
+      "eenheid": "eenheden",
+      "notatie": "3.600",
+      "bron": "DUWO jaarverslag 2024",
+      "geverifieerd": false
+    },
+    {
+      "id": "behoefte_2029",
+      "label": "Verwachte behoefte in 2029",
+      "waarde": 50000,
+      "eenheid": "eenheden",
+      "notatie": "50.000",
+      "bron": "duwo.nl: 'In 2029 behoefte van 50.000 eenheden in werkgebied DUWO'",
+      "geverifieerd": false
+    },
+    {
+      "id": "woonbeleving",
+      "label": "Woonbeleving bewoners",
+      "waarde": 7.2,
+      "eenheid": "rapportcijfer",
+      "notatie": "7,2 gemiddeld; elke locatie 7,1 of hoger",
+      "bron": "DUWO Woonbelevingsonderzoek 2024",
+      "geverifieerd": false
+    },
+    {
+      "id": "ambitie_den_haag",
+      "label": "Groeiambitie Den Haag",
+      "waarde": 5000,
+      "eenheid": "eenheden",
+      "notatie": "naar 5.000 eenheden",
+      "bron": "DUWO jaarverslag 2024",
+      "geverifieerd": false
+    }
   ],
   "strategische_themas": [
-    { "id": "beschikbaarheid", "naam": "Beschikbaarheid", "omschrijving": "Meer eenheden realiseren en de bestaande voorraad optimaal benutten in een markt met structureel tekort." },
-    { "id": "betaalbaarheid", "naam": "Betaalbaarheid", "omschrijving": "De huur betaalbaar houden voor studenten met een klein en wisselend budget." },
-    { "id": "duurzaamheid", "naam": "Duurzaamheid", "omschrijving": "Verduurzamen van het bezit zonder de woonlasten te laten oplopen." },
-    { "id": "dienstverlening", "naam": "Dienstverlening", "omschrijving": "Betrouwbare, meertalige service die past bij een kortverblijvende, digitaal ingestelde doelgroep." },
-    { "id": "bedrijfsvoering", "naam": "Doelmatige bedrijfsvoering", "omschrijving": "De bedrijfslasten per eenheid beheersen terwijl het volume en de complexiteit toenemen." }
+    {
+      "id": "beschikbaarheid",
+      "naam": "Beschikbaarheid",
+      "omschrijving": "Meer eenheden realiseren en de bestaande voorraad optimaal benutten in een markt met structureel tekort."
+    },
+    {
+      "id": "betaalbaarheid",
+      "naam": "Betaalbaarheid",
+      "omschrijving": "De huur betaalbaar houden voor studenten met een klein en wisselend budget."
+    },
+    {
+      "id": "duurzaamheid",
+      "naam": "Duurzaamheid",
+      "omschrijving": "Verduurzamen van het bezit zonder de woonlasten te laten oplopen."
+    },
+    {
+      "id": "dienstverlening",
+      "naam": "Dienstverlening",
+      "omschrijving": "Betrouwbare, meertalige service die past bij een kortverblijvende, digitaal ingestelde doelgroep."
+    },
+    {
+      "id": "bedrijfsvoering",
+      "naam": "Doelmatige bedrijfsvoering",
+      "omschrijving": "De bedrijfslasten per eenheid beheersen terwijl het volume en de complexiteit toenemen."
+    }
   ],
   "onderscheidende_kenmerken": [
     "Extreem hoge mutatiegraad: het verhuurproces is bij DUWO geen randverschijnsel maar de kernmachine.",
@@ -36,14 +136,70 @@
     "Lage gemiddelde huur per eenheid: een euro besparing per proces telt zwaarder dan bij een reguliere corporatie."
   ],
   "rekenkundige_uitgangspunten": [
-    { "id": "uurtarief_intern", "label": "Intern uurtarief medewerker (all-in)", "waarde": 65, "eenheid": "EUR/uur", "bron": "aanname", "geverifieerd": false },
-    { "id": "gem_maandhuur", "label": "Gemiddelde maandhuur per eenheid", "waarde": 450, "eenheid": "EUR/maand", "bron": "aanname", "geverifieerd": false },
-    { "id": "dagopbrengst_eenheid", "label": "Gederfde opbrengst per leegstandsdag", "waarde": 15, "eenheid": "EUR/dag", "bron": "afgeleid uit gemiddelde maandhuur", "geverifieerd": false },
-    { "id": "leegstandsdagen_per_mutatie", "label": "Gemiddelde leegstandsdagen per mutatie", "waarde": 10, "eenheid": "dagen", "bron": "aanname", "geverifieerd": false },
-    { "id": "reparatieverzoeken_per_jaar", "label": "Reparatieverzoeken per jaar", "waarde": 25000, "eenheid": "stuks/jaar", "bron": "aanname (circa 0,75 per eenheid per jaar)", "geverifieerd": false },
-    { "id": "klantcontacten_per_jaar", "label": "Klantcontacten per jaar (mail, telefoon, portaal)", "waarde": 120000, "eenheid": "contacten/jaar", "bron": "aanname", "geverifieerd": false },
-    { "id": "inkoopfacturen_per_jaar", "label": "Inkoopfacturen per jaar", "waarde": 40000, "eenheid": "stuks/jaar", "bron": "aanname", "geverifieerd": false },
-    { "id": "huurachterstand_jaar", "label": "Jaarlijkse huurderving door achterstand en oninbaarheid", "waarde": 1500000, "eenheid": "EUR/jaar", "bron": "aanname", "geverifieerd": false }
+    {
+      "id": "uurtarief_intern",
+      "label": "Intern uurtarief medewerker (all-in)",
+      "waarde": 65,
+      "eenheid": "EUR/uur",
+      "bron": "aanname",
+      "geverifieerd": false
+    },
+    {
+      "id": "gem_maandhuur",
+      "label": "Gemiddelde maandhuur per eenheid",
+      "waarde": 450,
+      "eenheid": "EUR/maand",
+      "bron": "aanname",
+      "geverifieerd": false
+    },
+    {
+      "id": "dagopbrengst_eenheid",
+      "label": "Gederfde opbrengst per leegstandsdag",
+      "waarde": 15,
+      "eenheid": "EUR/dag",
+      "bron": "afgeleid uit gemiddelde maandhuur",
+      "geverifieerd": false
+    },
+    {
+      "id": "leegstandsdagen_per_mutatie",
+      "label": "Gemiddelde leegstandsdagen per mutatie",
+      "waarde": 10,
+      "eenheid": "dagen",
+      "bron": "aanname",
+      "geverifieerd": false
+    },
+    {
+      "id": "reparatieverzoeken_per_jaar",
+      "label": "Reparatieverzoeken per jaar",
+      "waarde": 25000,
+      "eenheid": "stuks/jaar",
+      "bron": "aanname (circa 0,75 per eenheid per jaar)",
+      "geverifieerd": false
+    },
+    {
+      "id": "klantcontacten_per_jaar",
+      "label": "Klantcontacten per jaar (mail, telefoon, portaal)",
+      "waarde": 120000,
+      "eenheid": "contacten/jaar",
+      "bron": "aanname",
+      "geverifieerd": false
+    },
+    {
+      "id": "inkoopfacturen_per_jaar",
+      "label": "Inkoopfacturen per jaar",
+      "waarde": 40000,
+      "eenheid": "stuks/jaar",
+      "bron": "aanname",
+      "geverifieerd": false
+    },
+    {
+      "id": "huurachterstand_jaar",
+      "label": "Jaarlijkse huurderving door achterstand en oninbaarheid",
+      "waarde": 1500000,
+      "eenheid": "EUR/jaar",
+      "bron": "aanname",
+      "geverifieerd": false
+    }
   ],
   "budget_defaults": {
     "geld_eur": 1500000,

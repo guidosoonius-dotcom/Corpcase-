@@ -33,15 +33,13 @@ export function Sessiebalk({
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="truncate text-xs text-inkt-licht">{state.sessie.titel}</p>
-            <p className="truncate text-sm font-semibold text-inkt">
+            <p className="display truncate text-lg leading-tight text-inkt">
               {mijnRol?.naam ?? ik?.naam ?? "Deelnemer"}
             </p>
           </div>
           <div className="shrink-0 text-right">
             <p className="text-xs text-inkt-licht">Teamscore</p>
-            <p className="text-sm font-semibold tabular-nums text-accent">
-              {score.totaal}
-            </p>
+            <p className="cijfer text-3xl text-accent">{score.totaal}</p>
           </div>
         </div>
 
@@ -62,7 +60,7 @@ export function Sessiebalk({
             <button
               type="button"
               onClick={() => setOpdrachtZichtbaar((z) => !z)}
-              className="text-xs font-medium text-accent hover:underline"
+              className="text-xs font-medium text-accent-diep hover:underline"
             >
               {opdrachtZichtbaar ? "Verberg mijn opdracht" : "Toon mijn opdracht (alleen voor jou)"}
             </button>
@@ -81,7 +79,7 @@ export function Sessiebalk({
 function stijlVoorFase(fase: Fase, huidig: Fase): string {
   const index = FASES.indexOf(fase);
   const huidigIndex = FASES.indexOf(huidig);
-  if (index === huidigIndex) return "bg-accent text-white";
+  if (index === huidigIndex) return "bg-accent-sterk text-white";
   if (index < huidigIndex) return "bg-papier text-inkt-licht";
   return "text-inkt-licht";
 }

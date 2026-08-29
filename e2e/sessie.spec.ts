@@ -37,7 +37,8 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   const sessieUrl = facilitator.url();
   const sessieId = sessieUrl.match(/\/sessie\/([0-9a-f-]+)\//)![1];
 
-  const code = (await facilitator.locator("p.font-mono").first().innerText()).trim();
+  // Op betekenis zoeken, niet op een stijlklasse: die verandert nu eenmaal mee met de vormgeving.
+  const code = (await facilitator.getByLabel(/Sessiecode/).innerText()).trim();
   expect(code).toHaveLength(6);
 
   // --- Twee spelers doen mee ------------------------------------------------
@@ -125,8 +126,12 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   await wonen.getByRole("button", { name: "Doorrekenen" }).click();
   await wonen.getByRole("button", { name: /Begin met de ordegroottes/ }).click();
 
-  // Zodra de drivers gevuld zijn, staat er een bandbreedte en niet één hard getal.
-  await expect(wonen.getByText(/Netto .* – .* per jaar/)).toBeVisible({ timeout: 20_000 });
+  // Zodra de drivers gevuld zijn, staat er een bandbreedte tussen twee bedragen en niet één
+  // hard getal. Dat is de belofte van het waardemodel, dus die toetsen we expliciet.
+  await expect(wonen.getByText(/€[\d.\s]+ – €[\d.\s]+/).first()).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(wonen.getByText("netto per jaar")).toBeVisible();
 
   // De niet-financiële waarde staat er los naast en wordt apart gescoord. Marieke zet de
   // huurderswaarde hoog; dat telt straks mee bij de onthulling van haar rolopdracht.

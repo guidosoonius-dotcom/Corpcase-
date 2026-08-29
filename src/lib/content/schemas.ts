@@ -40,6 +40,16 @@ export const organisatieSchema = z.object({
   naam: z.string().min(1),
   type: z.string(),
   pitch: z.string(),
+  /**
+   * Eén accentkleur; de varianten voor knoppen, kleine tekst en donkere panelen worden eruit
+   * afgeleid in src/lib/thema/kleur.ts, met een gemeten contrasttoets.
+   */
+  thema: z.object({
+    accent: z.string().regex(/^#[0-9a-fA-F]{3,6}$/, "Geef een kleurcode zoals #E8524A"),
+    toelichting: z.string().optional(),
+    bron: z.string(),
+    geverifieerd: z.boolean(),
+  }),
   jaarverslag: z.object({
     jaar: z.number().int(),
     titel: z.string(),

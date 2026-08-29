@@ -7,6 +7,8 @@ import { opslag } from "@/lib/sessie/api";
 import { bewaarIdentiteit } from "@/lib/sessie/identiteit";
 import { organisaties, rollen, speelmodi } from "@/lib/content";
 import { Kaart, Knop, Melding, Veld, invoerStijl } from "@/components/basis";
+import { Cirkel } from "@/components/decoratie";
+import { Thema } from "@/components/thema";
 
 export default function StartPagina() {
   const router = useRouter();
@@ -48,11 +50,13 @@ export default function StartPagina() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-xl px-5 py-10">
-      <Link href="/" className="text-sm text-inkt-licht hover:text-accent">
+    <Thema accent={org.thema.accent} className="flex-1">
+      <main className="relative mx-auto w-full max-w-xl overflow-hidden px-5 py-10">
+      <Cirkel hoek="rechtsboven" formaat={0.5} toon="zacht" />
+      <Link href="/" className="text-sm text-inkt-licht hover:text-accent-diep">
         ← Terug
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-inkt">Sessie starten</h1>
+      <h1 className="display mt-4 text-3xl text-inkt">Sessie starten</h1>
       <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
         Je wordt facilitator én speler: je kiest een rol en doet gewoon mee. Alleen het openen en
         sluiten van de fases is van jou.
@@ -137,6 +141,7 @@ export default function StartPagina() {
           </p>
         </div>
       </div>
-    </main>
+      </main>
+    </Thema>
   );
 }

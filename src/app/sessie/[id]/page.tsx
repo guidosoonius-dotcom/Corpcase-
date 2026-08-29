@@ -12,6 +12,8 @@ import { Prioritering } from "@/components/fases/prioritering";
 import { Roadmap } from "@/components/fases/roadmap";
 import { Opbrengst } from "@/components/fases/opbrengst";
 import { Knop, Melding } from "@/components/basis";
+import { Thema } from "@/components/thema";
+import { organisatie } from "@/lib/content";
 
 /**
  * Het scherm van de speler, meestal een telefoon.
@@ -55,7 +57,10 @@ export default function SpelerPagina() {
   }
 
   return (
-    <>
+    <Thema
+      accent={organisatie(state.sessie.organisatie_id).thema.accent}
+      className="flex flex-1 flex-col"
+    >
       <Sessiebalk state={state} identiteit={identiteit} />
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
         {fout ? (
@@ -82,6 +87,6 @@ export default function SpelerPagina() {
         ) : null}
         {state.sessie.fase === "opbrengst" ? <Opbrengst state={state} /> : null}
       </main>
-    </>
+    </Thema>
   );
 }

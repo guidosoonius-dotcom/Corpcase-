@@ -238,35 +238,50 @@ export function teamscore(state: SessieState): Teamscore {
       label: "Onderbouwing",
       punten: onderbouwPunten,
       maximum: onderbouwMax,
-      toelichting: `${onderbouwd} use cases herleidbaar naar een signaal`,
+      toelichting:
+        onderbouwd === 1
+          ? "1 use case herleidbaar naar een signaal"
+          : `${onderbouwd} use cases herleidbaar naar een signaal`,
     },
     {
       id: "doorrekening",
       label: "Doorrekening",
       punten: doorrekenPunten,
       maximum: doorrekenMax,
-      toelichting: `${doorgerekend} volledig doorgerekende business cases`,
+      toelichting:
+        doorgerekend === 1
+          ? "1 volledig doorgerekende business case"
+          : `${doorgerekend} volledig doorgerekende business cases`,
     },
     {
       id: "assists",
       label: "Elkaar helpen",
       punten: assistPunten,
       maximum: assistMax,
-      toelichting: `${assists} aanvullingen op andermans use case`,
+      toelichting:
+        assists === 1
+          ? "1 aanvulling op andermans use case"
+          : `${assists} aanvullingen op andermans use case`,
     },
     {
       id: "hulpvragen",
       label: "Vragen opgelost",
       punten: hulpPunten,
       maximum: hulpMax,
-      toelichting: `${opgelosteHulpvragen} hulpvragen beantwoord`,
+      toelichting:
+        opgelosteHulpvragen === 1
+          ? "1 hulpvraag beantwoord"
+          : `${opgelosteHulpvragen} hulpvragen beantwoord`,
     },
     {
       id: "challenges",
       label: "Kritisch kijken",
       punten: challengePunten,
       maximum: challengeMax,
-      toelichting: `${challenges} aannames expliciet gemaakt`,
+      toelichting:
+        challenges === 1
+          ? "1 aanname expliciet gemaakt"
+          : `${challenges} aannames expliciet gemaakt`,
     },
   ];
 

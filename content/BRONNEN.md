@@ -24,6 +24,7 @@ gecontroleerd. Ze zijn bruikbaar als startpunt voor het gesprek, niet als verant
 | Woonbeleving | 7,2 gemiddeld, elke locatie ≥ 7,1 | Woonbelevingsonderzoek 2024 | Controleer |
 | Groeiambitie Den Haag | 5.000 eenheden | DUWO jaarverslag 2024 | Controleer |
 | CORA-hoofdbedrijfsfuncties | 18 domeinen in `content/cora/domeinen.json` | CORA 5 bedrijfsfunctiemodel | Controleer exacte benamingen tegen coraveraonline.nl |
+| Accentkleur DUWO | `#E8524A` (koraal) | voorlopig gekozen | Vervang door de huisstijlkleur van DUWO; `duwo.nl` was vanuit de bouwomgeving niet bereikbaar. Eén hex volstaat, de rest wordt afgeleid |
 | VERA-objectnamen | gebruikt als "benodigde data" per use case | VERA-standaard, Aedes Datastandaarden | Controleer of de gehanteerde termen aansluiten |
 
 ## Zuivere aannames (geen bron, bewust ingevuld)

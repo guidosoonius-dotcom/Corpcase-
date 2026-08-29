@@ -119,7 +119,7 @@ function Dekkingsmeter({
   return (
     <Kaart className="p-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-semibold text-inkt">Breedte van het gesprek</h2>
+        <h2 className="display text-lg text-inkt">Breedte van het gesprek</h2>
         <span className="text-sm font-semibold tabular-nums text-accent">
           {gedekt}/{totaal}
         </span>

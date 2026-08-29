@@ -23,6 +23,7 @@ import {
 } from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import { Knop, Melding } from "@/components/basis";
+import { Thema } from "@/components/thema";
 
 /**
  * Het eindrapport: wat het team meeneemt naar de volgende vergadering.
@@ -56,12 +57,16 @@ export default function RapportPagina() {
   const kanttekeningen = aannames(state);
   const onvolledig = onvolledigeBusinessCases(state);
 
-  const totaleBaat = inPortfolio.reduce(
-    (som, b) => som + (b.businessCase?.netto_baat?.verwacht ?? 0),
+  const doorgerekend = inPortfolio.filter((b) => b.businessCase?.netto_baat);
+  const totaleBaat = doorgerekend.reduce(
+    (som, b) => som + (b.businessCase!.netto_baat!.verwacht ?? 0),
     0,
   );
+  // Een negatieve uitkomst is een bevinding, geen reden om het vakje leeg te laten.
+  const heeftDoorrekening = doorgerekend.length > 0;
 
   return (
+    <Thema accent={org.thema.accent} className="flex-1">
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
       <div className="niet-printen mb-8 flex items-center justify-between gap-4">
         <p className="text-xs text-inkt-licht">
@@ -76,14 +81,15 @@ export default function RapportPagina() {
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
           Use-caseportfolio · {org.naam}
         </p>
-        <h1 className="mt-2 text-2xl font-semibold text-inkt">{state.sessie.titel}</h1>
+        <h1 className="display mt-2 text-4xl leading-tight text-inkt">{state.sessie.titel}</h1>
         <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
           {new Date(state.sessie.aangemaakt_op).toLocaleDateString("nl-NL", {
             day: "numeric",
             month: "long",
             year: "numeric",
           })}{" "}
-          · {modus.naam.toLowerCase()} · {state.deelnemers.length} deelnemers
+          · {modus.naam.toLowerCase()} · {state.deelnemers.length}{" "}
+          {state.deelnemers.length === 1 ? "deelnemer" : "deelnemers"}
         </p>
         <p className="mt-1 text-sm text-inkt-zacht">
           {state.deelnemers
@@ -93,14 +99,14 @@ export default function RapportPagina() {
       </header>
 
       <section className="print-blok mt-8">
-        <h2 className="text-base font-semibold text-inkt">In het kort</h2>
+        <h2 className="display text-2xl text-inkt">In het kort</h2>
         <dl className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
             { label: "In het portfolio", waarde: String(inPortfolio.length) },
             { label: "Laten vallen", waarde: String(afgevallen.length) },
             {
               label: "Verwachte netto waarde",
-              waarde: totaleBaat > 0 ? `${formatteerEuro(totaleBaat)}/jr` : "n.v.t.",
+              waarde: heeftDoorrekening ? `${formatteerEuro(totaleBaat)}/jr` : "niet doorgerekend",
             },
             {
               label: "Domeinen geraakt",
@@ -116,7 +122,7 @@ export default function RapportPagina() {
           ))}
         </dl>
 
-        {totaleBaat > 0 ? (
+        {heeftDoorrekening ? (
           <p className="mt-3 text-xs leading-relaxed text-inkt-licht">
             De verwachte netto waarde is de optelling van de doorgerekende use cases, elk met een
             onzekerheid van {state.sessie.onzekerheid_pct}% rond de verwachte waarde. Het is geen
@@ -127,7 +133,7 @@ export default function RapportPagina() {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-base font-semibold text-inkt">De roadmap</h2>
+        <h2 className="display text-2xl text-inkt">De roadmap</h2>
         {speelmodi.horizonnen
           .filter((h) => modus.roadmap_horizonnen.includes(h.id))
           .map((horizon) => {
@@ -183,7 +189,7 @@ export default function RapportPagina() {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-base font-semibold text-inkt">Het portfolio</h2>
+        <h2 className="display text-2xl text-inkt">Het portfolio</h2>
         <ul className="mt-3 space-y-6">
           {inPortfolio.map((beeld) => {
             const allocatie = state.allocaties.find((a) => a.usecase_id === beeld.usecase.id);
@@ -230,7 +236,13 @@ export default function RapportPagina() {
                       Jaarlijkse kosten {formatteerEuro(beeld.businessCase.kosten.jaarlijks)},
                       eenmalig {formatteerEuro(beeld.businessCase.kosten.eenmalig)}
                     </p>
-                    <p className="mt-1 text-sm font-semibold tabular-nums text-waarde">
+                    <p
+                      className={`mt-1 text-sm font-semibold tabular-nums ${
+                        (beeld.businessCase.netto_baat?.verwacht ?? 0) >= 0
+                          ? "text-waarde"
+                          : "text-risico"
+                      }`}
+                    >
                       Netto {formatteerBandbreedte(beeld.businessCase.netto_baat)} per jaar
                       {beeld.businessCase.terugverdientijd_maanden
                         ? `, terugverdiend in ${Math.round(beeld.businessCase.terugverdientijd_maanden)} maanden`
@@ -296,7 +308,7 @@ export default function RapportPagina() {
 
       {afgevallen.length > 0 ? (
         <section className="print-blok mt-10">
-          <h2 className="text-base font-semibold text-inkt">Bewust niet gedaan</h2>
+          <h2 className="display text-2xl text-inkt">Bewust niet gedaan</h2>
           <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
             Zodat het gesprek hierover volgend jaar niet opnieuw van voren af aan begint.
           </p>
@@ -312,7 +324,7 @@ export default function RapportPagina() {
 
       {state.besluiten.length > 0 ? (
         <section className="print-blok mt-10">
-          <h2 className="text-base font-semibold text-inkt">Realiteitschecks</h2>
+          <h2 className="display text-2xl text-inkt">Realiteitschecks</h2>
           <ul className="mt-3 space-y-3">
             {state.besluiten.map((besluit) => {
               const check = realiteitschecks.checks.find((c) => c.id === besluit.check_id);
@@ -339,7 +351,7 @@ export default function RapportPagina() {
       ) : null}
 
       <section className="print-blok mt-10">
-        <h2 className="text-base font-semibold text-inkt">Aannames en onzekerheden</h2>
+        <h2 className="display text-2xl text-inkt">Aannames en onzekerheden</h2>
         <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
           Wat hier staat is het eerste dat je moet toetsen voordat je aan de uitvoering begint.
         </p>
@@ -388,7 +400,7 @@ export default function RapportPagina() {
       </section>
 
       <section className="print-blok mt-10">
-        <h2 className="text-base font-semibold text-inkt">De rolopdrachten</h2>
+        <h2 className="display text-2xl text-inkt">De rolopdrachten</h2>
         <ul className="mt-3 space-y-2">
           {state.deelnemers.map((deelnemer) => {
             const opdracht = rolopdrachten.opdrachten.find((o) => o.id === deelnemer.rolopdracht_id);
@@ -414,5 +426,6 @@ export default function RapportPagina() {
         </p>
       </footer>
     </main>
+    </Thema>
   );
 }

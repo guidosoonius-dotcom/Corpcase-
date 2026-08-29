@@ -7,7 +7,18 @@ import { alleBeelden, type UsecaseBeeld } from "@/lib/sessie/afgeleid";
 import { driversUitBibliotheek, formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import type { SessieState, Waardemodus } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Kaart, Knop, Kop, Leeg, Melding, Schaal, invoerStijl } from "@/components/basis";
+import {
+  DonkerPaneel,
+  Etiket,
+  Kaart,
+  Knop,
+  Kop,
+  Leeg,
+  Melding,
+  Schaal,
+  invoerStijl,
+} from "@/components/basis";
+import { Halftoon } from "@/components/decoratie";
 
 /**
  * Fase 3: wat is dit waard?
@@ -183,7 +194,11 @@ function Samenvatting({ beeld }: { beeld: UsecaseBeeld }) {
   if (bc?.netto_baat) {
     return (
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-semibold tabular-nums text-waarde">
+        <span
+          className={`text-sm font-semibold tabular-nums ${
+            (bc.netto_baat?.verwacht ?? 0) >= 0 ? "text-waarde" : "text-risico"
+          }`}
+        >
           {formatteerBandbreedte(bc.netto_baat)} per jaar
         </span>
         {bc.terugverdientijd_maanden ? (
@@ -475,19 +490,25 @@ function BusinessCaseInvoer({
       </div>
 
       {beeld.businessCase?.bruto_baat ? (
-        <div className="rounded-kaart border border-waarde bg-waarde-zacht p-3">
-          <p className="text-xs text-waarde">
-            Bruto baat {formatteerBandbreedte(beeld.businessCase.bruto_baat)} per jaar, min{" "}
-            {formatteerEuro(kosten.jaarlijks)} jaarlijkse kosten.
-          </p>
-          <p className="mt-1 text-sm font-semibold tabular-nums text-waarde">
-            Netto {formatteerBandbreedte(beeld.businessCase.netto_baat)} per jaar
-          </p>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-waarde">
-            Een bandbreedte, geen bedrag. De onzekerheid staat op{" "}
-            {state.sessie.onzekerheid_pct}% rond de verwachte waarde.
-          </p>
-        </div>
+        <DonkerPaneel className="p-4">
+          <div aria-hidden className="absolute -right-8 -top-10 h-32 w-32 text-white/[0.07]">
+            <Halftoon />
+          </div>
+          <div className="relative">
+            <p className="text-xs text-houtskool-zacht">
+              Bruto {formatteerBandbreedte(beeld.businessCase.bruto_baat)} per jaar, min{" "}
+              {formatteerEuro(kosten.jaarlijks)} jaarlijkse kosten
+            </p>
+            <p className="cijfer mt-2 text-3xl text-accent-op-donker">
+              {formatteerBandbreedte(beeld.businessCase.netto_baat)}
+            </p>
+            <p className="mt-1 text-xs text-white">netto per jaar</p>
+            <p className="mt-3 border-t border-houtskool-rand pt-2.5 text-[11px] leading-relaxed text-houtskool-zacht">
+              Een bandbreedte, geen bedrag. De onzekerheid staat op{" "}
+              {state.sessie.onzekerheid_pct}% rond de verwachte waarde.
+            </p>
+          </div>
+        </DonkerPaneel>
       ) : null}
     </div>
   );

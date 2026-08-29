@@ -7,7 +7,17 @@ import { alleBeelden, budgetStand, type UsecaseBeeld } from "@/lib/sessie/afgele
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import type { CheckBesluit, SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Kaart, Knop, Kop, Leeg, Melding, invoerStijl } from "@/components/basis";
+import {
+  Cijfer,
+  DonkerPaneel,
+  Etiket,
+  Kaart,
+  Knop,
+  Kop,
+  Leeg,
+  invoerStijl,
+} from "@/components/basis";
+import { Halftoon } from "@/components/decoratie";
 import { KwadrantAdvies, Matrix } from "@/components/matrix";
 
 /**
@@ -97,46 +107,71 @@ function Budgetbalk({
     },
   ];
 
+  // Het percentage dat nog vrij is, als het getal dat het gesprek stuurt.
+  const vrijPercentage = Math.round(
+    (1 -
+      Math.min(
+        state.sessie.budget_geld > 0 ? stand.besteed.geld_eur / state.sessie.budget_geld : 0,
+        1,
+      )) *
+      100,
+  );
+
   return (
-    <Kaart className="p-4">
-      <h2 className="text-sm font-semibold text-inkt">Wat past er nog in?</h2>
-      <div className="mt-3 space-y-3">
-        {regels.map((regel) => {
-          const aandeel = regel.totaal > 0 ? Math.min(regel.besteed / regel.totaal, 1) : 0;
-          return (
-            <div key={regel.id}>
-              <div className="flex items-baseline justify-between gap-3 text-xs">
-                <span className="text-inkt-zacht">{regel.label}</span>
-                <span
-                  className={`font-medium tabular-nums ${
-                    regel.over ? "text-risico" : "text-inkt"
-                  }`}
-                >
-                  {regel.toon(regel.besteed)} van {regel.toon(regel.totaal)}
-                </span>
-              </div>
-              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-rand">
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    regel.over ? "bg-risico" : "bg-accent"
-                  }`}
-                  style={{ width: `${aandeel * 100}%` }}
-                />
-              </div>
-            </div>
-          );
-        })}
+    <DonkerPaneel className="p-5">
+      <div aria-hidden className="absolute -right-10 -top-12 h-40 w-40 text-white/[0.07]">
+            <Halftoon />
       </div>
 
-      {stand.overschreden.geld || stand.overschreden.capaciteit ? (
-        <div className="mt-3">
-          <Melding toon="risico">
+      <div className="relative">
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="display text-xl text-white">Wat past er nog in?</h2>
+          <Cijfer
+            waarde={vrijPercentage}
+            achtervoegsel="%"
+            toon={
+              stand.overschreden.geld || stand.overschreden.capaciteit ? "gedempt" : "op-donker"
+            }
+            formaat="groot"
+          />
+        </div>
+
+        <div className="mt-4 space-y-3.5">
+          {regels.map((regel) => {
+            const aandeel = regel.totaal > 0 ? Math.min(regel.besteed / regel.totaal, 1) : 0;
+            return (
+              <div key={regel.id}>
+                <div className="flex items-baseline justify-between gap-3 text-xs">
+                  <span className="text-houtskool-zacht">{regel.label}</span>
+                  <span
+                    className={`font-medium tabular-nums ${
+                      regel.over ? "text-accent-op-donker" : "text-white"
+                    }`}
+                  >
+                    {regel.toon(regel.besteed)} van {regel.toon(regel.totaal)}
+                  </span>
+                </div>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-houtskool-rand">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      regel.over ? "bg-accent-op-donker" : "bg-accent"
+                    }`}
+                    style={{ width: `${aandeel * 100}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {stand.overschreden.geld || stand.overschreden.capaciteit ? (
+          <p className="mt-4 border-t border-houtskool-rand pt-3 text-xs leading-relaxed text-accent-op-donker">
             Jullie zitten over het budget. Dat mag je zo laten, maar dan is dit de plek waar je
             uitlegt waarom — of je haalt er iets af.
-          </Melding>
-        </div>
-      ) : null}
-    </Kaart>
+          </p>
+        ) : null}
+      </div>
+    </DonkerPaneel>
   );
 }
 
@@ -224,7 +259,11 @@ function Toewijzen({
 
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
           {beeld.businessCase?.netto_baat ? (
-            <span className="text-xs font-medium tabular-nums text-waarde">
+            <span
+              className={`text-xs font-medium tabular-nums ${
+                (beeld.businessCase.netto_baat?.verwacht ?? 0) >= 0 ? "text-waarde" : "text-risico"
+              }`}
+            >
               {formatteerBandbreedte(beeld.businessCase.netto_baat)} per jaar
             </span>
           ) : null}
@@ -311,7 +350,7 @@ function Realiteitschecks({
 
   return (
     <section>
-      <h2 className="text-sm font-semibold text-inkt">Realiteitscheck</h2>
+      <h2 className="display text-lg text-inkt">Realiteitscheck</h2>
       <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
         Houdt jullie keuze stand als het tegenzit? Aanpassen mag, handhaven ook — alleen niet
         beslissen is geen optie.

@@ -8,6 +8,7 @@ import { bewaarIdentiteit } from "@/lib/sessie/identiteit";
 import { rollen } from "@/lib/content";
 import { normaliseerCode } from "@/lib/sessie/codes";
 import { Knop, Melding, Veld, invoerStijl } from "@/components/basis";
+import { Cirkel } from "@/components/decoratie";
 
 function Formulier() {
   const router = useRouter();
@@ -44,11 +45,12 @@ function Formulier() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-md px-5 py-10">
-      <Link href="/" className="text-sm text-inkt-licht hover:text-accent">
+    <main className="relative mx-auto w-full max-w-md overflow-hidden px-5 py-10">
+      <Cirkel hoek="rechtsboven" formaat={0.55} toon="zacht" />
+      <Link href="/" className="text-sm text-inkt-licht hover:text-accent-diep">
         ← Terug
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-inkt">Meedoen</h1>
+      <h1 className="display mt-4 text-3xl text-inkt">Meedoen</h1>
       <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
         Vul de code in die de facilitator deelt.
       </p>
