@@ -28,7 +28,7 @@ export default function SchermPagina() {
   const parameters = useParams<{ id: string }>();
   const { state, laden } = useSessie(parameters.id);
 
-  if (laden) return <main className="p-12 text-xl text-inkt-licht">Laden…</main>;
+  if (laden) return <main className="p-12 text-xl text-inkt-zacht">Laden…</main>;
 
   if (!state) {
     return (
@@ -55,11 +55,17 @@ export default function SchermPagina() {
   return (
     <Thema accent={organisatie(state.sessie.organisatie_id).thema.accent} className="flex-1">
     <main className="relative mx-auto w-full max-w-6xl overflow-hidden px-8 py-8">
-      <Cirkel hoek="rechtsboven" formaat={0.32} toon="zacht" />
+      {/*
+       * De cirkel begint onder de kop. Daarboven staat de teamscore in vol koraal, en dat cijfer
+       * haalt op de zachte tint 3,05 — net genoeg voor grote tekst, te mager voor een beamer
+       * waar je van vier meter naar kijkt. Onder de kop valt de tint alleen achter inkt en
+       * inkt-zacht, en die halen daar 13,5 en 6,7.
+       */}
+      <Cirkel hoek="rechtsboven" formaat={0.32} toon="zacht" vanBoven={140} />
 
       <header className="relative flex items-baseline justify-between gap-6">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-inkt-licht">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-inkt-zacht">
             {FASE_LABELS[state.sessie.fase]}
           </p>
           <h1 className="display mt-1 text-4xl leading-tight text-inkt">{state.sessie.titel}</h1>
@@ -87,7 +93,7 @@ export default function SchermPagina() {
                   <span className="text-base leading-snug text-inkt">
                     {beeld.usecase.titel}
                   </span>
-                  <span className="shrink-0 text-sm tabular-nums text-inkt-licht">
+                  <span className="shrink-0 text-sm tabular-nums text-inkt-zacht">
                     {beeld.businessCase?.netto_baat
                       ? formatteerBandbreedte(beeld.businessCase.netto_baat)
                       : beeld.positie
@@ -97,10 +103,10 @@ export default function SchermPagina() {
                 </li>
               ))}
               {beelden.length === 0 ? (
-                <li className="text-base text-inkt-licht">Nog niets.</li>
+                <li className="text-base text-inkt-zacht">Nog niets.</li>
               ) : null}
               {beelden.length > 8 ? (
-                <li className="text-sm text-inkt-licht">
+                <li className="text-sm text-inkt-zacht">
                   en {beelden.length - 8} meer
                 </li>
               ) : null}
@@ -108,7 +114,7 @@ export default function SchermPagina() {
           </div>
 
           {doorgerekend.length > 0 ? (
-            <DonkerPaneel className="p-5">
+            <DonkerPaneel bloedt="rechts" className="p-5">
               <div aria-hidden className="absolute -right-10 -top-14 h-44 w-44 text-white/[0.07]">
             <Halftoon />
               </div>
@@ -147,7 +153,7 @@ export default function SchermPagina() {
               {gedekt.personasGeraakt.length} van {personaSignalen.kaarten.length} huurderstypen
             </p>
             {gedekt.domeinenOngedekt.length > 0 ? (
-              <p className="mt-1 text-sm leading-relaxed text-inkt-licht">
+              <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
                 Nog niet geraakt:{" "}
                 {gedekt.domeinenOngedekt
                   .slice(0, 5)
@@ -181,7 +187,7 @@ export default function SchermPagina() {
             <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
               {state.deelnemers.map((d) => d.naam).join(" · ")}
             </p>
-            <p className="mt-2 text-sm text-inkt-licht">
+            <p className="mt-2 text-sm text-inkt-zacht">
               Speelduur: {modus.naam.toLowerCase()}
             </p>
           </div>

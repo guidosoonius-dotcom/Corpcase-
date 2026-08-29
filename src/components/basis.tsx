@@ -10,16 +10,24 @@ export function Kaart({
   children,
   className = "",
   aandacht = false,
+  onderruimte = false,
 }: {
   children: ReactNode;
   className?: string;
   aandacht?: boolean;
+  /**
+   * Reserveert ruimte onderaan voor een DonkerPaneel dat over deze kaart heen valt.
+   *
+   * Dit is een prop en geen kwestie van opletten: in de eerste opzet bedekte het uitkomstpaneel
+   * de invoervelden waarin je net stond te typen. Wie een paneel laat overlappen, zet dit aan.
+   */
+  onderruimte?: boolean;
 }) {
   return (
     <div
       className={`rounded-kaart border bg-vlak ${
         aandacht ? "border-accent" : "border-rand"
-      } ${className}`}
+      } ${onderruimte ? "pb-12" : ""} ${className}`}
     >
       {children}
     </div>
@@ -219,6 +227,10 @@ export function Cijfer({
   formaat?: "normaal" | "groot" | "reusachtig";
   achtervoegsel?: string;
 }) {
+  // Vol koraal haalt op papier 3,43. Dat is genoeg voor grote tekst (norm 3,0) en niet voor
+  // kleine, en daarom begint het kleinste formaat hieronder op 30px. Zolang dat zo blijft mag
+  // `accent` hier het volle koraal zijn; wordt er ooit een kleiner formaat bijgezet, dan moet
+  // dat `accent-diep` gebruiken.
   const kleuren: Record<string, string> = {
     inkt: "text-inkt",
     accent: "text-accent",
@@ -232,8 +244,10 @@ export function Cijfer({
     reusachtig: "text-6xl sm:text-7xl",
   };
 
+  // Op de lichte kant bewust `inkt-zacht` en niet `inkt-licht`: een cijferblok valt regelmatig
+  // over een zachte accentcirkel, en daar haalt inkt-licht maar 4,43.
   const labelkleur =
-    toon === "op-donker" || toon === "gedempt" ? "text-houtskool-zacht" : "text-inkt-licht";
+    toon === "op-donker" || toon === "gedempt" ? "text-houtskool-zacht" : "text-inkt-zacht";
 
   return (
     <div>
@@ -259,15 +273,118 @@ export function Cijfer({
 export function DonkerPaneel({
   children,
   className = "",
+  overlapt = false,
+  bloedt,
 }: {
   children: ReactNode;
   className?: string;
+  /** Valt over de kaart erboven heen. Die kaart hoort dan `onderruimte` te hebben. */
+  overlapt?: boolean;
+  /**
+   * Loopt tegen die schermrand aan: de hoeken aan die kant blijven recht en de marge valt weg.
+   * Dat is wat het paneel zijn gewicht geeft — een kaart die netjes binnen de marge blijft,
+   * leest als nog een blok in de lijst.
+   */
+  bloedt?: "links" | "rechts";
 }) {
+  // De marge is precies de standaard containerpadding (px-4), zodat het paneel de rand raakt
+  // en er niet overheen schiet.
+  const randvorm =
+    bloedt === "links"
+      ? "-ml-4 rounded-l-none"
+      : bloedt === "rechts"
+        ? "-mr-4 rounded-r-none"
+        : "";
+
   return (
     <div
-      className={`relative overflow-hidden rounded-kaart bg-houtskool text-white ${className}`}
+      className={`relative overflow-hidden rounded-kaart bg-houtskool text-white ${
+        overlapt ? "-mt-6" : ""
+      } ${randvorm} ${className}`}
     >
       {children}
+    </div>
+  );
+}
+
+/**
+ * De haarlijn met twee kleine kapitaallabels erboven, bovenaan elk fasescherm.
+ *
+ * Kort en met veel letterafstand: het is oriëntatie, geen inhoud, en het moet in één oogopslag
+ * te negeren zijn.
+ */
+export function Hoofdregel({ links, rechts }: { links: string; rechts?: string }) {
+  return (
+    <div className="niet-printen">
+      <div className="flex items-baseline justify-between gap-4">
+        <span className="truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-inkt-licht">
+          {links}
+        </span>
+        {rechts ? (
+          <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-inkt-licht">
+            {rechts}
+          </span>
+        ) : null}
+      </div>
+      <div className="mt-2.5 h-px bg-rand-sterk" />
+    </div>
+  );
+}
+
+/**
+ * De handeling onderaan een scherm: een haarlijn, een label met tekst, en een pijl.
+ *
+ * De pijl zit in een raakvlak van 44 bij 44 met de tekening erbinnen — dezelfde constructie als
+ * bij de matrixpunten, waar de globale regel dat elke knop 44 pixels hoog is er anders een streep
+ * van maakt.
+ */
+export function PijlActie({
+  label,
+  tekst,
+  onClick,
+}: {
+  label: string;
+  tekst: string;
+  onClick?: () => void;
+}) {
+  const inhoud = (
+    <>
+      <span className="min-w-0">
+        <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-inkt-licht">
+          {label}
+        </span>
+        <span className="mt-0.5 block text-sm leading-snug text-inkt-zacht">{tekst}</span>
+      </span>
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
+          <path
+            d="M4 14h20M17 7l7 7-7 7"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    </>
+  );
+
+  return (
+    <div className="niet-printen mt-6">
+      <div className="h-px bg-rand-sterk" />
+      {onClick ? (
+        <button
+          type="button"
+          onClick={onClick}
+          className="flex w-full items-center justify-between gap-4 pt-2 text-left text-accent-diep transition-colors hover:text-accent-sterk"
+        >
+          {inhoud}
+        </button>
+      ) : (
+        <div className="flex items-center justify-between gap-4 pt-2 text-accent-diep">
+          {inhoud}
+        </div>
+      )}
     </div>
   );
 }

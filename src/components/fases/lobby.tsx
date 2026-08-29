@@ -1,12 +1,19 @@
 "use client";
 
-import { organisatie, rol, speelmodus } from "@/lib/content";
+import { organisatie, rol, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Kaart, Kop } from "@/components/basis";
-import { Cirkel } from "@/components/decoratie";
+import { DonkerPaneel, Hoofdregel, Kaart, PijlActie } from "@/components/basis";
+import { Cirkel, Halftoon, RasterCirkel } from "@/components/decoratie";
 import { Aanwezigen } from "@/components/sessiebalk";
 
+/**
+ * Fase 0: de lobby.
+ *
+ * Het scherm met de minste inhoud en daarom de plek waar de vormtaal het meest te zeggen heeft:
+ * cirkels achter de kaarten, een lichte kaart met de kengetallen, en daaroverheen de houtskoolkaart
+ * met de rol waarmee je meedoet.
+ */
 export function Lobby({
   state,
   identiteit,
@@ -18,63 +25,86 @@ export function Lobby({
   const modus = speelmodus(state.sessie.speelmodus);
   const ik = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
+  const heeftOpdracht = Boolean(ik && rolopdrachtVoorRol(ik.rol_id));
 
   return (
-    <div className="relative space-y-6 overflow-hidden">
-      <Cirkel hoek="rechtsboven" formaat={0.45} toon="zacht" />
-      <Kop
-        boven="Lobby"
-        titel="Klaar om te beginnen"
-        onder="Zodra iedereen binnen is, opent de facilitator de eerste fase."
-      />
+    <div className="relative">
+      {/*
+        Vol koraal alleen hier, rechtsboven, waar geen tekst overheen valt. De zachte cirkel en
+        het raster liggen wél achter tekst en verdragen dat.
+      */}
+      <Cirkel hoek="rechtsboven" formaat={0.58} toon="accent" vanBoven={44} />
+      <Cirkel hoek="linksboven" formaat={0.36} toon="zacht" vanBoven={44} />
 
-      {mijnRol ? (
-        <Kaart className="p-4">
-          <h2 className="display text-lg text-inkt">Jouw bril: {mijnRol.naam}</h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
-            {mijnRol.lens}. De vraag die jij bewaakt: <em>{mijnRol.vraag}</em>
-          </p>
-        </Kaart>
-      ) : null}
+      <Hoofdregel links={state.sessie.titel} rechts="Lobby" />
 
-      <Kaart className="p-4">
-        <h2 className="display text-lg text-inkt">Waar we naar kijken</h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
-          {org.naam} — {org.pitch}
+      <div className="relative mt-14">
+        <RasterCirkel formaat={110} className="absolute -left-4 top-4 -z-10" />
+        <h1 className="display text-4xl leading-[1.06] text-inkt sm:text-5xl">
+          Klaar om
+          <br />
+          te beginnen
+        </h1>
+        <p className="mt-3.5 max-w-[16rem] text-sm leading-relaxed text-inkt-zacht">
+          Zodra iedereen binnen is, opent de facilitator de eerste fase.
         </p>
-        <dl className="mt-3 grid grid-cols-2 gap-3">
-          {org.kengetallen.slice(0, 4).map((k) => (
+      </div>
+
+      <Kaart onderruimte className="mt-8 p-[18px]">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-inkt-licht">
+          Waar we naar kijken
+        </span>
+        <p className="display mt-2 text-xl leading-snug text-inkt">{org.naam}</p>
+        <dl className="mt-4 grid grid-cols-2 gap-4">
+          {org.kengetallen.slice(0, 2).map((k) => (
             <div key={k.id}>
-              <dt className="text-xs leading-snug text-inkt-licht">{k.label}</dt>
-              <dd className="cijfer mt-0.5 text-2xl text-inkt">
+              <dt className="text-[10px] leading-snug text-inkt-licht">{k.label}</dt>
+              <dd className="cijfer mt-1 text-2xl text-inkt">
                 {k.notatie ?? k.waarde.toLocaleString("nl-NL")}
               </dd>
             </div>
           ))}
         </dl>
-        <p className="mt-3 text-xs leading-relaxed text-inkt-licht">
-          Deze cijfers komen uit publieke bronnen en zijn nog niet tegen het originele jaarverslag
-          geverifieerd. Ze zijn er om het gesprek te starten.
-        </p>
       </Kaart>
 
-      <Kaart className="p-4">
-        <h2 className="display text-lg text-inkt">
-          Speelduur: {modus.naam.toLowerCase()}
-        </h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
-          {modus.omschrijving}
-        </p>
-      </Kaart>
+      {mijnRol ? (
+        <DonkerPaneel overlapt bloedt="rechts" className="ml-10 p-5">
+          <div aria-hidden className="absolute -right-4 top-0 h-full w-32 text-white/[0.07]">
+            <Halftoon />
+          </div>
+          <div className="relative">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-houtskool-zacht">
+              Jouw bril
+            </span>
+            <p className="display mt-2 text-2xl leading-[1.18] text-white">{mijnRol.naam}</p>
+            <p className="mt-3 max-w-[15rem] text-xs leading-relaxed text-houtskool-zacht">
+              {mijnRol.lens}. De vraag die jij bewaakt: {mijnRol.vraag.toLowerCase()}
+            </p>
+            {heeftOpdracht ? (
+              <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-houtskool-rand pt-3">
+                <span className="text-[11px] text-houtskool-zacht">
+                  Je privé-opdracht staat klaar
+                </span>
+                <span className="shrink-0 text-[11px] text-accent-op-donker">Alleen voor jou</span>
+              </div>
+            ) : null}
+          </div>
+        </DonkerPaneel>
+      ) : null}
 
-      <div>
-        <h2 className="display text-lg text-inkt">
+      <section className="mt-8">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-inkt-licht">
           Aan tafel ({state.deelnemers.length})
         </h2>
-        <div className="mt-2">
+        <div className="mt-2.5">
           <Aanwezigen state={state} />
         </div>
-      </div>
+      </section>
+
+      <PijlActie
+        label={`Speelduur: ${modus.naam.toLowerCase()}`}
+        tekst="Wachten op de facilitator"
+      />
     </div>
   );
 }

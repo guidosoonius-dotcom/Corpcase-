@@ -14,7 +14,7 @@ import { opslag } from "@/lib/sessie/api";
 import { alleBeelden, dekking } from "@/lib/sessie/afgeleid";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Kaart, Knop, Kop, Leeg, Melding, Veld, invoerStijl } from "@/components/basis";
+import { Etiket, Hoofdregel, Kaart, Knop, Kop, Leeg, Melding, Veld, invoerStijl } from "@/components/basis";
 import { Bijdragen } from "@/components/bijdragen";
 
 /**
@@ -41,6 +41,7 @@ export function Identificatie({
 
   return (
     <div className="space-y-5">
+      <Hoofdregel links={state.sessie.titel} rechts="Fase 2 · Identificatie" />
       <Kop
         boven="Fase 2 · Identificatie"
         titel="Welke use cases volgen hieruit?"
@@ -70,7 +71,7 @@ export function Identificatie({
             onClick={() => setTab(id)}
             className={`shrink-0 rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
               tab === id
-                ? "border-accent bg-accent text-white"
+                ? "border-accent-sterk bg-accent-sterk text-white"
                 : "border-rand-sterk bg-vlak text-inkt-zacht"
             }`}
           >
@@ -120,7 +121,7 @@ function Dekkingsmeter({
     <Kaart className="p-4">
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="display text-lg text-inkt">Breedte van het gesprek</h2>
-        <span className="text-sm font-semibold tabular-nums text-accent">
+        <span className="text-sm font-semibold tabular-nums text-accent-diep">
           {gedekt}/{totaal}
         </span>
       </div>
@@ -425,7 +426,7 @@ export function UsecaseKaart({
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="mt-2.5 text-xs font-medium text-accent hover:underline"
+          className="mt-2.5 text-xs font-medium text-accent-diep hover:underline"
         >
           {open ? "Inklappen" : "Openen en meehelpen"}
         </button>

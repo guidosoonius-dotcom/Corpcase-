@@ -12,11 +12,19 @@ import { useId } from "react";
 
 type Hoek = "linksboven" | "rechtsboven" | "linksonder" | "rechtsonder";
 
+/**
+ * De cirkel wordt vanuit de hoek verschoven met een deel van zijn eigen breedte.
+ *
+ * Bewust met `translate` en niet met een procentuele `top`/`bottom`: die resolveert tegen de
+ * hoogte van de container, en op een lang scherm schoof de cirkel daardoor honderden pixels
+ * buiten beeld. Een verschuiving over de eigen maat doet altijd hetzelfde, hoe lang de pagina
+ * ook is.
+ */
 const PLAATSING: Record<Hoek, string> = {
-  linksboven: "-left-1/4 -top-1/3",
-  rechtsboven: "-right-1/4 -top-1/3",
-  linksonder: "-bottom-1/3 -left-1/4",
-  rechtsonder: "-bottom-1/3 -right-1/4",
+  linksboven: "left-0 top-0 -translate-x-1/3 -translate-y-1/3",
+  rechtsboven: "right-0 top-0 translate-x-1/3 -translate-y-1/3",
+  linksonder: "bottom-0 left-0 -translate-x-1/3 translate-y-1/3",
+  rechtsonder: "bottom-0 right-0 translate-x-1/3 translate-y-1/3",
 };
 
 /**
@@ -26,24 +34,49 @@ const PLAATSING: Record<Hoek, string> = {
 export function Cirkel({
   hoek = "rechtsboven",
   formaat = 0.7,
-  toon = "accent",
+  toon = "zacht",
   raster = false,
+  vanBoven = 0,
 }: {
   hoek?: Hoek;
   formaat?: number;
+  /**
+   * Vanaf welke hoogte de cirkel mag beginnen, in pixels.
+   *
+   * Bestaat om de cirkel onder de kopregel te houden: op het volle accent haalt zelfs de
+   * donkerste tekst maar 4,44, dus een label mag er nooit overheen vallen.
+   */
+  vanBoven?: number;
+  /**
+   * `zacht` is de standaard en verdraagt tekst eroverheen: inkt haalt er 13,5 en inkt-zacht 6,7.
+   *
+   * `accent` is het volle koraal en verdraagt géén tekst — wit haalt erop 3,66 en zelfs de
+   * donkerste inkt niet meer dan 4,44, allebei onder de norm. Gebruik die alleen in een zone
+   * waar zeker geen tekst overheen valt.
+   */
   toon?: "accent" | "zacht" | "rand";
   raster?: boolean;
 }) {
   const vulling =
     toon === "accent" ? "bg-accent" : toon === "zacht" ? "bg-accent-zacht" : "bg-rand";
 
+  /*
+   * De cirkel krijgt zijn eigen bijsnijdvlak over de hele container. Zo wordt hij netjes door de
+   * schermrand afgesneden zonder dat de container zelf `overflow-hidden` nodig heeft — die mag
+   * dat niet, want daar loopt het donkere paneel juist met opzet tegen de rand aan.
+   */
   return (
     <div
       aria-hidden
-      className={`niet-printen pointer-events-none absolute ${PLAATSING[hoek]} -z-10 aspect-square rounded-full ${vulling}`}
-      style={{ width: `${formaat * 100}%` }}
+      className="niet-printen pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      style={vanBoven ? { top: vanBoven } : undefined}
     >
-      {raster ? <Halftoon className="text-vlak/50" /> : null}
+      <div
+        className={`absolute ${PLAATSING[hoek]} aspect-square rounded-full ${vulling}`}
+        style={{ width: `${formaat * 100}%` }}
+      >
+        {raster ? <Halftoon className="text-vlak/50" /> : null}
+      </div>
     </div>
   );
 }

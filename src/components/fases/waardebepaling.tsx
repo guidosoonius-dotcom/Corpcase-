@@ -10,6 +10,7 @@ import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import {
   DonkerPaneel,
   Etiket,
+  Hoofdregel,
   Kaart,
   Knop,
   Kop,
@@ -44,6 +45,7 @@ export function Waardebepaling({
 
   return (
     <div className="space-y-5">
+      <Hoofdregel links={state.sessie.titel} rechts="Fase 3 · Waardebepaling" />
       <Kop
         boven="Fase 3 · Waardebepaling"
         titel="Wat levert het op?"
@@ -130,7 +132,7 @@ function Waarderen({
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="mt-2.5 text-xs font-medium text-accent hover:underline"
+          className="mt-2.5 text-xs font-medium text-accent-diep hover:underline"
         >
           {open ? "Inklappen" : "Waarderen"}
         </button>
@@ -293,7 +295,7 @@ function Dimensies({
         <button
           type="button"
           onClick={() => setAllesTonen(true)}
-          className="mt-2 text-xs font-medium text-accent hover:underline"
+          className="mt-2 text-xs font-medium text-accent-diep hover:underline"
         >
           Nog {verborgen} {verborgen === 1 ? "dimensie" : "dimensies"} tonen
         </button>
@@ -490,7 +492,7 @@ function BusinessCaseInvoer({
       </div>
 
       {beeld.businessCase?.bruto_baat ? (
-        <DonkerPaneel className="p-4">
+        <DonkerPaneel bloedt="rechts" className="ml-6 p-4">
           <div aria-hidden className="absolute -right-8 -top-10 h-32 w-32 text-white/[0.07]">
             <Halftoon />
           </div>

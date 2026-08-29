@@ -10,6 +10,7 @@ import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import {
   Cijfer,
   DonkerPaneel,
+  Hoofdregel,
   Etiket,
   Kaart,
   Knop,
@@ -48,6 +49,7 @@ export function Prioritering({
 
   return (
     <div className="space-y-6">
+      <Hoofdregel links={state.sessie.titel} rechts="Fase 4 · Prioritering" />
       <Kop
         boven="Fase 4 · Prioritering"
         titel="Wat doen we wél?"
@@ -118,7 +120,7 @@ function Budgetbalk({
   );
 
   return (
-    <DonkerPaneel className="p-5">
+    <DonkerPaneel bloedt="links" className="p-5">
       <div aria-hidden className="absolute -right-10 -top-12 h-40 w-40 text-white/[0.07]">
             <Halftoon />
       </div>

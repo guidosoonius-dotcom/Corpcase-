@@ -22,7 +22,7 @@ import {
   portfolio,
 } from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
-import { Knop, Melding } from "@/components/basis";
+import { Hoofdregel, Knop, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
 
 /**
@@ -77,7 +77,9 @@ export default function RapportPagina() {
         </Knop>
       </div>
 
-      <header className="print-blok border-b border-rand pb-6">
+      <Hoofdregel links="Corpcase" rechts="Eindrapport" />
+
+      <header className="print-blok mt-6 border-b border-rand pb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
           Use-caseportfolio · {org.naam}
         </p>

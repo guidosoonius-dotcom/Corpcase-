@@ -109,7 +109,7 @@ export function Bijdragen({
                           setSoort("assist");
                           setBeantwoordt(b.id);
                         }}
-                        className="text-xs font-medium text-accent hover:underline"
+                        className="text-xs font-medium text-accent-diep hover:underline"
                       >
                         Hier antwoord op geven
                       </button>
@@ -145,7 +145,7 @@ export function Bijdragen({
               }}
               className={`flex-1 rounded-kaart border px-2 py-2 text-xs font-medium transition-colors ${
                 soort === s
-                  ? "border-accent bg-accent text-white"
+                  ? "border-accent-sterk bg-accent-sterk text-white"
                   : "border-rand-sterk bg-vlak text-inkt-zacht"
               }`}
             >
@@ -160,7 +160,7 @@ export function Bijdragen({
             <button
               type="button"
               onClick={() => setBeantwoordt(null)}
-              className="font-medium text-accent hover:underline"
+              className="font-medium text-accent-diep hover:underline"
             >
               Losmaken
             </button>

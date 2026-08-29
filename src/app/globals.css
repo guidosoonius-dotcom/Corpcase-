@@ -27,7 +27,8 @@
   /* Het donkere paneel */
   --color-houtskool: #2b2926;
   --color-houtskool-rand: #45413c;
-  --color-houtskool-zacht: #8e877e;
+  /* Draagt de labels op het donkere paneel. #8e877e haalde daar 4,09 en was dus te licht. */
+  --color-houtskool-zacht: #9e968c;
 
   /*
    * Accent. Standaard koraal; per corporatie overschreven.

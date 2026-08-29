@@ -5,7 +5,7 @@ import { alleSignalen, rol, speelmodus, type SignaalKaart } from "@/lib/content"
 import { opslag } from "@/lib/sessie/api";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Kaart, Knop, Kop, Melding } from "@/components/basis";
+import { Etiket, Hoofdregel, Kaart, Knop, Kop, Melding } from "@/components/basis";
 
 const PER_PORTIE = 12;
 
@@ -102,6 +102,7 @@ export function Verkennen({
 
   return (
     <div className="space-y-5">
+      <Hoofdregel links={state.sessie.titel} rechts="Fase 1 · Verkennen" />
       <Kop
         boven="Fase 1 · Verkennen"
         titel="Wat herken je?"
@@ -131,7 +132,7 @@ export function Verkennen({
             }}
             className={`shrink-0 rounded-kaart border px-3 py-1.5 text-xs font-medium transition-colors ${
               lens === l
-                ? "border-accent bg-accent text-white"
+                ? "border-accent-sterk bg-accent-sterk text-white"
                 : "border-rand-sterk bg-vlak text-inkt-zacht"
             }`}
           >

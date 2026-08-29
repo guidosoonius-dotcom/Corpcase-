@@ -6,7 +6,7 @@ import { portfolio, alleBeelden, type UsecaseBeeld } from "@/lib/sessie/afgeleid
 import { formatteerBandbreedte } from "@/lib/waarde/berekening";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Kaart, Knop, Kop, Leeg, Melding, invoerStijl } from "@/components/basis";
+import { Etiket, Hoofdregel, Kaart, Knop, Kop, Leeg, Melding, invoerStijl } from "@/components/basis";
 
 /**
  * Fase 5: wanneer doen we wat?
@@ -33,6 +33,7 @@ export function Roadmap({
 
   return (
     <div className="space-y-6">
+      <Hoofdregel links={state.sessie.titel} rechts="Fase 5 · Roadmap" />
       <Kop
         boven="Fase 5 · Roadmap"
         titel="Wanneer doen we wat?"

@@ -113,6 +113,14 @@ test("schermafdrukken van een gevulde sessie", async ({ browser }) => {
   await bezonken(speler);
   await speler.screenshot({ path: `${MAP}/10-rapport.png`, fullPage: false });
 
+  // Hetzelfde rapport zoals de printer het ziet. Het rapport gaat mee de bestuurskamer in en
+  // wordt daar op zwart-wit uitgedraaid; de decoratie hoort dan weg te vallen en de tekst
+  // leesbaar te blijven. Zonder deze opname is dat niet te beoordelen.
+  await speler.emulateMedia({ media: "print" });
+  await bezonken(speler);
+  await speler.screenshot({ path: `${MAP}/10b-rapport-print.png`, fullPage: true });
+  await speler.emulateMedia({ media: "screen" });
+
   // Beamerscherm op een breed scherm.
   const beamer = await (
     await browser.newContext({ viewport: { width: 1440, height: 900 } })

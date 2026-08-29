@@ -131,18 +131,27 @@ export default function BeheerPagina() {
       <section className="mt-6">
         <h2 className="display text-lg text-inkt">Fase</h2>
         <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-          {FASES.map((fase, index) => (
-            <Knop
-              key={fase}
-              soort={fase === state.sessie.fase ? "primair" : "rand"}
-              onClick={() => void naarFase(fase)}
-              disabled={!ikBenFacilitator}
-              className="justify-start"
-            >
-              <span className="tabular-nums text-inkt-licht">{index}</span>
-              {FASE_LABELS[fase]}
-            </Knop>
-          ))}
+          {FASES.map((fase, index) => {
+            const actief = fase === state.sessie.fase;
+            return (
+              <Knop
+                key={fase}
+                soort={actief ? "primair" : "rand"}
+                onClick={() => void naarFase(fase)}
+                disabled={!ikBenFacilitator}
+                className="justify-start"
+              >
+                {/*
+                 * Op de actieve fase staat de knop in het accent, en daarop verdwijnt inkt-licht
+                 * volledig (1,6). Het volgnummer wordt daar dus wit, net als het label.
+                 */}
+                <span className={`tabular-nums ${actief ? "text-white" : "text-inkt-licht"}`}>
+                  {index}
+                </span>
+                {FASE_LABELS[fase]}
+              </Knop>
+            );
+          })}
         </div>
         {huidigeIndex < FASES.length - 1 && ikBenFacilitator ? (
           <div className="mt-3">

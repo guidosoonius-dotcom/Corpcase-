@@ -19,6 +19,8 @@ import { organisaties } from "@/lib/content";
  */
 
 const AA = 4.5;
+/** De norm voor grote tekst: vanaf 24 px gewoon, of 18,66 px vet. */
+const AA_GROOT = 3;
 
 describe("kleurconversie", () => {
   it("gaat heen en weer tussen hex en hsl zonder de kleur te verliezen", () => {
@@ -113,6 +115,41 @@ describe("elke organisatie in content/", () => {
   );
 });
 
+describe("de zachte tint draagt tekst", () => {
+  /**
+   * De zachte tint wordt per corporatie afgeleid, dus dit moet per organisatie getoetst worden
+   * en niet op één vaste waarde. Op die tint valt tekst wanneer een cirkel achter een tekstblok
+   * ligt; inkt-licht haalt er net niet genoeg, vandaar dat daar inkt-zacht wordt gebruikt.
+   */
+  it.each(organisaties.map((o) => [o.naam, o.thema.accent] as const))(
+    "%s: inkt en inkt-zacht blijven leesbaar op de afgeleide tint",
+    (_naam, accent) => {
+      const { accentZacht } = leidPaletAf(accent);
+      expect(contrast("#22201E", accentZacht)).toBeGreaterThanOrEqual(AA);
+      expect(contrast("#55504A", accentZacht)).toBeGreaterThanOrEqual(AA);
+    },
+  );
+
+  /**
+   * Eén uitzondering op die regel: het cijfer. `Cijfer toon="accent"` zet het volle accent op
+   * papier, en dat mag omdat het kleinste formaat 30 px is — daarboven geldt de norm voor grote
+   * tekst (3,0) en niet 4,5. Zakt dat formaat ooit, dan valt deze test niet om; dan moet
+   * `Cijfer` naar accent-diep. De test bewaakt dus alleen de kleurkant.
+   */
+  it.each(organisaties.map((o) => [o.naam, o.thema.accent] as const))(
+    "%s: het accentcijfer haalt de norm voor grote tekst op papier",
+    (_naam, accent) => {
+      expect(contrast(accent, PAPIER)).toBeGreaterThanOrEqual(AA_GROOT);
+    },
+  );
+
+  it("het volle accent verdraagt juist géén tekst, en daarom bestaat de tint", () => {
+    // Deze verwachting legt de ontwerpregel vast: geen kleine tekst op het volle koraal.
+    expect(contrast(WIT, "#E8524A")).toBeLessThan(AA);
+    expect(contrast("#22201E", "#E8524A")).toBeLessThan(AA);
+  });
+});
+
 describe("de vaste neutralen", () => {
   it("halen allemaal de norm op de papieren ondergrond", () => {
     const neutralen = { inkt: "#22201E", "inkt-zacht": "#55504A", "inkt-licht": "#726A61" };
@@ -123,6 +160,11 @@ describe("de vaste neutralen", () => {
 
   it("laten witte tekst op het houtskoolpaneel ruim toe", () => {
     expect(contrast(WIT, HOUTSKOOL)).toBeGreaterThanOrEqual(AA);
+  });
+
+  it("houden het label op het houtskoolpaneel leesbaar", () => {
+    // Deze stond op #8E877E en haalde 4,09; te licht voor de labels die het paneel draagt.
+    expect(contrast("#9E968C", HOUTSKOOL)).toBeGreaterThanOrEqual(AA);
   });
 
   it("houden de semantische kleuren leesbaar", () => {
