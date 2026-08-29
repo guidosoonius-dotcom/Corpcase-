@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { supabaseSleutel, supabaseUrl } from "./config";
 
 /**
  * Supabase-client met identiteit in de headers.
@@ -28,11 +29,11 @@ function sleutelVoor(identiteit: Identiteit): string {
 }
 
 function omgeving() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const url = supabaseUrl();
+  const key = supabaseSleutel();
   if (!url || !key) {
     throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URL en NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ontbreken. Zie .env.example.",
+      "Geen Supabase-project geconfigureerd. Zie .env.example en src/lib/supabase/config.ts.",
     );
   }
   return { url, key };

@@ -1,3 +1,4 @@
+import { heeftSupabase } from "@/lib/supabase/config";
 import { lokaleOpslag } from "./opslag-lokaal";
 import { supabaseOpslag } from "./opslag-supabase";
 import type { Opslag } from "./soorten";
@@ -22,11 +23,7 @@ export function gekozenOpslagSoort(): OpslagSoort {
   if (process.env.NEXT_PUBLIC_OPSLAG === "lokaal") return "lokaal";
   if (process.env.NEXT_PUBLIC_OPSLAG === "supabase") return "supabase";
 
-  const heeftSupabase =
-    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
-    Boolean(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
-
-  return heeftSupabase ? "supabase" : "lokaal";
+  return heeftSupabase() ? "supabase" : "lokaal";
 }
 
 export const opslag: Opslag =
