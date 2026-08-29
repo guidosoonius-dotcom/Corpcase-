@@ -85,6 +85,62 @@ label.keuze {
 }
 
 /*
+ * Merkbare terugkoppeling op elk klikbaar element: een lichte lift op hover, een duik bij het
+ * indrukken. Bewust met `transform`, niet met de losse CSS-eigenschappen `translate`/`scale`:
+ * Tailwind 4 vertaalt zijn eigen `-translate-x-1/2`-achtige utility's — zoals de positionering
+ * van de matrixpunten en de decoratieve cirkels — juist naar díe losse eigenschappen (te zien in
+ * de gebouwde CSS: `.translate-x-1\/3{translate:var(--tw-translate-x) var(--tw-translate-y)}`).
+ * Was deze regel ook met `translate`/`scale` geschreven, dan zou hover op een matrixpunt zijn
+ * eigen centrering overschrijven en zichtbaar laten verspringen. `transform` raakt geen van
+ * beide, dus telt er zuiver bovenop.
+ *
+ * `hover` alleen binnen `(hover: hover)`: op een telefoon is er geen muis die weer weggaat, en
+ * zonder die grens blijft de lift na een tik "plakken" tot de volgende aanraking ergens anders.
+ */
+button:not(:disabled),
+[role="button"],
+a.knop,
+label.keuze {
+  transition: transform 200ms ease-out;
+}
+
+@media (hover: hover) {
+  button:not(:disabled):hover,
+  [role="button"]:hover,
+  a.knop:hover,
+  label.keuze:hover {
+    transform: translateY(-2px);
+  }
+}
+
+button:not(:disabled):active,
+[role="button"]:active,
+a.knop:active,
+label.keuze:active {
+  transform: scale(0.97);
+}
+
+/*
+ * Heel langzame ademhaling voor de decoratieve cirkels — zie Cirkel/RasterCirkel in
+ * decoratie.tsx. Klein genoeg om als rustig te lezen, niet als knipperend; lang genoeg (9s) dat
+ * niemand hem als een laadanimatie leest. Ook hier `transform`, om dezelfde reden als hierboven:
+ * de cirkels dragen hun positionering al in `translate`.
+ */
+@theme {
+  --animate-ademen: ademen 9s ease-in-out infinite;
+}
+
+@keyframes ademen {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+/*
  * Display-tekst. Playfair heeft van zichzelf ruime letterafstand bij grote formaten; die wordt
  * hier ingehaald zodat koppen als één geheel lezen in plaats van als losse letters.
  */

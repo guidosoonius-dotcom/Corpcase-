@@ -71,8 +71,16 @@ export function Cirkel({
       className="niet-printen pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       style={vanBoven ? { top: vanBoven } : undefined}
     >
+      {/*
+       * `animate-ademen` schaalt via `transform`, niet via de losse CSS-eigenschap `scale` — die
+       * laatste draagt hier al de positionering: Tailwinds `translate-x-1/3` (uit `PLAATSING`)
+       * compileert naar de losse eigenschap `translate`, niet naar `transform`. Zou de animatie
+       * zelf ook `scale` gebruiken, dan overschreef hij diezelfde eigenschap zodra hij op een
+       * cirkel met een schaal-utility terechtkwam; met `transform` blijft hij daar sowieso los
+       * van, wat er verder ook aan Tailwind-utility's bijkomt.
+       */}
       <div
-        className={`absolute ${PLAATSING[hoek]} aspect-square rounded-full ${vulling}`}
+        className={`absolute ${PLAATSING[hoek]} aspect-square rounded-full ${vulling} motion-safe:animate-ademen`}
         style={{ width: `${formaat * 100}%` }}
       >
         {raster ? <Halftoon className="text-vlak/50" /> : null}
@@ -131,7 +139,7 @@ export function RasterCirkel({
   return (
     <div
       aria-hidden
-      className={`niet-printen pointer-events-none relative aspect-square overflow-hidden rounded-full text-rand-sterk ${className}`}
+      className={`niet-printen pointer-events-none relative aspect-square overflow-hidden rounded-full text-rand-sterk motion-safe:animate-ademen ${className}`}
       style={{ width: formaat }}
     >
       <Halftoon />

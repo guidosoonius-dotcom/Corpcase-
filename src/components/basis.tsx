@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useTelOp } from "@/lib/animatie/telOp";
 
 /**
  * Gedeelde bouwstenen. De toon is boardroom: rustige neutralen, één accent, veel wit.
@@ -51,10 +54,14 @@ export function Knop({
   className?: string;
   title?: string;
 }) {
+  // De lift bij hover/press komt uit de globale regel in globals.css (via de losse CSS-
+  // eigenschappen `translate`/`scale`, niet `transform`, zodat dat niets breekt bij een knop die
+  // zelf al een transform-gebaseerde Tailwind-utility gebruikt). Hier alleen de schaduw erbij,
+  // want die moet per variant een andere diepte hebben.
   const stijlen: Record<string, string> = {
     primair:
-      "bg-accent-sterk text-white hover:bg-accent-diep disabled:bg-rand-sterk",
-    rand: "border border-rand-sterk bg-vlak text-inkt hover:border-accent",
+      "bg-accent-sterk text-white shadow-sm shadow-accent-diep/20 transition-shadow hover:bg-accent-diep hover:shadow-md hover:shadow-accent-diep/30 disabled:bg-rand-sterk disabled:shadow-none",
+    rand: "border border-rand-sterk bg-vlak text-inkt transition-shadow hover:border-accent hover:shadow-sm",
     stil: "text-inkt-zacht hover:bg-papier",
     gevaar:
       "border border-risico bg-vlak text-risico hover:bg-risico-zacht",
@@ -249,13 +256,19 @@ export function Cijfer({
   const labelkleur =
     toon === "op-donker" || toon === "gedempt" ? "text-houtskool-zacht" : "text-inkt-zacht";
 
+  // Alleen een echt getal telt zichtbaar op; een al opgemaakte tekst (een bandbreedte als
+  // "€ 91.500 – € 208.500") heeft geen enkele waarde om naartoe te tellen.
+  const getal = typeof waarde === "number" ? waarde : null;
+  const opgeteld = useTelOp(getal ?? 0);
+  const weerTeGeven = getal !== null ? opgeteld : waarde;
+
   return (
     <div>
       {label ? (
         <p className={`text-xs leading-snug ${labelkleur}`}>{label}</p>
       ) : null}
       <p className={`cijfer mt-1 ${formaten[formaat]} ${kleuren[toon]}`}>
-        {waarde}
+        {weerTeGeven}
         {achtervoegsel ? (
           <span className="ml-1 align-baseline text-base font-normal">{achtervoegsel}</span>
         ) : null}
@@ -355,8 +368,20 @@ export function PijlActie({
         </span>
         <span className="mt-0.5 block text-sm leading-snug text-inkt-zacht">{tekst}</span>
       </span>
+      {/*
+       * De pijl schuift op hover een stukje op — een klassieke, kleine wenk dat er iets volgt.
+       * Dit is een eigen transform op dit kind-element, los van de lift die de knop zelf al van
+       * de globale hover-regel krijgt; ze staan op verschillende elementen en botsen dus niet.
+       */}
       <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 28 28"
+          fill="none"
+          aria-hidden
+          className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+        >
           <path
             d="M4 14h20M17 7l7 7-7 7"
             stroke="currentColor"
@@ -376,7 +401,7 @@ export function PijlActie({
         <button
           type="button"
           onClick={onClick}
-          className="flex w-full items-center justify-between gap-4 pt-2 text-left text-accent-diep transition-colors hover:text-accent-sterk"
+          className="group flex w-full items-center justify-between gap-4 pt-2 text-left text-accent-diep transition-colors hover:text-accent-sterk"
         >
           {inhoud}
         </button>

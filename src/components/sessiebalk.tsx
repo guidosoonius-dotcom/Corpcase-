@@ -8,6 +8,7 @@ import type { SessieState } from "@/lib/supabase/types";
 import { eigenFase, looptVoor, teamscore } from "@/lib/sessie/afgeleid";
 import type { SessieHaak } from "@/lib/sessie/gebruik";
 import { opslag } from "@/lib/sessie/api";
+import { useTelOp } from "@/lib/animatie/telOp";
 import { Etiket, Melding } from "./basis";
 import { OogDichtIcoon, OogIcoon, SyncIcoon, WaarschuwingIcoon } from "./icoon";
 
@@ -38,6 +39,10 @@ export function Sessiebalk({
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
   const opdracht = rolopdrachten.opdrachten.find((o) => o.id === ik?.rolopdracht_id);
   const score = teamscore(state);
+  // Deze balk staat boven elke fase en poll elke 2,5s mee; het optellen maakt zichtbaar wanneer
+  // een medespeler net iets aan de teamscore heeft toegevoegd, in plaats van dat het getal
+  // geruisloos verspringt.
+  const teamscoreWeergegeven = useTelOp(score.totaal);
   const bekekenFase = ik ? eigenFase(ik, state) : state.sessie.fase;
   const voorloper = ik ? looptVoor(ik, state) : false;
 
@@ -61,7 +66,7 @@ export function Sessiebalk({
           </div>
           <div className="shrink-0 text-right">
             <p className="text-xs text-inkt-licht">Teamscore</p>
-            <p className="cijfer text-3xl text-accent">{score.totaal}</p>
+            <p className="cijfer text-3xl text-accent">{teamscoreWeergegeven}</p>
           </div>
         </div>
 

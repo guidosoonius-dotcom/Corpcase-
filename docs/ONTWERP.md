@@ -131,3 +131,29 @@ van de rest verstoren.
 De globale regel dat elke knop minstens 44 pixels hoog is, maakte van de matrixpunten strepen. Die
 punten zijn daarom een transparante knop van 44 bij 44 met een kleine ronde stip erin: het
 raakvlak blijft bruikbaar op een telefoon, en de stip blijft een stip.
+
+## Animatie
+
+Drie plekken, met opzet niet meer: een lift en een duik op elk klikbaar element (hover/press,
+globaal in `globals.css`), kengetallen die zichtbaar optellen naar hun nieuwe waarde in plaats van
+te verspringen (`useTelOp`, in `Cijfer` en de teamscore in `Sessiebalk`), en een heel langzame
+ademhaling op de decoratieve cirkels. Verspreid over de hele app in plaats van op één uitgelicht
+moment — dat past bij een instrument dat een dagdeel meegaat, niet bij een demo.
+
+**`transform`, nooit de losse eigenschappen `translate`/`scale`/`rotate`.** Tailwind 4 vertaalt
+zijn eigen positionerings-utility's (`translate-x-1/3` voor de cirkels, `-translate-x-1/2` voor de
+matrixpunten) naar díe losse eigenschappen, niet naar `transform`. Was de hover-lift of de
+ademhaling ook met `translate`/`scale` geschreven, dan overschreef hij zonder waarschuwing de
+eigen positionering van precies die elementen — de matrixpunten waren van hun plek geschoven bij
+elke hover. `transform` raakt geen van beide en telt er zuiver bovenop. Geverifieerd door de
+gebouwde CSS na te lezen (`.translate-x-1\/3{translate:var(--tw-translate-x) ...}`) én door een
+matrixpunt voor en na een hover op de pixel te vergelijken.
+
+**`useTelOp` telt alleen echte getallen op.** `Cijfer` accepteert ook al opgemaakte tekst (een
+bandbreedte als "€ 91.500 – € 208.500"); daar is niets om naartoe te tellen, dus die gaat ongewijzigd
+door. De hook regelt `prefers-reduced-motion` zelf met `window.matchMedia`, want de globale
+CSS-regel onderaan dit bestand vangt alleen CSS-transities en -animaties af, geen
+requestAnimationFrame-lussen.
+
+**De ademhaling staat achter `motion-safe:`**, net als de rest van de bewuste beweging achter de
+globale `prefers-reduced-motion`-regel. Wie liever geen beweging ziet, ziet ook deze niet.
