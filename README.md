@@ -10,6 +10,9 @@ ranglijst tussen collega's.
 
 DUWO is de eerste voorbeeldcorporatie.
 
+**Live:** https://corpcase.vercel.app — elke push naar deze branch deployt automatisch.
+**Een sessie begeleiden:** zie [`docs/FACILITATOR.md`](docs/FACILITATOR.md).
+
 ## Opzet
 
 | Map | Inhoud |
@@ -40,6 +43,16 @@ toont die en presenteert nooit een aanname als feit.
 2. **Elke uitkomst is een bandbreedte** (laag / verwacht / hoog). Eén hard getal suggereert een
    precisie die er niet is en kost geloofwaardigheid aan de bestuurstafel.
 
+## Twee opslagmodi
+
+| Modus | Wanneer | Wat je krijgt |
+|---|---|---|
+| **Supabase** (standaard) | Normaal gebruik | Meerdere apparaten, sessie blijft bewaard. Toegang wordt in de database afgedwongen met RLS op basis van een deelnemertoken en de beheercode; er zijn geen accounts en geen geheime sleutel nodig. |
+| **Offline** (`NEXT_PUBLIC_OPSLAG=lokaal`) | Tests, en als terugvaloptie op locatie | De sessie leeft in het geheugen van de Next.js-server. Dezelfde toegangsregels, maar weg bij een herstart en alleen bruikbaar als iedereen dezelfde server gebruikt. |
+
+Het schema staat in [`supabase/schema.sql`](supabase/schema.sql) en richt een leeg project in één
+keer in.
+
 ## Ontwikkelen
 
 ```bash
@@ -49,4 +62,8 @@ npm run content:check  # contentvalidatie
 npm test               # unittests op de rekenmotor
 npm run lint
 npm run build
+npm run e2e            # drie browsers spelen samen een sessie, in de offline modus
 ```
+
+De integratietest tegen het echte Supabase-project slaat zichzelf over wanneer dat project vanuit
+de omgeving niet bereikbaar is; een netwerkbeperking is geen defect in de applicatie.
