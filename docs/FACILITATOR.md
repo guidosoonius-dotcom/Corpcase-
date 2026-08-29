@@ -27,8 +27,12 @@ Zet het beamerscherm (`/sessie/<id>/scherm`) op de grote schermen. Zelf werk je 
 `/sessie/<id>/beheer`; daar staan de join-code, de fasebesturing en het overzicht van waar het
 hapert.
 
-**De fases openen doe jij.** Deelnemers zien hun scherm vanzelf meebewegen; ze hoeven nergens
-heen te navigeren.
+**Jij zet de gezamenlijke stand.** Deelnemers volgen die automatisch mee, maar kunnen ook zelf
+door de fasetabs klikken — vooruitbladeren om te zien wat eraan komt, of terugbladeren naar iets
+dat nog niet af is. Wie zichzelf zo voor de groep uit zet, ziet daar een waarschuwing bij op zijn
+eigen scherm; op het beheerscherm zie je het bij "Wie is er" terug als een etiket bij hun naam.
+Dat is geen storing — vaak is het iemand die alvast rondkijkt — maar bij drie mensen die alle
+drie ergens anders zitten, is dat het moment om ze weer bij elkaar te roepen.
 
 Wat op het beheerscherm om aandacht vraagt:
 

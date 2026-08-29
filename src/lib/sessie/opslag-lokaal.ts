@@ -63,6 +63,8 @@ export const lokaleOpslag: Opslag = {
     }),
   wijzigSessie: (identiteit, sessieId, velden: SessieVelden) =>
     roep<void>("wijzigSessie", identiteit, { sessieId, velden }),
+  zetEigenFase: (identiteit, deelnemerId, fase: Fase | null) =>
+    roep<void>("zetEigenFase", identiteit, { deelnemerId, fase }),
 
   selecteerSignaal: (identiteit, invoer: SignaalInvoer) =>
     roep<void>("selecteerSignaal", identiteit, invoer),

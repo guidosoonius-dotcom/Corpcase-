@@ -2,8 +2,9 @@
 --
 -- Dit bestand beschrijft de eindtoestand van het schema en kan een leeg Supabase-project in één
 -- keer inrichten. De losse migraties zijn met de Supabase-tooling toegepast onder de namen
--- corpcase_speltabellen, corpcase_rls_policies, corpcase_helpers_naar_intern_schema en
--- corpcase_fk_indexen; dit bestand is daarvan het samengevoegde resultaat.
+-- corpcase_speltabellen, corpcase_rls_policies, corpcase_helpers_naar_intern_schema,
+-- corpcase_fk_indexen en deelnemers_eigen_fase; dit bestand is daarvan het samengevoegde
+-- resultaat.
 --
 -- Twee ontwerpkeuzes die de rest verklaren:
 --
@@ -76,7 +77,11 @@ create table deelnemers (
   token text not null unique,
   is_facilitator boolean not null default false,
   laatst_gezien_op timestamptz not null default now(),
-  aangemaakt_op timestamptz not null default now()
+  aangemaakt_op timestamptz not null default now(),
+  -- Eigen navigatiepositie, los van sessies.fase. Null = volgt de groep automatisch mee; een
+  -- waarde = zelf naar een andere fase genavigeerd. Geen aparte RLS-policy nodig: de bestaande
+  -- deelnemers_wijzigen staat een deelnemer al toe zijn eigen rij te updaten.
+  eigen_fase fase
 );
 
 create index deelnemers_sessie_idx on deelnemers (sessie_id);

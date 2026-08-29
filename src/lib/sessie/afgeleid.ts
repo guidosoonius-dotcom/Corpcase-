@@ -9,7 +9,14 @@ import {
 } from "@/lib/waarde/berekening";
 import type { DrivertypeId } from "@/lib/content/schemas";
 import { cora, personaSignalen, speelmodus, usecase as bibliotheekKaart } from "@/lib/content";
-import type { SessieState, SessieUsecaseRij, WaarderingRij } from "@/lib/supabase/types";
+import {
+  FASES,
+  type DeelnemerRij,
+  type Fase,
+  type SessieState,
+  type SessieUsecaseRij,
+  type WaarderingRij,
+} from "@/lib/supabase/types";
 
 /**
  * Afgeleide waarden over een sessie: alles wat de schermen tonen maar niet in de database staat.
@@ -304,6 +311,18 @@ export function aanwezig(state: SessieState, nu = Date.now()) {
   return state.deelnemers.filter(
     (d) => nu - new Date(d.laatst_gezien_op).getTime() < 2 * 60 * 1000,
   );
+}
+
+// Vrije fasenavigatie ---------------------------------------------------------
+
+/** De fase die deze deelnemer daadwerkelijk bekijkt: zijn eigen keuze, anders de groep. */
+export function eigenFase(deelnemer: DeelnemerRij, state: SessieState): Fase {
+  return deelnemer.eigen_fase ?? state.sessie.fase;
+}
+
+/** Loopt deze deelnemer voor op waar de facilitator de groep heeft neergezet? */
+export function looptVoor(deelnemer: DeelnemerRij, state: SessieState): boolean {
+  return FASES.indexOf(eigenFase(deelnemer, state)) > FASES.indexOf(state.sessie.fase);
 }
 
 // Rolopdrachten -------------------------------------------------------------

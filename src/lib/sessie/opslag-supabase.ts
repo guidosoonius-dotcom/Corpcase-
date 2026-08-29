@@ -236,6 +236,24 @@ export async function zetFaseDeadline(
   if (error) throw new SessieFout(`Timer zetten: ${error.message}`);
 }
 
+/**
+ * Zelfbediening: een deelnemer stuurt zijn eigen rij bij, niet die van de sessie. De bestaande
+ * update-policy op `deelnemers` staat dit al toe voor het eigen token; er is geen aparte
+ * beheerscontrole nodig zoals bij `zetFase`.
+ */
+export async function zetEigenFase(
+  identiteit: Identiteit,
+  deelnemerId: string,
+  fase: Fase | null,
+): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client
+    .from("deelnemers")
+    .update({ eigen_fase: fase })
+    .eq("id", deelnemerId);
+  if (error) throw new SessieFout(`Eigen fase wijzigen: ${error.message}`);
+}
+
 export async function wijzigSessie(
   identiteit: Identiteit,
   sessieId: string,
@@ -504,6 +522,7 @@ export const supabaseOpslag: Opslag = {
   haalState,
   zetFase,
   zetFaseDeadline,
+  zetEigenFase,
   wijzigSessie,
   selecteerSignaal,
   verwijderSignaalSelectie,

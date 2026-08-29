@@ -7,10 +7,20 @@ import { FASES, FASE_LABELS, type Fase } from "@/lib/supabase/types";
 import { rol, speelmodus } from "@/lib/content";
 import { opslag } from "@/lib/sessie/api";
 import { useAanwezigheid, useSessie } from "@/lib/sessie/gebruik";
-import { aanwezig, alleBeelden, budgetStand, dekking, openHulpvragen, teamscore } from "@/lib/sessie/afgeleid";
+import {
+  aanwezig,
+  alleBeelden,
+  budgetStand,
+  dekking,
+  eigenFase,
+  looptVoor,
+  openHulpvragen,
+  teamscore,
+} from "@/lib/sessie/afgeleid";
 import { Etiket, Kaart, Knop, Kop, Leeg, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
 import { organisatie } from "@/lib/content";
+import { KopieerIcoon, WaarschuwingIcoon } from "@/components/icoon";
 
 /**
  * Het scherm van de facilitator.
@@ -122,6 +132,7 @@ export default function BeheerPagina() {
           </p>
           <div className="mt-3">
             <Knop soort="rand" onClick={kopieerUitnodiging}>
+              {gekopieerd ? null : <KopieerIcoon className="h-4 w-4" />}
               {gekopieerd ? "Gekopieerd" : "Uitnodiging kopiëren"}
             </Knop>
           </div>
@@ -169,11 +180,15 @@ export default function BeheerPagina() {
             const selecties = state.selecties.filter((s) => s.deelnemer_id === deelnemer.id).length;
             const ingebracht = state.usecases.filter((u) => u.eigenaar_id === deelnemer.id).length;
             const isOnline = online.some((d) => d.id === deelnemer.id);
+            // Alleen een fase-etiket tonen als iemand van de groep is afgeweken; wie gewoon
+            // meevolgt (het gangbare geval) hoeft daar geen aparte badge voor te krijgen.
+            const afgeweken = deelnemer.eigen_fase != null;
+            const voorop = afgeweken && looptVoor(deelnemer, state);
 
             return (
               <li
                 key={deelnemer.id}
-                className="flex items-center justify-between gap-3 rounded-kaart border border-rand bg-vlak px-3 py-2"
+                className="flex flex-col gap-2 rounded-kaart border border-rand bg-vlak px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-inkt">
@@ -183,9 +198,22 @@ export default function BeheerPagina() {
                     {rol(deelnemer.rol_id)?.naam ?? deelnemer.rol_id}
                   </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
+                {/*
+                 * Op smalle schermen krijgen de badges hun eigen regel: het vierde etiket (de
+                 * fase-afwijking) paste er niet meer naast de naam bij, en `shrink-0` op een
+                 * krappe kolom duwde de rolnaam toen woord voor woord uit elkaar.
+                 */}
+                <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end">
                   <Etiket>{selecties} signalen</Etiket>
                   <Etiket>{ingebracht} use cases</Etiket>
+                  {afgeweken ? (
+                    <Etiket toon={voorop ? "aandacht" : "neutraal"}>
+                      {voorop ? (
+                        <WaarschuwingIcoon className="mr-0.5 inline h-3 w-3 -translate-y-px" />
+                      ) : null}
+                      bij {FASE_LABELS[eigenFase(deelnemer, state)]}
+                    </Etiket>
+                  ) : null}
                   <Etiket toon={isOnline ? "waarde" : "neutraal"}>
                     {isOnline ? "actief" : "stil"}
                   </Etiket>

@@ -50,6 +50,10 @@ const acties: Record<string, Handler> = {
     const { sessieId, velden } = als<{ sessieId: string; velden: Parameters<typeof kern.wijzigSessie>[2] }>(a);
     return kern.wijzigSessie(i, sessieId, velden);
   },
+  zetEigenFase: (i, a) => {
+    const { deelnemerId, fase } = als<{ deelnemerId: string; fase: Fase | null }>(a);
+    return kern.zetEigenFase(i, deelnemerId, fase);
+  },
 
   selecteerSignaal: (i, a) => kern.selecteerSignaal(i, als(a)),
   verwijderSignaalSelectie: (i, a) => kern.verwijderSignaalSelectie(i, als(a)),

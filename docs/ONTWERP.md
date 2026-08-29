@@ -111,6 +111,21 @@ Playfair Display voor display, Inter voor de rest, allebei via `next/font/google
 de build binnen en serveert ze vanaf het eigen domein — er gaat dus geen bezoekersdata naar Google.
 Voor een corporatie die in deze game zelf over privacy bij huurdersdata praat, is dat geen detail.
 
+## Iconen
+
+De iconen komen uit Google's Material Symbols (Apache 2.0), maar niet als lettertype: de subset
+weegt al snel enkele megabytes voor een handvol glyphs, en `next/font/google` kent het bovendien
+niet als gewoon lettertype. In plaats daarvan staan de padgegevens van een klein, met de hand
+gekozen setje losse in `src/components/icoon.tsx` — dezelfde constructie als de handgetekende pijl
+in `PijlActie` en de halftoon in `decoratie.tsx`. Geen extra verzoek naar Google, geen megabytes
+voor een paar honderd bytes aan SVG-paden.
+
+Terughoudend toegepast: een icoon staat er alleen waar het een handeling of status verduidelijkt
+die de tekst zelf niet snel genoeg overbrengt — waarschuwen dat je voorloopt op de groep, tonen of
+verbergen van de privé-rolopdracht, kopiëren van de uitnodiging, opnieuw meevolgen met de groep.
+Geen icoon naast een label dat zichzelf al uitlegt; dat zou de redactionele, tekstgedreven toon
+van de rest verstoren.
+
 ## Raakvlakken
 
 De globale regel dat elke knop minstens 44 pixels hoog is, maakte van de matrixpunten strepen. Die

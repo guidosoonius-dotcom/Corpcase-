@@ -141,6 +141,12 @@ export type Opslag = {
   zetFaseDeadline(identiteit: Identiteit, sessieId: string, deadline: Date | null): Promise<void>;
   wijzigSessie(identiteit: Identiteit, sessieId: string, velden: SessieVelden): Promise<void>;
 
+  /**
+   * De deelnemer navigeert zelf naar een andere fase, los van de gezamenlijke `sessie.fase`.
+   * `fase: null` laat de deelnemer de groep weer volgen.
+   */
+  zetEigenFase(identiteit: Identiteit, deelnemerId: string, fase: Fase | null): Promise<void>;
+
   selecteerSignaal(identiteit: Identiteit, invoer: SignaalInvoer): Promise<void>;
   verwijderSignaalSelectie(
     identiteit: Identiteit,

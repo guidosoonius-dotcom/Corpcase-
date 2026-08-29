@@ -179,6 +179,7 @@ function voegDeelnemerToe(
     is_facilitator: isFacilitatorRol,
     laatst_gezien_op: nu(),
     aangemaakt_op: nu(),
+    eigen_fase: null,
   };
   dossier.deelnemers.push(deelnemer);
   return deelnemer;
@@ -241,6 +242,26 @@ export function zetFaseDeadline(
   const dossier = vindDossier(sessieId);
   if (!magBesturen(dossier, identiteit)) return;
   dossier.sessie = { ...dossier.sessie, fase_deadline: deadline, bijgewerkt_op: nu() };
+}
+
+/**
+ * Zelfbediening, met dezelfde grens als de Supabase-policy `deelnemers_wijzigen`: het eigen
+ * token, of de facilitator die de hele rij van elke deelnemer al mag bijwerken.
+ */
+export function zetEigenFase(
+  identiteit: Identiteit,
+  deelnemerId: string,
+  fase: Fase | null,
+): void {
+  for (const dossier of dossiers.values()) {
+    const deelnemer = dossier.deelnemers.find((d) => d.id === deelnemerId);
+    if (!deelnemer) continue;
+    if (deelnemer.token !== identiteit.deelnemerToken && !isFacilitator(dossier, identiteit)) {
+      return;
+    }
+    deelnemer.eigen_fase = fase;
+    return;
+  }
 }
 
 export function wijzigSessie(

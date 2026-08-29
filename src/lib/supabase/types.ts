@@ -68,6 +68,13 @@ export type DeelnemerRij = {
   is_facilitator: boolean;
   laatst_gezien_op: string;
   aangemaakt_op: string;
+  /**
+   * De fase die deze deelnemer zelf bekijkt, los van `sessies.fase`.
+   *
+   * `null` betekent: volgt de groep automatisch mee, wat de facilitator ook instelt. Een waarde
+   * betekent: is zelf naar een andere fase genavigeerd en ontkoppeld van de groep.
+   */
+  eigen_fase: Fase | null;
 };
 
 export type SignaalSelectieRij = {

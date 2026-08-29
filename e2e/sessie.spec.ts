@@ -196,6 +196,47 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   await expect(facilitator.getByRole("heading", { name: "Waarde tegen haalbaarheid" })).toBeVisible();
 });
 
+test("een speler navigeert zelf vooruit en krijgt een waarschuwing dat hij voorloopt", async ({
+  browser,
+}) => {
+  const facilitator = await nieuweSpeler(browser);
+  const speler = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const code = (await facilitator.getByLabel(/Sessiecode/).innerText()).trim();
+
+  await joinMet(speler, code, "Marieke", "Manager Wonen / Klant");
+  await expect(speler.getByRole("heading", { name: "Klaar om te beginnen" })).toBeVisible();
+
+  // De facilitator zet de groep pas op Verkennen; de waarschuwing bestaat nog niet.
+  await facilitator.getByRole("button", { name: "Volgende fase: Verkennen" }).click();
+  await expect(speler.getByRole("heading", { name: "Wat herken je?" })).toBeVisible();
+  await expect(speler.getByText(/Je loopt voor op de groep/)).toHaveCount(0);
+
+  // De speler klikt zelf door naar Identificatie, zonder op de facilitator te wachten.
+  await speler.getByRole("button", { name: "Identificatie", exact: true }).click();
+  await expect(speler.getByRole("heading", { name: "Welke use cases volgen hieruit?" })).toBeVisible();
+  await expect(
+    speler.getByText(/Je loopt voor op de groep — de facilitator staat nog bij Verkennen/),
+  ).toBeVisible();
+
+  // Teruglopen naar een fase die de groep al gehad heeft, is geen "voorlopen".
+  await speler.getByRole("button", { name: "Lobby", exact: true }).click();
+  await expect(speler.getByRole("heading", { name: "Klaar om te beginnen" })).toBeVisible();
+  await expect(speler.getByText(/Je loopt voor op de groep/)).toHaveCount(0);
+
+  // "Terug naar de groep" laat de speler weer meevolgen met wat de facilitator instelt.
+  await speler.getByRole("button", { name: "Terug naar de groep" }).click();
+  await expect(speler.getByRole("heading", { name: "Wat herken je?" })).toBeVisible();
+
+  // Zet de facilitator de groep nu vooruit, dan volgt de speler automatisch mee.
+  await facilitator.getByRole("button", { name: "Volgende fase: Identificatie" }).click();
+  await expect(speler.getByRole("heading", { name: "Welke use cases volgen hieruit?" })).toBeVisible();
+});
+
 test("een browser zonder identiteit komt niet in de sessie", async ({ browser }) => {
   const facilitator = await nieuweSpeler(browser);
   await facilitator.goto("/start");
