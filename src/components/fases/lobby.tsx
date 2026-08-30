@@ -41,7 +41,7 @@ export function Lobby({
         hoek="rechtsboven"
         formaat={0.58}
         vanBoven={44}
-        afbeelding={{ src: "/illustraties/lobby.jpg" }}
+        afbeelding={{ src: "/illustraties/lobby.jpg", verschuifX: -8, verschuifY: 6 }}
       />
       <Cirkel hoek="linksboven" formaat={0.36} toon="zacht" vanBoven={44} />
 

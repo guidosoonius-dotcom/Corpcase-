@@ -66,8 +66,13 @@ export function Cirkel({
    * zoals de effen vulling: een cirkel snijdt een illustratie al genoeg af aan de buitenrand, en
    * mag het onderwerp zelf niet nóg verder wegsnijden. Net als de effen cirkel puur decoratief —
    * geen tekst hoort hier ooit overheen te vallen.
+   *
+   * `verschuifX`/`verschuifY` schuiven de ongesneden foto op binnen haar cirkel, als percentage
+   * van haar eigen breedte/hoogte — positief is naar rechts/beneden. Puur een fijnkorrelige
+   * duw voor het beeld dat toevallig het beste in de cirkel oogt; de cirkel snijdt de rand af,
+   * dus een lichte verschuiving mag een paar procent van de foto buiten beeld duwen.
    */
-  afbeelding?: { src: string };
+  afbeelding?: { src: string; verschuifX?: number; verschuifY?: number };
 }) {
   const vulling =
     toon === "accent" ? "bg-accent" : toon === "zacht" ? "bg-accent-zacht" : "bg-rand";
@@ -107,6 +112,13 @@ export function Cirkel({
             priority
             sizes="(min-width: 640px) 260px, 55vw"
             className="object-contain p-4"
+            style={
+              afbeelding.verschuifX || afbeelding.verschuifY
+                ? {
+                    transform: `translate(${afbeelding.verschuifX ?? 0}%, ${afbeelding.verschuifY ?? 0}%)`,
+                  }
+                : undefined
+            }
           />
         ) : raster ? (
           <Halftoon className="text-vlak/50" />
