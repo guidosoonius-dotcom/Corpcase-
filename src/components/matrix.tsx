@@ -26,6 +26,7 @@ export function Matrix({
 }) {
   const geplaatst = beelden.filter((b) => b.positie !== null);
   const ontbreekt = beelden.length - geplaatst.length;
+  const actief = geselecteerd ? beelden.find((b) => b.usecase.id === geselecteerd) : undefined;
 
   const vlak = donker ? "border-houtskool-rand bg-houtskool" : "border-rand bg-vlak";
   const lijn = donker ? "bg-houtskool-rand" : "bg-rand";
@@ -34,6 +35,20 @@ export function Matrix({
 
   return (
     <div>
+      {/*
+       * Vaste hoogte, ook leeg: anders springt de matrix een regel omhoog zodra de eerste stip
+       * wordt aangetikt. Alleen aanwezig waar getikt ook echt iets doet — op de statische
+       * beamerweergave (geen `onKies`) blijft deze regel weg.
+       */}
+      {onKies ? (
+        <p
+          className={`mb-1.5 min-h-[1.1rem] text-xs ${
+            actief ? "font-medium text-accent-diep" : "text-inkt-licht"
+          }`}
+        >
+          {actief?.usecase.titel ?? "Tik op een stip voor de naam van de use case"}
+        </p>
+      ) : null}
       <div
         className={`relative w-full rounded-kaart border ${vlak}`}
         style={{ height: hoogte }}
