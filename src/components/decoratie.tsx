@@ -61,10 +61,13 @@ export function Cirkel({
   toon?: "accent" | "zacht" | "rand";
   raster?: boolean;
   /**
-   * Vervangt de effen vulling door een uitgesneden foto, op dezelfde plek en hetzelfde formaat.
-   * Net als de effen cirkel puur decoratief — geen tekst hoort hier ooit overheen te vallen.
+   * Vervangt de effen vulling door een foto, op dezelfde plek en hetzelfde formaat. De foto blijft
+   * ongesneden zichtbaar (`object-contain`) op een papieren ondergrond, in plaats van uitgesneden
+   * zoals de effen vulling: een cirkel snijdt een illustratie al genoeg af aan de buitenrand, en
+   * mag het onderwerp zelf niet nóg verder wegsnijden. Net als de effen cirkel puur decoratief —
+   * geen tekst hoort hier ooit overheen te vallen.
    */
-  afbeelding?: { src: string; positie?: string };
+  afbeelding?: { src: string };
 }) {
   const vulling =
     toon === "accent" ? "bg-accent" : toon === "zacht" ? "bg-accent-zacht" : "bg-rand";
@@ -91,7 +94,7 @@ export function Cirkel({
       <div
         className={`absolute ${PLAATSING[hoek]} aspect-square overflow-hidden rounded-full motion-safe:animate-ademen ${
           afbeelding
-            ? "shadow-[0_8px_24px_-8px_rgba(34,32,30,0.35)]"
+            ? "bg-[#f7f2e2] shadow-[0_8px_24px_-8px_rgba(34,32,30,0.35)]"
             : vulling
         }`}
         style={{ width: `${formaat * 100}%` }}
@@ -103,8 +106,7 @@ export function Cirkel({
             fill
             priority
             sizes="(min-width: 640px) 260px, 55vw"
-            className="object-cover"
-            style={afbeelding.positie ? { objectPosition: afbeelding.positie } : undefined}
+            className="object-contain p-4"
           />
         ) : raster ? (
           <Halftoon className="text-vlak/50" />

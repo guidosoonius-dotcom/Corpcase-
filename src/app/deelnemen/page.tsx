@@ -49,7 +49,7 @@ function Formulier() {
       <Cirkel
         hoek="rechtsboven"
         formaat={0.55}
-        afbeelding={{ src: "/illustraties/meedoen.jpg", positie: "58% 30%" }}
+        afbeelding={{ src: "/illustraties/meedoen.jpg" }}
       />
       <Link href="/" className="text-sm text-inkt-licht hover:text-accent-diep">
         ← Terug

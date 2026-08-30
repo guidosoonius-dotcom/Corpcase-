@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { organisatie, rol, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import { DonkerPaneel, Hoofdregel, Kaart, PijlActie } from "@/components/basis";
 import { Cirkel, Halftoon, RasterCirkel } from "@/components/decoratie";
 import { Aanwezigen } from "@/components/sessiebalk";
+import { OogDichtIcoon, OogIcoon, RolIcoon } from "@/components/icoon";
 
 /**
  * Fase 0: de lobby.
@@ -21,11 +23,12 @@ export function Lobby({
   state: SessieState;
   identiteit: BewaardeIdentiteit;
 }) {
+  const [opdrachtZichtbaar, setOpdrachtZichtbaar] = useState(false);
   const org = organisatie(state.sessie.organisatie_id);
   const modus = speelmodus(state.sessie.speelmodus);
   const ik = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
-  const heeftOpdracht = Boolean(ik && rolopdrachtVoorRol(ik.rol_id));
+  const opdracht = ik ? rolopdrachtVoorRol(ik.rol_id) : undefined;
 
   return (
     <div className="relative">
@@ -38,7 +41,7 @@ export function Lobby({
         hoek="rechtsboven"
         formaat={0.58}
         vanBoven={44}
-        afbeelding={{ src: "/illustraties/lobby.jpg", positie: "50% 18%" }}
+        afbeelding={{ src: "/illustraties/lobby.jpg" }}
       />
       <Cirkel hoek="linksboven" formaat={0.36} toon="zacht" vanBoven={44} />
 
@@ -82,16 +85,34 @@ export function Lobby({
             <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-houtskool-zacht">
               Jouw bril
             </span>
-            <p className="display mt-2 text-2xl leading-[1.18] text-white">{mijnRol.naam}</p>
+            <p className="display mt-2 flex items-center gap-2 text-2xl leading-[1.18] text-white">
+              <RolIcoon rolId={mijnRol.id} className="h-5 w-5 shrink-0 text-accent-op-donker" />
+              {mijnRol.naam}
+            </p>
             <p className="mt-3 max-w-[15rem] text-xs leading-relaxed text-houtskool-zacht">
               {mijnRol.lens}. De vraag die jij bewaakt: {mijnRol.vraag.toLowerCase()}
             </p>
-            {heeftOpdracht ? (
-              <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-houtskool-rand pt-3">
-                <span className="text-[11px] text-houtskool-zacht">
-                  Je privé-opdracht staat klaar
-                </span>
-                <span className="shrink-0 text-[11px] text-accent-op-donker">Alleen voor jou</span>
+            {opdracht ? (
+              <div className="mt-4 border-t border-houtskool-rand pt-3">
+                <button
+                  type="button"
+                  onClick={() => setOpdrachtZichtbaar((z) => !z)}
+                  className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-op-donker hover:underline"
+                >
+                  {opdrachtZichtbaar ? (
+                    <OogDichtIcoon className="h-3.5 w-3.5" />
+                  ) : (
+                    <OogIcoon className="h-3.5 w-3.5" />
+                  )}
+                  {opdrachtZichtbaar
+                    ? "Verberg je privé-opdracht"
+                    : "Je privé-opdracht staat klaar — alleen voor jou"}
+                </button>
+                {opdrachtZichtbaar ? (
+                  <p className="mt-1.5 rounded-kaart border-l-2 border-accent bg-houtskool-rand px-3 py-2 text-xs leading-relaxed text-white">
+                    {opdracht.opdracht}
+                  </p>
+                ) : null}
               </div>
             ) : null}
           </div>
