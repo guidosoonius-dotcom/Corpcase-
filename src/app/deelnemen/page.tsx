@@ -46,7 +46,11 @@ function Formulier() {
 
   return (
     <main className="relative mx-auto w-full max-w-md overflow-hidden px-5 py-10">
-      <Cirkel hoek="rechtsboven" formaat={0.55} toon="zacht" />
+      <Cirkel
+        hoek="rechtsboven"
+        formaat={0.55}
+        afbeelding={{ src: "/illustraties/meedoen.jpg", positie: "58% 30%" }}
+      />
       <Link href="/" className="text-sm text-inkt-licht hover:text-accent-diep">
         ← Terug
       </Link>

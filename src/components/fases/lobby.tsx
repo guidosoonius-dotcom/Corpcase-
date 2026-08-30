@@ -30,10 +30,16 @@ export function Lobby({
   return (
     <div className="relative">
       {/*
-        Vol koraal alleen hier, rechtsboven, waar geen tekst overheen valt. De zachte cirkel en
-        het raster liggen wél achter tekst en verdragen dat.
+        Rechtsboven een uitgesneden foto op de plek waar eerder het volle koraal stond — zelfde
+        formaat en dezelfde vanBoven-marge onder de kopregel. Linksboven blijft de zachte tint,
+        die ook achter tekst leesbaar is.
       */}
-      <Cirkel hoek="rechtsboven" formaat={0.58} toon="accent" vanBoven={44} />
+      <Cirkel
+        hoek="rechtsboven"
+        formaat={0.58}
+        vanBoven={44}
+        afbeelding={{ src: "/illustraties/lobby.jpg", positie: "50% 18%" }}
+      />
       <Cirkel hoek="linksboven" formaat={0.36} toon="zacht" vanBoven={44} />
 
       <Hoofdregel links={state.sessie.titel} rechts="Lobby" />

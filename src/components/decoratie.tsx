@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import Image from "next/image";
 
 /**
  * Decoratieve vormen: halfafgesneden cirkels en een halftoon-raster.
@@ -37,6 +38,7 @@ export function Cirkel({
   toon = "zacht",
   raster = false,
   vanBoven = 0,
+  afbeelding,
 }: {
   hoek?: Hoek;
   formaat?: number;
@@ -53,9 +55,16 @@ export function Cirkel({
    * `accent` is het volle koraal en verdraagt géén tekst — wit haalt erop 3,66 en zelfs de
    * donkerste inkt niet meer dan 4,44, allebei onder de norm. Gebruik die alleen in een zone
    * waar zeker geen tekst overheen valt.
+   *
+   * Genegeerd zodra `afbeelding` is gezet.
    */
   toon?: "accent" | "zacht" | "rand";
   raster?: boolean;
+  /**
+   * Vervangt de effen vulling door een uitgesneden foto, op dezelfde plek en hetzelfde formaat.
+   * Net als de effen cirkel puur decoratief — geen tekst hoort hier ooit overheen te vallen.
+   */
+  afbeelding?: { src: string; positie?: string };
 }) {
   const vulling =
     toon === "accent" ? "bg-accent" : toon === "zacht" ? "bg-accent-zacht" : "bg-rand";
@@ -80,10 +89,26 @@ export function Cirkel({
        * van, wat er verder ook aan Tailwind-utility's bijkomt.
        */}
       <div
-        className={`absolute ${PLAATSING[hoek]} aspect-square rounded-full ${vulling} motion-safe:animate-ademen`}
+        className={`absolute ${PLAATSING[hoek]} aspect-square overflow-hidden rounded-full motion-safe:animate-ademen ${
+          afbeelding
+            ? "shadow-[0_8px_24px_-8px_rgba(34,32,30,0.35)]"
+            : vulling
+        }`}
         style={{ width: `${formaat * 100}%` }}
       >
-        {raster ? <Halftoon className="text-vlak/50" /> : null}
+        {afbeelding ? (
+          <Image
+            src={afbeelding.src}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 640px) 260px, 55vw"
+            className="object-cover"
+            style={afbeelding.positie ? { objectPosition: afbeelding.positie } : undefined}
+          />
+        ) : raster ? (
+          <Halftoon className="text-vlak/50" />
+        ) : null}
       </div>
     </div>
   );
