@@ -125,7 +125,13 @@ async function voegDeelnemerToe(args: {
 }): Promise<DeelnemerRij> {
   const token = maakToken();
   const opdracht = rolopdrachtVoorRol(args.rolId);
-  const client = maakClient(args.identiteit);
+  /*
+   * Het eigen token moet als header mee op precies dit verzoek: de RLS-policy `deelnemers_lezen`
+   * herkent de zojuist ingevoegde rij aan `token = huidig_token()`, en die header moet er dus al
+   * bij staan vóórdat deze insert wordt uitgevoerd — een latere client met dit token erin helpt
+   * de RETURNING van déze insert niet.
+   */
+  const client = maakClient({ ...args.identiteit, deelnemerToken: token });
 
   return controleer(
     await client

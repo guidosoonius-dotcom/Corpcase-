@@ -3,8 +3,10 @@
 -- Dit bestand beschrijft de eindtoestand van het schema en kan een leeg Supabase-project in één
 -- keer inrichten. De losse migraties zijn met de Supabase-tooling toegepast onder de namen
 -- corpcase_speltabellen, corpcase_rls_policies, corpcase_helpers_naar_intern_schema,
--- corpcase_fk_indexen, deelnemers_eigen_fase, sessies_beheercode_niet_publiek en
--- sessies_publiek_alleen_lezen; dit bestand is daarvan het samengevoegde resultaat.
+-- corpcase_fk_indexen, deelnemers_eigen_fase, sessies_beheercode_niet_publiek,
+-- sessies_publiek_alleen_lezen, sessies_lezen_zonder_zelfreferentie_bij_aanmaken en
+-- deelnemers_joinen_via_security_definer_en_lezen_zonder_zelfreferentie; dit bestand is daarvan
+-- het samengevoegde resultaat.
 --
 -- Twee ontwerpkeuzes die de rest verklaren:
 --
@@ -259,6 +261,23 @@ returns boolean language sql stable security definer set search_path = '' as $$
   );
 $$;
 
+-- Voor het joinen zelf: `sessies_lezen` staat met opzet geen lookup via de join_code toe (zie het
+-- commentaar bij die policy). Een rechtstreekse subquery op `sessies` in `deelnemers_joinen` zou
+-- daardoor nóóit een sessie vinden voor een gewone deelnemer — de subquery zelf valt óók onder
+-- die RLS. Vandaar hier, net als bij `is_facilitator`/`is_deelnemer`, een `security definer`
+-- die de sessies-RLS bewust omzeilt voor precies deze ene vergelijking.
+create or replace function intern.sessie_toegankelijk_via_code(sid uuid)
+returns boolean language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from public.sessies s
+    where s.id = sid
+      and (
+        s.join_code = intern.header_waarde('x-join-code')
+        or s.beheer_code = intern.header_waarde('x-beheer-code')
+      )
+  );
+$$;
+
 grant execute on all functions in schema intern to anon, authenticated;
 
 alter table sessies enable row level security;
@@ -277,8 +296,19 @@ alter table roadmap_items enable row level security;
 -- iedereen die de joincode kent — die is juist bedoeld om rond te sturen — met een gericht
 -- `select=beheer_code`-verzoek de beheercode van diezelfde rij meelezen en zich zo tot
 -- facilitator bevorderen. De brede zichtbaarheid zit in de view `sessies_publiek` verderop.
+--
+-- De rechtstreekse kolomvergelijking staat er niet naast `is_facilitator(id)` voor de leesbaarheid
+-- maar noodgedwongen: `is_facilitator` doet een subquery op `sessies` zelf, en die subquery
+-- gebruikt het snapshot van vóór het huidige statement. Bij `insert into sessies (...) returning
+-- *` — wat supabase-js altijd doet — bestaat de zojuist ingevoegde rij dus nog niet voor die
+-- subquery, en gaf dat "new row violates row-level security policy for table sessies" bij elke
+-- sessiecreatie. De rechtstreekse vergelijking toetst de kolom van de rij die RETURNING al in
+-- handen heeft, zonder herquery, en werkt daardoor wél meteen na een insert in hetzelfde statement.
 create policy sessies_lezen on sessies for select
-  using (intern.is_facilitator(id));
+  using (
+    beheer_code = intern.header_waarde('x-beheer-code')
+    or intern.is_facilitator(id)
+  );
 
 create policy sessies_aanmaken on sessies for insert with check (true);
 
@@ -287,20 +317,18 @@ create policy sessies_wijzigen on sessies for update
 
 create policy sessies_verwijderen on sessies for delete using (intern.is_facilitator(id));
 
+-- Dezelfde reden voor de rechtstreekse kolomcheck als bij `sessies_lezen`: `is_deelnemer` doet een
+-- subquery op `deelnemers` zelf, die de zojuist ingevoegde rij nog niet ziet bij `insert ...
+-- returning` in hetzelfde statement — wat supabase-js altijd doet.
 create policy deelnemers_lezen on deelnemers for select
-  using (intern.is_deelnemer(sessie_id) or intern.is_facilitator(sessie_id));
+  using (
+    token = intern.huidig_token()
+    or intern.is_deelnemer(sessie_id)
+    or intern.is_facilitator(sessie_id)
+  );
 
 create policy deelnemers_joinen on deelnemers for insert
-  with check (
-    exists (
-      select 1 from sessies s
-      where s.id = sessie_id
-        and (
-          s.join_code = intern.header_waarde('x-join-code')
-          or s.beheer_code = intern.header_waarde('x-beheer-code')
-        )
-    )
-  );
+  with check (intern.sessie_toegankelijk_via_code(sessie_id));
 
 create policy deelnemers_wijzigen on deelnemers for update
   using (token = intern.huidig_token() or intern.is_facilitator(sessie_id))
