@@ -24,6 +24,8 @@ import {
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import { Hoofdregel, Knop, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
+import { downloadCsv, genereerRapportCsv } from "@/lib/rapport/csv";
+import { DownloadIcoon } from "@/components/icoon";
 
 /**
  * Het eindrapport: wat het team meeneemt naar de volgende vergadering.
@@ -65,16 +67,32 @@ export default function RapportPagina() {
   // Een negatieve uitkomst is een bevinding, geen reden om het vakje leeg te laten.
   const heeftDoorrekening = doorgerekend.length > 0;
 
+  function csvDownloaden() {
+    const datum = new Date(state!.sessie.aangemaakt_op).toISOString().slice(0, 10);
+    const naam = state!.sessie.titel
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    downloadCsv(`${naam || "corpcase-rapport"}-${datum}.csv`, genereerRapportCsv(state!));
+  }
+
   return (
     <Thema accent={org.thema.accent} className="flex-1">
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="niet-printen mb-8 flex items-center justify-between gap-4">
+      <div className="niet-printen mb-8 flex flex-wrap items-center justify-between gap-4">
         <p className="text-xs text-inkt-licht">
-          Print deze pagina of bewaar hem als pdf.
+          Print deze pagina of bewaar hem als pdf. Voor verdere verwerking kan het portfolio,
+          de business cases en de roadmap ook als spreadsheet mee.
         </p>
-        <Knop soort="rand" onClick={() => window.print()}>
-          Printen
-        </Knop>
+        <div className="flex shrink-0 gap-2">
+          <Knop soort="rand" onClick={csvDownloaden}>
+            <DownloadIcoon className="h-4 w-4" />
+            CSV downloaden
+          </Knop>
+          <Knop soort="rand" onClick={() => window.print()}>
+            Printen
+          </Knop>
+        </div>
       </div>
 
       <Hoofdregel links="Corpcase" rechts="Eindrapport" />

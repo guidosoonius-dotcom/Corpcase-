@@ -8,10 +8,10 @@
  * Draai met: npm run content:check
  */
 import {
+  allePersonaSignalen,
   bibliotheek,
   cora,
   organisaties,
-  personaSignalen,
   realiteitschecks,
   rollen,
   rolopdrachten,
@@ -25,7 +25,7 @@ const fouten: string[] = [];
 const waarschuwingen: string[] = [];
 
 const domeinIds = new Set(cora.domeinen.map((d) => d.id));
-const personaIds = new Set(personaSignalen.kaarten.map((k) => k.id));
+const personaIds = new Set(allePersonaSignalen.map((k) => k.id));
 const uitdagingIds = new Set(uitdagingSignalen.kaarten.map((k) => k.id));
 const rolIds = new Set(rollen.rollen.map((r) => r.id));
 
@@ -154,7 +154,7 @@ const onGeverifieerd = organisaties.flatMap((o) =>
 
 console.log(`Use cases:            ${bibliotheek.usecases.length}`);
 console.log(`CORA-domeinen:        ${cora.domeinen.length} (${gedekt.size} met bibliotheekkaart)`);
-console.log(`Signaalkaarten:       ${uitdagingSignalen.kaarten.length + personaSignalen.kaarten.length} + jaarverslag`);
+console.log(`Signaalkaarten:       ${uitdagingSignalen.kaarten.length + allePersonaSignalen.length} + jaarverslag`);
 console.log(`Realiteitschecks:     ${realiteitschecks.checks.length}`);
 console.log(`Rollen:               ${rollen.rollen.length}`);
 console.log(`Nog te verifiëren:    ${onGeverifieerd.length} cijfers (zie content/BRONNEN.md)`);

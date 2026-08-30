@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
 /**
  * De volledige sessie met drie spelers.
@@ -190,6 +191,20 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   await expect(wonen.getByText(/Eerst nodig: Koppelvlak op VERA/)).toBeVisible();
   // En de kanttekening dat een doorrekening op aannames rust, ontbreekt niet.
   await expect(wonen.getByRole("heading", { name: "Realiteitschecks" })).toBeVisible();
+
+  // Het rapport gaat ook als spreadsheet mee, voor wie verder wil rekenen dan de pagina zelf.
+  const [download] = await Promise.all([
+    wonen.waitForEvent("download"),
+    wonen.getByRole("button", { name: "CSV downloaden" }).click(),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/\.csv$/);
+  const csvPad = await download.path();
+  const csvInhoud = readFileSync(csvPad!, "utf-8");
+  expect(csvInhoud).toContain("Portfolio");
+  expect(csvInhoud).toContain("Business cases");
+  expect(csvInhoud).toContain("Roadmap");
+  // De randvoorwaarde die Marieke invulde staat ook in de export.
+  expect(csvInhoud).toContain("Koppelvlak op VERA");
 
   // Het beamerscherm van de facilitator toont dezelfde sessie.
   await facilitator.goto(`/sessie/${sessieId}/scherm`);

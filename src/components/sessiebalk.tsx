@@ -10,7 +10,7 @@ import type { SessieHaak } from "@/lib/sessie/gebruik";
 import { opslag } from "@/lib/sessie/api";
 import { useTelOp } from "@/lib/animatie/telOp";
 import { Etiket, Melding } from "./basis";
-import { OogDichtIcoon, OogIcoon, SyncIcoon, WaarschuwingIcoon } from "./icoon";
+import { InfoIcoon, OogDichtIcoon, OogIcoon, SyncIcoon, WaarschuwingIcoon } from "./icoon";
 
 /**
  * De vaste kop boven elk spelerscherm: waar zijn we, wie ben ik, hoe staat het team ervoor.
@@ -35,6 +35,7 @@ export function Sessiebalk({
   doe: SessieHaak["doe"];
 }) {
   const [opdrachtZichtbaar, setOpdrachtZichtbaar] = useState(false);
+  const [scoreUitlegZichtbaar, setScoreUitlegZichtbaar] = useState(false);
   const ik = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
   const opdracht = rolopdrachten.opdrachten.find((o) => o.id === ik?.rolopdracht_id);
@@ -65,10 +66,27 @@ export function Sessiebalk({
             </p>
           </div>
           <div className="shrink-0 text-right">
-            <p className="text-xs text-inkt-licht">Teamscore</p>
+            <button
+              type="button"
+              onClick={() => setScoreUitlegZichtbaar((z) => !z)}
+              className="inline-flex items-center gap-0.5 text-xs text-inkt-licht hover:text-inkt"
+              aria-label={
+                scoreUitlegZichtbaar ? "Verberg uitleg bij de teamscore" : "Wat is de teamscore?"
+              }
+            >
+              Teamscore
+              <InfoIcoon className="h-3 w-3" />
+            </button>
             <p className="cijfer text-3xl text-accent">{teamscoreWeergegeven}</p>
           </div>
         </div>
+
+        {scoreUitlegZichtbaar ? (
+          <p className="mt-2 text-xs leading-relaxed text-inkt-zacht">
+            Meet de breedte en onderbouwing van het gesprek — geen ranking tussen jullie. De volle
+            uitsplitsing staat straks bij Opbrengst.
+          </p>
+        ) : null}
 
         <nav aria-label={`Fase, sessie ${sessieId}`}>
           <ol className="scroll-x mt-3 flex gap-1 pb-0.5">

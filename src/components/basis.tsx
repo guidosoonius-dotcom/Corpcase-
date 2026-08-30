@@ -227,12 +227,15 @@ export function Cijfer({
   toon = "inkt",
   formaat = "groot",
   achtervoegsel,
+  toelichting,
 }: {
   waarde: string | number;
   label?: string;
   toon?: "inkt" | "accent" | "op-donker" | "gedempt";
   formaat?: "normaal" | "groot" | "reusachtig";
   achtervoegsel?: string;
+  /** Eén korte regel onder het getal die uitlegt wat het meet — niet elk cijfer heeft dat nodig. */
+  toelichting?: string;
 }) {
   // Vol koraal haalt op papier 3,43. Dat is genoeg voor grote tekst (norm 3,0) en niet voor
   // kleine, en daarom begint het kleinste formaat hieronder op 30px. Zolang dat zo blijft mag
@@ -273,6 +276,9 @@ export function Cijfer({
           <span className="ml-1 align-baseline text-base font-normal">{achtervoegsel}</span>
         ) : null}
       </p>
+      {toelichting ? (
+        <p className={`mt-1 max-w-[22rem] text-[11px] leading-snug ${labelkleur}`}>{toelichting}</p>
+      ) : null}
     </div>
   );
 }

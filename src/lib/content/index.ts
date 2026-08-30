@@ -1,7 +1,4 @@
 import coraJson from "@content/cora/domeinen.json";
-import duwoJson from "@content/organisaties/duwo.json";
-import jaarverslagJson from "@content/signalen/duwo-jaarverslag.json";
-import personasJson from "@content/signalen/duwo-personas.json";
 import uitdagingenJson from "@content/signalen/uitdagingen.json";
 import bibliotheekJson from "@content/usecases/bibliotheek.json";
 import driversJson from "@content/waarde/drivers.json";
@@ -9,6 +6,14 @@ import rollenJson from "@content/spel/rollen.json";
 import rolopdrachtenJson from "@content/spel/rolopdrachten.json";
 import realiteitschecksJson from "@content/spel/realiteitschecks.json";
 import speelmodiJson from "@content/spel/speelmodi.json";
+
+// Per organisatie horen drie bestanden bij elkaar: het profiel en de twee org-specifieke
+// signaallenzen (jaarverslag, huurders). Nieuwe corporatie? Voeg de drie imports hieronder toe en
+// één regel aan ORGANISATIE_BRONNEN — de onboardingwizard (/organisatie-toevoegen) genereert de
+// bestanden zelf en toont precies deze twee regels om te plakken.
+import duwoJson from "@content/organisaties/duwo.json";
+import duwoJaarverslagJson from "@content/signalen/duwo-jaarverslag.json";
+import duwoPersonasJson from "@content/signalen/duwo-personas.json";
 
 import {
   bibliotheekSchema,
@@ -22,6 +27,8 @@ import {
   rollenBestandSchema,
   speelmodiBestandSchema,
   uitdagingBestandSchema,
+  type JaarverslagKaart,
+  type PersonaKaart,
 } from "./schemas";
 
 /**
@@ -31,10 +38,25 @@ import {
  * of bij `npm run content:check` — niet pas halverwege een sessie met een bestuurder aan tafel.
  */
 
+const ORGANISATIE_BRONNEN = [
+  { organisatie: duwoJson, jaarverslag: duwoJaarverslagJson, personas: duwoPersonasJson },
+];
+
+/** Los van ORGANISATIE_BRONNEN getest in __tests__/organisaties.test.ts, met fictieve bronnen. */
+export function bouwOrganisatieRegister(
+  bronnen: { organisatie: unknown; jaarverslag: unknown; personas: unknown }[],
+) {
+  return bronnen.map((bron) => ({
+    organisatie: organisatieSchema.parse(bron.organisatie),
+    jaarverslag: jaarverslagBestandSchema.parse(bron.jaarverslag),
+    personas: personaBestandSchema.parse(bron.personas),
+  }));
+}
+
+const organisatieRegister = bouwOrganisatieRegister(ORGANISATIE_BRONNEN);
+
 export const cora = coraBestandSchema.parse(coraJson);
-export const organisaties = [organisatieSchema.parse(duwoJson)];
-export const jaarverslagSignalen = jaarverslagBestandSchema.parse(jaarverslagJson);
-export const personaSignalen = personaBestandSchema.parse(personasJson);
+export const organisaties = organisatieRegister.map((e) => e.organisatie);
 export const uitdagingSignalen = uitdagingBestandSchema.parse(uitdagingenJson);
 export const bibliotheek = bibliotheekSchema.parse(bibliotheekJson);
 export const waardeModel = driversBestandSchema.parse(driversJson);
@@ -42,6 +64,17 @@ export const rollen = rollenBestandSchema.parse(rollenJson);
 export const rolopdrachten = rolopdrachtenBestandSchema.parse(rolopdrachtenJson);
 export const realiteitschecks = realiteitschecksBestandSchema.parse(realiteitschecksJson);
 export const speelmodi = speelmodiBestandSchema.parse(speelmodiJson);
+
+/**
+ * Alle huurderspersona's van alle organisaties samen — voor kruiscontroles in
+ * `scripts/valideer-content.ts` (verwijst elke usecase.personas naar een bestaand persona-id?)
+ * en voor de wizard, die de bestaande persona-concepten toont als startpunt: een nieuwe
+ * corporatie die een concept-id hergebruikt (bijvoorbeeld `p-internationaal`) houdt de koppeling
+ * met de bibliotheek in stand.
+ */
+export const allePersonaSignalen: PersonaKaart[] = organisatieRegister.flatMap(
+  (e) => e.personas.kaarten,
+);
 
 export function organisatie(id: string) {
   const gevonden = organisaties.find((o) => o.id === id);
@@ -71,6 +104,17 @@ export function rolopdrachtVoorRol(rolId: string) {
   return rolopdrachten.opdrachten.find((o) => o.rol === rolId);
 }
 
+/** De huurderspersona's van precies deze organisatie, voor dekking() en de teamscore. */
+export function personasVoorOrganisatie(organisatieId: string): PersonaKaart[] {
+  return organisatieRegister.find((e) => e.organisatie.id === organisatieId)?.personas.kaarten ?? [];
+}
+
+function jaarverslagVoorOrganisatie(organisatieId: string): JaarverslagKaart[] {
+  return (
+    organisatieRegister.find((e) => e.organisatie.id === organisatieId)?.jaarverslag.kaarten ?? []
+  );
+}
+
 /** Alle signaalkaarten van de vier lenzen, in één lijst met hun lens erbij. */
 export type SignaalKaart = {
   id: string;
@@ -87,31 +131,27 @@ export type SignaalKaart = {
 export function alleSignalen(organisatieId: string): SignaalKaart[] {
   const kaarten: SignaalKaart[] = [];
 
-  if (jaarverslagSignalen.organisatie_id === organisatieId) {
-    for (const k of jaarverslagSignalen.kaarten) {
-      kaarten.push({
-        id: k.id,
-        lens: "jaarverslag",
-        titel: k.titel,
-        tekst: k.signaal,
-        thema: k.thema,
-        bron: k.bron,
-        geverifieerd: k.geverifieerd,
-      });
-    }
+  for (const k of jaarverslagVoorOrganisatie(organisatieId)) {
+    kaarten.push({
+      id: k.id,
+      lens: "jaarverslag",
+      titel: k.titel,
+      tekst: k.signaal,
+      thema: k.thema,
+      bron: k.bron,
+      geverifieerd: k.geverifieerd,
+    });
   }
 
-  if (personaSignalen.organisatie_id === organisatieId) {
-    for (const k of personaSignalen.kaarten) {
-      kaarten.push({
-        id: k.id,
-        lens: "huurder",
-        titel: k.titel,
-        tekst: k.signaal,
-        thema: k.thema,
-        detail: { profiel: k.profiel, reis: k.reis, frustraties: k.frustraties },
-      });
-    }
+  for (const k of personasVoorOrganisatie(organisatieId)) {
+    kaarten.push({
+      id: k.id,
+      lens: "huurder",
+      titel: k.titel,
+      tekst: k.signaal,
+      thema: k.thema,
+      detail: { profiel: k.profiel, reis: k.reis, frustraties: k.frustraties },
+    });
   }
 
   for (const k of uitdagingSignalen.kaarten) {

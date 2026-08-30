@@ -113,6 +113,10 @@ export function Opbrengst({ state }: { state: SessieState }) {
 
       <section>
         <h2 className="display text-lg text-inkt">Waar de teamscore vandaan komt</h2>
+        <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
+          Geen ranking tussen spelers: elk onderdeel meet iets anders over hoe breed en
+          onderbouwd het gesprek was.
+        </p>
         <ul className="mt-2 space-y-1.5">
           {score.onderdelen.map((onderdeel) => (
             <li key={onderdeel.id} className="flex items-baseline justify-between gap-3">

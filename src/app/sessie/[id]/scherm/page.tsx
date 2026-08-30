@@ -2,13 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { FASE_LABELS } from "@/lib/supabase/types";
-import {
-  cora,
-  domein as coraDomein,
-  organisatie,
-  personaSignalen,
-  speelmodus,
-} from "@/lib/content";
+import { cora, domein as coraDomein, organisatie, speelmodus } from "@/lib/content";
 import { useSessie } from "@/lib/sessie/gebruik";
 import { alleBeelden, budgetStand, dekking, teamscore } from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
@@ -70,7 +64,13 @@ export default function SchermPagina() {
           </p>
           <h1 className="display mt-1 text-4xl leading-tight text-inkt">{state.sessie.titel}</h1>
         </div>
-        <Cijfer waarde={score.totaal} label="Teamscore" toon="accent" formaat="groot" />
+        <Cijfer
+          waarde={score.totaal}
+          label="Teamscore"
+          toon="accent"
+          formaat="groot"
+          toelichting="Meet de breedte en onderbouwing van het gesprek, niet wie er wint."
+        />
       </header>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[3fr_2fr]">
@@ -150,7 +150,8 @@ export default function SchermPagina() {
             </div>
             <p className="mt-2 text-sm text-inkt-zacht">
               {gedekt.domeinenGedekt.length} van {cora.domeinen.length} domeinen ·{" "}
-              {gedekt.personasGeraakt.length} van {personaSignalen.kaarten.length} huurderstypen
+              {gedekt.personasGeraakt.length} van{" "}
+              {gedekt.personasGeraakt.length + gedekt.personasGemist.length} huurderstypen
             </p>
             {gedekt.domeinenOngedekt.length > 0 ? (
               <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">

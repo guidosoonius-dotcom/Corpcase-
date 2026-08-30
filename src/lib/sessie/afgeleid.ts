@@ -8,7 +8,7 @@ import {
   type Positie,
 } from "@/lib/waarde/berekening";
 import type { DrivertypeId } from "@/lib/content/schemas";
-import { cora, personaSignalen, speelmodus, usecase as bibliotheekKaart } from "@/lib/content";
+import { cora, personasVoorOrganisatie, speelmodus, usecase as bibliotheekKaart } from "@/lib/content";
 import {
   FASES,
   type DeelnemerRij,
@@ -155,11 +155,12 @@ export type Dekking = {
  * waar het toch al mee bezig is.
  */
 export function dekking(state: SessieState): Dekking {
+  const personas = personasVoorOrganisatie(state.sessie.organisatie_id);
   const geraakteDomeinen = new Set(state.usecases.map((u) => u.domein));
 
   const geraaktePersonas = new Set<string>();
   for (const koppeling of state.usecaseSignalen) {
-    if (personaSignalen.kaarten.some((k) => k.id === koppeling.signaal_id)) {
+    if (personas.some((k) => k.id === koppeling.signaal_id)) {
       geraaktePersonas.add(koppeling.signaal_id);
     }
   }
@@ -172,12 +173,8 @@ export function dekking(state: SessieState): Dekking {
   return {
     domeinenGedekt: cora.domeinen.filter((d) => geraakteDomeinen.has(d.id)).map((d) => d.id),
     domeinenOngedekt: cora.domeinen.filter((d) => !geraakteDomeinen.has(d.id)).map((d) => d.id),
-    personasGeraakt: personaSignalen.kaarten
-      .filter((k) => geraaktePersonas.has(k.id))
-      .map((k) => k.id),
-    personasGemist: personaSignalen.kaarten
-      .filter((k) => !geraaktePersonas.has(k.id))
-      .map((k) => k.id),
+    personasGeraakt: personas.filter((k) => geraaktePersonas.has(k.id)).map((k) => k.id),
+    personasGemist: personas.filter((k) => !geraaktePersonas.has(k.id)).map((k) => k.id),
   };
 }
 
@@ -199,8 +196,9 @@ export function teamscore(state: SessieState): Teamscore {
   const domeinPunten = gedekt.domeinenGedekt.length * 3;
   const domeinMax = cora.domeinen.length * 3;
 
+  const personaAantal = gedekt.personasGeraakt.length + gedekt.personasGemist.length;
   const personaPunten = gedekt.personasGeraakt.length * 4;
-  const personaMax = personaSignalen.kaarten.length * 4;
+  const personaMax = personaAantal * 4;
 
   const assists = state.bijdragen.filter((b) => b.soort === "assist").length;
   const assistPunten = assists * 5;
@@ -238,7 +236,7 @@ export function teamscore(state: SessieState): Teamscore {
       label: "Huurdersblik",
       punten: personaPunten,
       maximum: personaMax,
-      toelichting: `${gedekt.personasGeraakt.length} van de ${personaSignalen.kaarten.length} huurderstypen in beeld`,
+      toelichting: `${gedekt.personasGeraakt.length} van de ${personaAantal} huurderstypen in beeld`,
     },
     {
       id: "onderbouwing",
