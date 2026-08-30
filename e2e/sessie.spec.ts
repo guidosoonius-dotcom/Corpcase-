@@ -51,12 +51,15 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   await expect(facilitator.getByText("Peter")).toBeVisible();
 
   // --- Privé-rolopdracht lekt niet -----------------------------------------
+  // De opdracht zit achter het rolpaneel, dat zelf achter het avatarknopje in de balk zit.
+  await wonen.getByRole("button", { name: "Toon jouw rol en opdracht" }).click();
   await wonen.getByRole("button", { name: /Toon mijn opdracht/ }).click();
   const opdrachtVanMarieke = await wonen
     .getByText(/Zorg dat minstens twee use cases/)
     .innerText();
   expect(opdrachtVanMarieke).toContain("bewoner");
   // Peter ziet zijn eigen opdracht, niet die van Marieke.
+  await it.getByRole("button", { name: "Toon jouw rol en opdracht" }).click();
   await it.getByRole("button", { name: /Toon mijn opdracht/ }).click();
   await expect(it.getByText(/geen enkele use case het portfolio in gaat zonder benoemde databron/)).toBeVisible();
   await expect(it.getByText(/Zorg dat minstens twee use cases/)).toHaveCount(0);
