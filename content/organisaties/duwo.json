@@ -10,10 +10,10 @@
     "geverifieerd": false
   },
   "jaarverslag": {
-    "jaar": 2024,
-    "titel": "Een eerlijk thuis voor elke student: beschikbaar, betaalbaar en duurzaam",
-    "bron": "https://storage-customers.zig365.nl/duwo-ksp-web-hupo-portal-p-pub/user_upload/Jaarverslagen/Jaarverslag%202024%20PDF.pdf",
-    "geverifieerd": false
+    "jaar": 2025,
+    "titel": "Jaarverslag 2025: Werken aan het beste voor onze studenten",
+    "bron": "DUWO_Jaarverslag_2025_definitief.pdf",
+    "geverifieerd": true
   },
   "steden": [
     "Amsterdam",
@@ -30,11 +30,11 @@
     {
       "id": "eenheden",
       "label": "Studentenkamers en -woningen",
-      "waarde": 33000,
+      "waarde": 34562,
       "eenheid": "eenheden",
-      "notatie": "ruim 33.000",
-      "bron": "DUWO jaarverslag 2024 / duwo.nl",
-      "geverifieerd": false
+      "notatie": "34.562",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
     },
     {
       "id": "verhuizingen_per_jaar",
@@ -84,11 +84,11 @@
     {
       "id": "woonbeleving",
       "label": "Woonbeleving bewoners",
-      "waarde": 7.2,
+      "waarde": 6.8,
       "eenheid": "rapportcijfer",
-      "notatie": "7,2 gemiddeld; elke locatie 7,1 of hoger",
-      "bron": "DUWO Woonbelevingsonderzoek 2024",
-      "geverifieerd": false
+      "notatie": "6,8 gemiddeld (was 7,2 in 2024); respons daalde naar 17,4%",
+      "bron": "DUWO Woonbelevingsonderzoek 2025 (Jaarverslag 2025)",
+      "geverifieerd": true
     },
     {
       "id": "ambitie_den_haag",
@@ -188,6 +188,78 @@
       "notatie": "30.400 tot 67.300 (was 22.000 in 2020)",
       "bron": "Landelijke Monitor Studentenhuisvesting, via DUWO ondernemingsplan 2026-2030",
       "geverifieerd": true
+    },
+    {
+      "id": "loan_to_value_2025",
+      "label": "Loan-to-value (op basis van beleidswaarde)",
+      "waarde": 52.9,
+      "eenheid": "%",
+      "notatie": "52,9% (was 31,1% in 2024)",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "eigen_vermogen_2025",
+      "label": "Eigen vermogen",
+      "waarde": 2000000000,
+      "eenheid": "EUR",
+      "notatie": "circa €2 miljard (+€132 mln in 2025)",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "investeringsvolume_2030",
+      "label": "Investeringsvolume tot en met 2030",
+      "waarde": 1300000000,
+      "eenheid": "EUR",
+      "notatie": "€1,3 miljard (€787 mln nieuwbouw, €515 mln bestaande voorraad)",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "klanttevredenheid_2025",
+      "label": "Klanttevredenheid",
+      "waarde": 7.8,
+      "eenheid": "rapportcijfer",
+      "notatie": "7,8 (was 7,5 in 2024)",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "energielabel_afgerond_pct",
+      "label": "Woningen met een energielabel",
+      "waarde": 88,
+      "eenheid": "%",
+      "notatie": "88%; resterend zijn vooral monumenten",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "duwo_app_gebruikers_2025",
+      "label": "Actieve gebruikers DUWO-app",
+      "waarde": 30728,
+      "eenheid": "gebruikers",
+      "notatie": "ruim 30.700 (was 25.000 in 2024)",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "totale_doelgroep_werkgebied",
+      "label": "Totale relevante doelgroep (mbo/hbo/wo)",
+      "waarde": 389900,
+      "eenheid": "studenten",
+      "notatie": "389.900 in alle DUWO-regio's",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
+    },
+    {
+      "id": "verwacht_tekort_werkgebied",
+      "label": "Verwacht gemiddeld woningtekort in het werkgebied",
+      "waarde": 29450,
+      "eenheid": "eenheden",
+      "notatie": "29.450, gemiddeld over de planperiode",
+      "bron": "DUWO Jaarverslag 2025",
+      "geverifieerd": true
     }
   ],
   "strategische_themas": [
@@ -237,18 +309,18 @@
     {
       "id": "gem_maandhuur",
       "label": "Gemiddelde maandhuur per eenheid",
-      "waarde": 450,
+      "waarde": 524,
       "eenheid": "EUR/maand",
-      "bron": "aanname",
-      "geverifieerd": false
+      "bron": "DUWO Jaarverslag 2025 (huishoudboekje: huur en servicekosten ontvangen)",
+      "geverifieerd": true
     },
     {
       "id": "dagopbrengst_eenheid",
       "label": "Gederfde opbrengst per leegstandsdag",
-      "waarde": 15,
+      "waarde": 17,
       "eenheid": "EUR/dag",
-      "bron": "afgeleid uit gemiddelde maandhuur",
-      "geverifieerd": false
+      "bron": "afgeleid uit gemiddelde maandhuur (DUWO Jaarverslag 2025)",
+      "geverifieerd": true
     },
     {
       "id": "leegstandsdagen_per_mutatie",
@@ -261,18 +333,18 @@
     {
       "id": "reparatieverzoeken_per_jaar",
       "label": "Reparatieverzoeken per jaar",
-      "waarde": 25000,
+      "waarde": 21000,
       "eenheid": "stuks/jaar",
-      "bron": "aanname (circa 0,75 per eenheid per jaar)",
-      "geverifieerd": false
+      "bron": "DUWO Jaarverslag 2025 (reparatieopdrachten door eigen vakmensen)",
+      "geverifieerd": true
     },
     {
       "id": "klantcontacten_per_jaar",
-      "label": "Klantcontacten per jaar (mail, telefoon, portaal)",
-      "waarde": 120000,
+      "label": "Klantcontacten per jaar (chat, telefoon, e-mail)",
+      "waarde": 243000,
       "eenheid": "contacten/jaar",
-      "bron": "aanname",
-      "geverifieerd": false
+      "bron": "DUWO Jaarverslag 2025 (62.500 chats, 43.500 telefoongesprekken, 137.000 e-mails)",
+      "geverifieerd": true
     },
     {
       "id": "inkoopfacturen_per_jaar",
