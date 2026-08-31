@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { alleSignalen, rol, speelmodus, type SignaalKaart } from "@/lib/content";
 import { opslag } from "@/lib/sessie/api";
-import type { SessieState } from "@/lib/supabase/types";
+import type { EigenSignaalRij, SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Hoofdregel, Kaart, Knop, Kop, Melding } from "@/components/basis";
+import { Etiket, Hoofdregel, Kaart, Knop, Kop, Melding, Veld, invoerStijl } from "@/components/basis";
 
 const PER_PORTIE = 12;
 
@@ -15,6 +15,11 @@ const LENS_LABELS: Record<SignaalKaart["lens"], string> = {
   uitdaging: "Uitdaging",
   domein: "Domein",
 };
+
+/** Een zelf toegevoegde kaart krijgt geen bron of domeinrelevantie — dat verzint zich niet. */
+function alsSignaalKaart(eigen: EigenSignaalRij): SignaalKaart {
+  return { id: eigen.id, lens: "uitdaging", titel: eigen.titel, tekst: eigen.tekst };
+}
 
 /**
  * Fase 1: door welke ogen kijk je?
@@ -36,13 +41,19 @@ export function Verkennen({
   // Er zijn ruim veertig kaarten. Alles tegelijk tonen is op een telefoon een scrollmarathon
   // waarin niemand nog kiest; per portie van twaalf blijft het een gesprek.
   const [portie, setPortie] = useState(1);
+  const [eigenFormulierOpen, setEigenFormulierOpen] = useState(false);
+  const [eigenTitel, setEigenTitel] = useState("");
+  const [eigenTekst, setEigenTekst] = useState("");
   const modus = speelmodus(state.sessie.speelmodus);
   const ik = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
 
   const signalen = useMemo(
-    () => alleSignalen(state.sessie.organisatie_id),
-    [state.sessie.organisatie_id],
+    () => [
+      ...alleSignalen(state.sessie.organisatie_id),
+      ...state.eigenSignalen.map(alsSignaalKaart),
+    ],
+    [state.sessie.organisatie_id, state.eigenSignalen],
   );
 
   const mijnSelecties = state.selecties.filter((s) => s.deelnemer_id === identiteit.deelnemerId);
@@ -93,6 +104,21 @@ export function Verkennen({
     );
   }
 
+  async function voegEigenUitdagingToe() {
+    if (!eigenTitel.trim()) return;
+    await doe(() =>
+      opslag.voegEigenUitdagingToe(identiteit, {
+        sessieId: state.sessie.id,
+        deelnemerId: identiteit.deelnemerId,
+        titel: eigenTitel.trim(),
+        tekst: eigenTekst.trim(),
+      }),
+    );
+    setEigenTitel("");
+    setEigenTekst("");
+    setEigenFormulierOpen(false);
+  }
+
   // Al gekozen kaarten blijven altijd in beeld, ook als ze buiten de huidige portie vallen.
   const zichtbaar = gesorteerd.filter(
     (signaal, index) => index < portie * PER_PORTIE || gekozen.has(signaal.id),
@@ -140,6 +166,55 @@ export function Verkennen({
           </button>
         ))}
       </div>
+
+      {lens === "uitdaging" ? (
+        eigenFormulierOpen ? (
+          <Kaart className="p-4">
+            <h3 className="text-sm font-medium text-inkt">Eigen uitdaging toevoegen</h3>
+            <div className="mt-3 space-y-3">
+              <Veld label="Titel">
+                <input
+                  className={invoerStijl}
+                  value={eigenTitel}
+                  onChange={(e) => setEigenTitel(e.target.value)}
+                  placeholder="Kort en herkenbaar, zoals de andere kaarten hierboven."
+                  autoFocus
+                />
+              </Veld>
+              <Veld label="Toelichting" hint="Wat maakt dit lastig? Optioneel, maar helpt anderen het te herkennen.">
+                <textarea
+                  className={`${invoerStijl} min-h-16`}
+                  value={eigenTekst}
+                  onChange={(e) => setEigenTekst(e.target.value)}
+                />
+              </Veld>
+              <div className="flex gap-1.5">
+                <Knop onClick={() => void voegEigenUitdagingToe()} disabled={!eigenTitel.trim()}>
+                  Toevoegen
+                </Knop>
+                <Knop
+                  soort="stil"
+                  onClick={() => {
+                    setEigenFormulierOpen(false);
+                    setEigenTitel("");
+                    setEigenTekst("");
+                  }}
+                >
+                  Annuleren
+                </Knop>
+              </div>
+            </div>
+          </Kaart>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setEigenFormulierOpen(true)}
+            className="w-full rounded-kaart border border-dashed border-rand-sterk px-4 py-3 text-left text-sm font-medium text-inkt-zacht transition-colors hover:border-accent-sterk hover:text-accent-diep"
+          >
+            + Zelf een uitdaging toevoegen die er nog niet bij staat
+          </button>
+        )
+      ) : null}
 
       <ul className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
         {zichtbaar.map((signaal) => {

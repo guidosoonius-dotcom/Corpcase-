@@ -3,6 +3,7 @@ import type {
   AllocatieRij,
   BijdrageRij,
   DeelnemerRij,
+  EigenSignaalRij,
   Fase,
   RealiteitscheckBesluitRij,
   RoadmapItemRij,
@@ -20,6 +21,7 @@ import {
   type AllocatieInvoer,
   type BesluitInvoer,
   type BijdrageInvoer,
+  type EigenUitdagingInvoer,
   type Identiteit,
   type NieuweSessie,
   type NieuweUsecase,
@@ -50,6 +52,7 @@ type Dossier = {
   sessie: SessieRij;
   deelnemers: DeelnemerRij[];
   selecties: SignaalSelectieRij[];
+  eigenSignalen: EigenSignaalRij[];
   usecases: SessieUsecaseRij[];
   usecaseSignalen: UsecaseSignaalRij[];
   waarderingen: WaarderingRij[];
@@ -153,6 +156,7 @@ export function maakSessie(invoer: NieuweSessie): Toegang {
     sessie,
     deelnemers: [],
     selecties: [],
+    eigenSignalen: [],
     usecases: [],
     usecaseSignalen: [],
     waarderingen: [],
@@ -245,6 +249,7 @@ export function haalState(identiteit: Identiteit, sessieId: string): SessieState
     sessie: maskeerBeheercode(dossier.sessie),
     deelnemers: [...dossier.deelnemers],
     selecties: [...dossier.selecties],
+    eigenSignalen: [...dossier.eigenSignalen],
     usecases: [...dossier.usecases],
     usecaseSignalen: dossier.usecaseSignalen.filter((k) => ids.has(k.usecase_id)),
     waarderingen: [...dossier.waarderingen],
@@ -339,6 +344,36 @@ export function verwijderSignaalSelectie(
       (s) => !(s.deelnemer_id === args.deelnemerId && s.signaal_id === args.signaalId),
     );
   }
+}
+
+export function voegEigenUitdagingToe(
+  identiteit: Identiteit,
+  invoer: EigenUitdagingInvoer,
+): EigenSignaalRij {
+  const dossier = vindDossier(invoer.sessieId);
+  eisDeelnemer(dossier, identiteit);
+
+  const kaart: EigenSignaalRij = {
+    id: crypto.randomUUID(),
+    sessie_id: invoer.sessieId,
+    auteur_id: invoer.deelnemerId,
+    lens: "uitdaging",
+    titel: invoer.titel,
+    tekst: invoer.tekst ?? "",
+    aangemaakt_op: nu(),
+  };
+  dossier.eigenSignalen.push(kaart);
+
+  // Wie een kaart toevoegt, herkent hem per definitie — zelfde herkenning als bij het aantikken
+  // van een bestaande kaart.
+  selecteerSignaal(identiteit, {
+    sessieId: invoer.sessieId,
+    deelnemerId: invoer.deelnemerId,
+    signaalId: kaart.id,
+    herkenning: 3,
+  });
+
+  return kaart;
 }
 
 // Fase 2: use cases ---------------------------------------------------------

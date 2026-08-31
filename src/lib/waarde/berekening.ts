@@ -231,6 +231,31 @@ export function bepaalKwadrant(positie: Positie, grens = 3): KwadrantId {
   return "vermijden";
 }
 
+/**
+ * Bij het plaatsen op de roadmap staat het kwadrant uit Prioritering al vast — dat is genoeg voor
+ * een voorzet, zonder iets te verzinnen dat er nog niet was. Snel doen is per definitie haalbaar
+ * en waardevol, dus meteen beginnen; strategisch investeren vraagt eerst een fundament, dus later;
+ * meenemen is geen prioriteit maar kan tussendoor. "Niet nu" krijgt bewust geen voorstel: dat
+ * kwadrant wijst juist af, en een use case die daar toch is opgenomen vraagt om een eigen afweging
+ * in plaats van een automatische plek.
+ *
+ * De voorkeursvolgorde valt terug op de eerstvolgende horizon die in déze speelduur bestaat —
+ * `kort` heeft geen `later`.
+ */
+const HORIZON_VOORKEUR: Record<Exclude<KwadrantId, "vermijden">, string[]> = {
+  "quick-wins": ["nu", "volgend"],
+  strategisch: ["later", "volgend"],
+  vulwerk: ["volgend", "nu"],
+};
+
+export function voorgesteldeHorizon(
+  kwadrant: KwadrantId | null,
+  horizonIds: string[],
+): string | null {
+  if (!kwadrant || kwadrant === "vermijden") return null;
+  return HORIZON_VOORKEUR[kwadrant].find((id) => horizonIds.includes(id)) ?? null;
+}
+
 export type Budget = { geld_eur: number; verandercapaciteit_mensmaanden: number };
 
 export type Allocatie = { usecase_id: string; geld_eur: number; capaciteit_mensmaanden: number };

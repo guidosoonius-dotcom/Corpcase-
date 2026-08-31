@@ -95,6 +95,17 @@ export type SignaalSelectieRij = {
   aangemaakt_op: string;
 };
 
+/** Een door een deelnemer zelf toegevoegde signaalkaart, los van de statische bibliotheek. */
+export type EigenSignaalRij = {
+  id: string;
+  sessie_id: string;
+  auteur_id: string;
+  lens: string;
+  titel: string;
+  tekst: string;
+  aangemaakt_op: string;
+};
+
 export type SessieUsecaseRij = {
   id: string;
   sessie_id: string;
@@ -170,6 +181,7 @@ export type SessieState = {
   sessie: SessieRij;
   deelnemers: DeelnemerRij[];
   selecties: SignaalSelectieRij[];
+  eigenSignalen: EigenSignaalRij[];
   usecases: SessieUsecaseRij[];
   usecaseSignalen: UsecaseSignaalRij[];
   waarderingen: WaarderingRij[];

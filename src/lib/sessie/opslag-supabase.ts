@@ -3,6 +3,7 @@ import type {
   AllocatieRij,
   BijdrageRij,
   DeelnemerRij,
+  EigenSignaalRij,
   Fase,
   RealiteitscheckBesluitRij,
   RoadmapItemRij,
@@ -21,6 +22,7 @@ import {
   type AllocatieInvoer,
   type BesluitInvoer,
   type BijdrageInvoer,
+  type EigenUitdagingInvoer,
   type Identiteit,
   type NieuweSessie,
   type NieuweUsecase,
@@ -242,6 +244,7 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     sessie,
     deelnemers,
     selecties,
+    eigenSignalen,
     usecases,
     usecaseSignalen,
     waarderingen,
@@ -253,6 +256,7 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     client.from(SESSIE_PUBLIEK).select("*").eq("id", sessieId).single(),
     client.from("deelnemers").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
     client.from("signaal_selecties").select("*").eq("sessie_id", sessieId),
+    client.from("eigen_signalen").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
     client.from("sessie_usecases").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
     client.from("usecase_signalen").select("*"),
     client.from("waarderingen").select("*").eq("sessie_id", sessieId),
@@ -266,6 +270,7 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     sessie: maskeerBeheercode(controleer(sessie, "Sessie laden") as SessieRij),
     deelnemers: controleer(deelnemers, "Deelnemers laden") as DeelnemerRij[],
     selecties: controleer(selecties, "Signaalselecties laden") as SignaalSelectieRij[],
+    eigenSignalen: controleer(eigenSignalen, "Eigen signalen laden") as EigenSignaalRij[],
     usecases: controleer(usecases, "Use cases laden") as SessieUsecaseRij[],
     usecaseSignalen: controleer(usecaseSignalen, "Onderbouwing laden") as UsecaseSignaalRij[],
     waarderingen: controleer(waarderingen, "Waarderingen laden") as WaarderingRij[],
@@ -356,6 +361,38 @@ export async function verwijderSignaalSelectie(
     .eq("deelnemer_id", args.deelnemerId)
     .eq("signaal_id", args.signaalId);
   if (error) throw new SessieFout(`Signaal verwijderen: ${error.message}`);
+}
+
+export async function voegEigenUitdagingToe(
+  identiteit: Identiteit,
+  invoer: EigenUitdagingInvoer,
+): Promise<EigenSignaalRij> {
+  const client = maakClient(identiteit);
+
+  const kaart = controleer(
+    await client
+      .from("eigen_signalen")
+      .insert({
+        sessie_id: invoer.sessieId,
+        auteur_id: invoer.deelnemerId,
+        titel: invoer.titel,
+        tekst: invoer.tekst ?? "",
+      })
+      .select()
+      .single(),
+    "Eigen uitdaging toevoegen",
+  ) as EigenSignaalRij;
+
+  // Wie een kaart toevoegt, herkent hem per definitie — zelfde herkenning als bij het aantikken
+  // van een bestaande kaart.
+  await selecteerSignaal(identiteit, {
+    sessieId: invoer.sessieId,
+    deelnemerId: invoer.deelnemerId,
+    signaalId: kaart.id,
+    herkenning: 3,
+  });
+
+  return kaart;
 }
 
 // Fase 2: use cases ---------------------------------------------------------
@@ -588,6 +625,7 @@ export const supabaseOpslag: Opslag = {
   wijzigSessie,
   selecteerSignaal,
   verwijderSignaalSelectie,
+  voegEigenUitdagingToe,
   voegUsecaseToe,
   koppelSignalen,
   ontkoppelSignaal,

@@ -59,6 +59,7 @@ const acties: Record<string, Handler> = {
 
   selecteerSignaal: (i, a) => kern.selecteerSignaal(i, als(a)),
   verwijderSignaalSelectie: (i, a) => kern.verwijderSignaalSelectie(i, als(a)),
+  voegEigenUitdagingToe: (i, a) => kern.voegEigenUitdagingToe(i, als(a)),
 
   voegUsecaseToe: (i, a) => kern.voegUsecaseToe(i, als(a)),
   koppelSignalen: (i, a) => {

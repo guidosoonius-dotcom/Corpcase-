@@ -9,6 +9,7 @@ import {
   BEREKENINGEN,
   gemiddeldeScore,
   STANDAARD_BANDBREEDTE_PCT,
+  voorgesteldeHorizon,
 } from "../berekening";
 import { waardeModel } from "@/lib/content";
 
@@ -184,6 +185,26 @@ describe("positie en kwadrant", () => {
     expect(bepaalKwadrant({ waarde: 4, haalbaarheid: 2 })).toBe("strategisch");
     expect(bepaalKwadrant({ waarde: 2, haalbaarheid: 4 })).toBe("vulwerk");
     expect(bepaalKwadrant({ waarde: 2, haalbaarheid: 2 })).toBe("vermijden");
+  });
+});
+
+describe("voorgesteldeHorizon", () => {
+  const alleHorizonnen = ["nu", "volgend", "later"];
+
+  it("stelt voor elk kwadrant de bijpassende horizon voor", () => {
+    expect(voorgesteldeHorizon("quick-wins", alleHorizonnen)).toBe("nu");
+    expect(voorgesteldeHorizon("strategisch", alleHorizonnen)).toBe("later");
+    expect(voorgesteldeHorizon("vulwerk", alleHorizonnen)).toBe("volgend");
+  });
+
+  it("doet geen voorstel voor 'vermijden' of zonder kwadrant", () => {
+    expect(voorgesteldeHorizon("vermijden", alleHorizonnen)).toBeNull();
+    expect(voorgesteldeHorizon(null, alleHorizonnen)).toBeNull();
+  });
+
+  it("valt terug op de eerstvolgende horizon die in de speelduur bestaat", () => {
+    // De modus "kort" heeft geen horizon "later".
+    expect(voorgesteldeHorizon("strategisch", ["nu", "volgend"])).toBe("volgend");
   });
 });
 

@@ -3,10 +3,25 @@
 import { speelmodi, speelmodus } from "@/lib/content";
 import { opslag } from "@/lib/sessie/api";
 import { portfolio, alleBeelden, type UsecaseBeeld } from "@/lib/sessie/afgeleid";
-import { formatteerBandbreedte } from "@/lib/waarde/berekening";
-import type { SessieState } from "@/lib/supabase/types";
+import { formatteerBandbreedte, voorgesteldeHorizon } from "@/lib/waarde/berekening";
+import type { SessieState, SessieUsecaseRij } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import { Etiket, Hoofdregel, Kaart, Knop, Kop, Leeg, Melding, invoerStijl } from "@/components/basis";
+
+/**
+ * Een voorzet voor de randvoorwaarden, opgebouwd uit wat er in Identificatie al over deze use case
+ * is vastgelegd — nooit verzonnen tekst. Komt als placeholder in het veld, niet als waarde: een
+ * voorzet die niemand aanraakt mag nooit als het team zijn eigen, doordachte antwoord wegschrijven.
+ */
+function randvoorwaardenVoorzet(usecase: SessieUsecaseRij): string | undefined {
+  if (usecase.aandachtspunten.length > 0) {
+    return usecase.aandachtspunten.slice(0, 2).join(" ");
+  }
+  if (usecase.benodigde_data.length > 0) {
+    return `Bijvoorbeeld: ${usecase.benodigde_data.slice(0, 2).join(" en ")} beschikbaar en betrouwbaar.`;
+  }
+  return undefined;
+}
 
 /**
  * Fase 5: wanneer doen we wat?
@@ -141,6 +156,9 @@ function RoadmapKaart({
   const anderen = alleBeelden(state).filter(
     (b) => b.usecase.id !== beeld.usecase.id && b.usecase.status === "portfolio",
   );
+  // Alleen een voorzet zolang er nog geen horizon gekozen is — daarna is het de keuze van het
+  // team, niet meer een suggestie.
+  const voorstel = item ? null : voorgesteldeHorizon(beeld.kwadrant, horizonIds);
 
   async function bewaar(velden: {
     horizon?: string;
@@ -186,9 +204,18 @@ function RoadmapKaart({
               key={h.id}
               soort={item?.horizon === h.id ? "primair" : "rand"}
               onClick={() => void bewaar({ horizon: h.id })}
-              className="!px-3 !py-2 !text-xs"
+              className={`!px-3 !py-2 !text-xs ${
+                voorstel === h.id ? "!border-dashed !border-accent" : ""
+              }`}
             >
               {h.naam}
+              {voorstel === h.id ? (
+                // aria-hidden: telt niet mee in de toegankelijke naam van de knop, anders wordt
+                // "Nu" ineens "Nu · voorstel" voor wie met een schermlezer of test op naam kiest.
+                <span aria-hidden className="ml-1 text-accent-diep">
+                  · voorstel
+                </span>
+              ) : null}
             </Knop>
           ))}
         {item ? (
@@ -202,6 +229,13 @@ function RoadmapKaart({
         ) : null}
       </div>
 
+      {voorstel ? (
+        <p className="mt-1.5 text-[11px] leading-relaxed text-inkt-licht">
+          Voorstel op basis van het kwadrant uit Prioritering — een klik op de gestippelde knop
+          neemt hem over, een andere horizon mag net zo goed.
+        </p>
+      ) : null}
+
       {item ? (
         <div className="mt-3 space-y-2.5">
           <label className="block">
@@ -212,7 +246,10 @@ function RoadmapKaart({
               className={`${invoerStijl} mt-1 min-h-14 !text-sm`}
               defaultValue={item.randvoorwaarden}
               onBlur={(e) => void bewaar({ randvoorwaarden: e.target.value })}
-              placeholder="Bijvoorbeeld: koppelvlak op VERA, of een besluit over het gebruik van huurdersdata."
+              placeholder={
+                randvoorwaardenVoorzet(beeld.usecase) ??
+                "Bijvoorbeeld: koppelvlak op VERA, of een besluit over het gebruik van huurdersdata."
+              }
             />
           </label>
 

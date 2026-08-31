@@ -4,6 +4,7 @@ import type {
   BijdrageSoort,
   CheckBesluit,
   DeelnemerRij,
+  EigenSignaalRij,
   Fase,
   SessieRij,
   SessieState,
@@ -98,6 +99,17 @@ export type SignaalInvoer = {
   notitie?: string;
 };
 
+/**
+ * Een zelf toegevoegde uitdaging: meteen ook een herkenning van de auteur zelf, net zoals het
+ * aantikken van een bestaande kaart dat doet — wie een kaart toevoegt, herkent hem per definitie.
+ */
+export type EigenUitdagingInvoer = {
+  sessieId: string;
+  deelnemerId: string;
+  titel: string;
+  tekst?: string;
+};
+
 export type AllocatieInvoer = {
   sessieId: string;
   usecaseId: string;
@@ -159,6 +171,10 @@ export type Opslag = {
     identiteit: Identiteit,
     args: { deelnemerId: string; signaalId: string },
   ): Promise<void>;
+  voegEigenUitdagingToe(
+    identiteit: Identiteit,
+    invoer: EigenUitdagingInvoer,
+  ): Promise<EigenSignaalRij>;
 
   voegUsecaseToe(identiteit: Identiteit, invoer: NieuweUsecase): Promise<SessieUsecaseRij>;
   koppelSignalen(identiteit: Identiteit, usecaseId: string, signaalIds: string[]): Promise<void>;

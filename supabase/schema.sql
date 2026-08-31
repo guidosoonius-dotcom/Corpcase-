@@ -106,6 +106,23 @@ create table signaal_selecties (
 
 create index signaal_selecties_sessie_idx on signaal_selecties (sessie_id);
 
+-- Fase 1: een zelf toegevoegde signaalkaart, vooralsnog alleen voor de uitdaging-lens. Staat los
+-- van de statische signaalbibliotheek in content/ (zie de toelichting bovenaan dit bestand) —
+-- precies zoals sessie_usecases hieronder los staat van de use-casebibliotheek. `signaal_id` in
+-- signaal_selecties verwijst naar zo'n rij hier op dezelfde manier als naar een statische kaart:
+-- als vrije tekst, zonder foreign key.
+create table eigen_signalen (
+  id uuid primary key default gen_random_uuid(),
+  sessie_id uuid not null references sessies (id) on delete cascade,
+  auteur_id uuid not null references deelnemers (id) on delete cascade,
+  lens text not null default 'uitdaging',
+  titel text not null,
+  tekst text not null default '',
+  aangemaakt_op timestamptz not null default now()
+);
+
+create index eigen_signalen_sessie_idx on eigen_signalen (sessie_id);
+
 -- Fase 2: een use case in deze sessie. Komt uit de bibliotheek of is zelf bedacht.
 create table sessie_usecases (
   id uuid primary key default gen_random_uuid(),
@@ -287,6 +304,7 @@ grant execute on all functions in schema intern to anon, authenticated;
 alter table sessies enable row level security;
 alter table deelnemers enable row level security;
 alter table signaal_selecties enable row level security;
+alter table eigen_signalen enable row level security;
 alter table sessie_usecases enable row level security;
 alter table usecase_signalen enable row level security;
 alter table waarderingen enable row level security;
@@ -344,6 +362,9 @@ create policy deelnemers_verwijderen on deelnemers for delete
 -- Spelinhoud: iedereen in de sessie mag alles zien en bijdragen. Dat is het punt van het spel:
 -- spelers vullen elkaars use cases aan. Wie niet in de sessie zit, ziet niets.
 create policy signaal_selecties_alles on signaal_selecties for all
+  using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
+
+create policy eigen_signalen_alles on eigen_signalen for all
   using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
 
 create policy sessie_usecases_alles on sessie_usecases for all

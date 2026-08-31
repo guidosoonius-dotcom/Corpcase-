@@ -1,5 +1,6 @@
 import type {
   BijdrageRij,
+  EigenSignaalRij,
   Fase,
   SessieRij,
   SessieState,
@@ -11,6 +12,7 @@ import {
   type AllocatieInvoer,
   type BesluitInvoer,
   type BijdrageInvoer,
+  type EigenUitdagingInvoer,
   type Identiteit,
   type NieuweSessie,
   type NieuweUsecase,
@@ -72,6 +74,8 @@ export const lokaleOpslag: Opslag = {
     roep<void>("selecteerSignaal", identiteit, invoer),
   verwijderSignaalSelectie: (identiteit, args) =>
     roep<void>("verwijderSignaalSelectie", identiteit, args),
+  voegEigenUitdagingToe: (identiteit, invoer: EigenUitdagingInvoer) =>
+    roep<EigenSignaalRij>("voegEigenUitdagingToe", identiteit, invoer),
 
   voegUsecaseToe: (identiteit, invoer: NieuweUsecase) =>
     roep<SessieUsecaseRij>("voegUsecaseToe", identiteit, invoer),
