@@ -98,6 +98,96 @@
       "notatie": "naar 5.000 eenheden",
       "bron": "DUWO jaarverslag 2024",
       "geverifieerd": false
+    },
+    {
+      "id": "huurders",
+      "label": "Aantal huurders",
+      "waarde": 40000,
+      "eenheid": "huurders",
+      "notatie": "circa 40.000",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "nieuwbouw_jaarlijks",
+      "label": "Nieuwbouwambitie per jaar",
+      "waarde": 1000,
+      "eenheid": "woningen/jaar",
+      "notatie": "gemiddeld 1.000 per jaar",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "nieuwbouw_2035",
+      "label": "Nieuwbouwambitie tot en met 2035",
+      "waarde": 10000,
+      "eenheid": "woningen",
+      "notatie": "10.000 nieuwe woningen",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "streefcijfer_woonbeleving",
+      "label": "Streefcijfer woonbeleving (2030)",
+      "waarde": 8.0,
+      "eenheid": "rapportcijfer",
+      "notatie": "8,0 (nu 7,2)",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "streefcijfer_klanttevredenheid",
+      "label": "Streefcijfer klanttevredenheid (2030)",
+      "waarde": 8.0,
+      "eenheid": "rapportcijfer",
+      "notatie": "8,0",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "first_time_right",
+      "label": "Streefcijfer first-time-right",
+      "waarde": 90,
+      "eenheid": "%",
+      "notatie": "90%",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "first_time_fix",
+      "label": "Streefcijfer first-time-fix",
+      "waarde": 80,
+      "eenheid": "%",
+      "notatie": "80%",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "aandeel_groepswoningen_streven",
+      "label": "Streefaandeel groepswoningen",
+      "waarde": 60,
+      "eenheid": "%",
+      "notatie": "60% van de woningvoorraad",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "employee_nps_streven",
+      "label": "Streefcijfer Employee Net Promotor Score",
+      "waarde": 60,
+      "eenheid": "%",
+      "notatie": "60%",
+      "bron": "DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
+    },
+    {
+      "id": "landelijk_tekort_2030",
+      "label": "Landelijk tekort studentenwoningen (prognose collegejaar 2030-2031)",
+      "waarde": 30400,
+      "eenheid": "eenheden",
+      "notatie": "30.400 tot 67.300 (was 22.000 in 2020)",
+      "bron": "Landelijke Monitor Studentenhuisvesting, via DUWO ondernemingsplan 2026-2030",
+      "geverifieerd": true
     }
   ],
   "strategische_themas": [
