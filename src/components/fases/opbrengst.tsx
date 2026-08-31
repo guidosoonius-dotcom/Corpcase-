@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { rol, rolopdrachten } from "@/lib/content";
+import { rolNaam, rolopdrachten } from "@/lib/content";
 import { beoordeelRolopdracht, portfolio, teamscore } from "@/lib/sessie/afgeleid";
 import { formatteerEuro } from "@/lib/waarde/berekening";
 import type { SessieState } from "@/lib/supabase/types";
@@ -147,7 +147,7 @@ export function Opbrengst({ state }: { state: SessieState }) {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="text-xs text-inkt-licht">
-                        {deelnemer.naam} · {rol(deelnemer.rol_id)?.naam ?? deelnemer.rol_id}
+                        {deelnemer.naam} · {rolNaam(deelnemer.rol_id)}
                       </p>
                       <p className="mt-1 text-sm leading-snug text-inkt">
                         {opdracht.opdracht}

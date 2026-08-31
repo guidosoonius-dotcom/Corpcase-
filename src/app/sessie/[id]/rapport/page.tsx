@@ -6,7 +6,7 @@ import {
   domein as coraDomein,
   organisatie,
   realiteitschecks,
-  rol,
+  rolNaam,
   rolopdrachten,
   speelmodi,
   speelmodus,
@@ -113,7 +113,7 @@ export default function RapportPagina() {
         </p>
         <p className="mt-1 text-sm text-inkt-zacht">
           {state.deelnemers
-            .map((d) => `${d.naam} (${rol(d.rol_id)?.naam ?? d.rol_id})`)
+            .map((d) => `${d.naam} (${rolNaam(d.rol_id)})`)
             .join(", ")}
         </p>
       </header>

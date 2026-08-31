@@ -119,7 +119,7 @@ export async function maakSessie(invoer: NieuweSessie): Promise<Toegang> {
 async function voegDeelnemerToe(args: {
   sessieId: string;
   naam: string;
-  rolId: string;
+  rolId: string | null;
   isFacilitator: boolean;
   identiteit: Identiteit;
 }): Promise<DeelnemerRij> {

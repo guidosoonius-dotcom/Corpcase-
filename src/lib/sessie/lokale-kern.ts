@@ -175,7 +175,7 @@ export function maakSessie(invoer: NieuweSessie): Toegang {
 function voegDeelnemerToe(
   dossier: Dossier,
   naam: string,
-  rolId: string,
+  rolId: string | null,
   isFacilitatorRol: boolean,
 ): DeelnemerRij {
   const deelnemer: DeelnemerRij = {

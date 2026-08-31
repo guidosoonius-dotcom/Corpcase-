@@ -69,7 +69,8 @@ export type DeelnemerRij = {
   id: string;
   sessie_id: string;
   naam: string;
-  rol_id: string;
+  /** Null voor een facilitator die alleen begeleidt, zonder zelf een rol te spelen. */
+  rol_id: string | null;
   rolopdracht_id: string | null;
   token: string;
   is_facilitator: boolean;

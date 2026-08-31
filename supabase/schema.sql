@@ -73,7 +73,11 @@ create table deelnemers (
   id uuid primary key default gen_random_uuid(),
   sessie_id uuid not null references sessies (id) on delete cascade,
   naam text not null,
-  rol_id text not null,
+  -- Nullable: een facilitator kan kiezen alleen te begeleiden, zonder zelf een rol te spelen.
+  -- Reguliere deelnemers (via /deelnemen) kiezen nog altijd verplicht een rol; dat wordt
+  -- client-side afgedwongen, niet hier — er is geen kolom die "is facilitator" en "heeft rol"
+  -- aan elkaar koppelt zonder een check die bij elke nieuwe speelvorm weer bijgewerkt moet worden.
+  rol_id text,
   rolopdracht_id text,
   -- Geheim per deelnemer; bewijst wie je bent zonder account. Staat in localStorage.
   token text not null unique,

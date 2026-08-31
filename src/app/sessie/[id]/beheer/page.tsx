@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { FASES, FASE_LABELS, type Fase } from "@/lib/supabase/types";
-import { rol, speelmodus } from "@/lib/content";
+import { rolNaam, speelmodus } from "@/lib/content";
 import { opslag } from "@/lib/sessie/api";
 import { useAanwezigheid, useSessie } from "@/lib/sessie/gebruik";
 import {
@@ -50,8 +50,11 @@ export default function BeheerPagina() {
     );
   }
 
-  const ikBenFacilitator =
-    state.deelnemers.find((d) => d.id === identiteit.deelnemerId)?.is_facilitator ?? false;
+  const eigenDeelnemer = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
+  const ikBenFacilitator = eigenDeelnemer?.is_facilitator ?? false;
+  // Wie alleen begeleidt heeft geen rol en dus ook geen eigen speelbord — de link ernaartoe heet
+  // dan anders, zodat duidelijk is dat het om meekijken gaat en niet om meespelen.
+  const ikSpeelMee = eigenDeelnemer?.rol_id != null;
 
   const modus = speelmodus(state.sessie.speelmodus);
   const beelden = alleBeelden(state);
@@ -105,7 +108,7 @@ export default function BeheerPagina() {
               <Knop soort="rand">Beamer</Knop>
             </Link>
             <Link href={`/sessie/${sessieId}`}>
-              <Knop soort="rand">Mijn spelerscherm</Knop>
+              <Knop soort="rand">{ikSpeelMee ? "Mijn spelerscherm" : "Sessie live volgen"}</Knop>
             </Link>
           </div>
         }
@@ -262,7 +265,7 @@ export default function BeheerPagina() {
                     {deelnemer.naam}
                   </p>
                   <p className="text-xs text-inkt-licht">
-                    {rol(deelnemer.rol_id)?.naam ?? deelnemer.rol_id}
+                    {rolNaam(deelnemer.rol_id)}
                   </p>
                 </div>
                 {/*

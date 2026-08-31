@@ -1,4 +1,4 @@
-import { domein as coraDomein, organisatie, rol } from "@/lib/content";
+import { domein as coraDomein, organisatie, rolNaam } from "@/lib/content";
 import { alleBeelden, portfolio } from "@/lib/sessie/afgeleid";
 import type { SessieState } from "@/lib/supabase/types";
 
@@ -134,7 +134,7 @@ export function genereerRapportCsv(state: SessieState): string {
   csv += regel(["Deelnemers"]);
   csv += regel(["Naam", "Rol"]);
   for (const deelnemer of state.deelnemers) {
-    csv += regel([deelnemer.naam, rol(deelnemer.rol_id)?.naam ?? deelnemer.rol_id]);
+    csv += regel([deelnemer.naam, rolNaam(deelnemer.rol_id)]);
   }
 
   return csv;

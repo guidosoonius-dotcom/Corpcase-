@@ -96,12 +96,21 @@ export function speelmodus(id: string) {
   return gevonden;
 }
 
-export function rol(id: string) {
+export function rol(id: string | null | undefined) {
   return rollen.rollen.find((r) => r.id === id);
 }
 
-export function rolopdrachtVoorRol(rolId: string) {
+export function rolopdrachtVoorRol(rolId: string | null | undefined) {
   return rolopdrachten.opdrachten.find((o) => o.rol === rolId);
+}
+
+/**
+ * Weergavetekst voor een deelnemersrol, met een leesbare tekst voor een facilitator die alleen
+ * begeleidt en dus geen `rol_id` heeft — anders staat er `null` of niets in lijsten en het rapport.
+ */
+export function rolNaam(rolId: string | null): string {
+  if (!rolId) return "Begeleidt, geen rol";
+  return rol(rolId)?.naam ?? rolId;
 }
 
 /** De huurderspersona's van precies deze organisatie, voor dekking() en de teamscore. */

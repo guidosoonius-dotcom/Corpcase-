@@ -17,6 +17,7 @@ export default function StartPagina() {
   const [titel, setTitel] = useState(`Use-casesessie ${org.naam}`);
   const [modusId, setModusId] = useState("halve-dag");
   const [naam, setNaam] = useState("");
+  const [speeltMee, setSpeeltMee] = useState(true);
   const [rolId, setRolId] = useState(rollen.rollen[0].id);
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState<string | null>(null);
@@ -36,7 +37,7 @@ export default function StartPagina() {
         organisatieId: org.id,
         speelmodusId: modusId,
         facilitatorNaam: naam.trim(),
-        facilitatorRolId: rolId,
+        facilitatorRolId: speeltMee ? rolId : null,
       });
       bewaarIdentiteit(toegang.sessie.id, {
         ...toegang.identiteit,
@@ -58,8 +59,8 @@ export default function StartPagina() {
       </Link>
       <h1 className="display mt-4 text-3xl text-inkt">Sessie starten</h1>
       <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
-        Je wordt facilitator én speler: je kiest een rol en doet gewoon mee. Alleen het openen en
-        sluiten van de fases is van jou.
+        Jij opent en sluit de fases. Kies hieronder of je daarnaast ook zelf een rol speelt, of
+        alleen begeleidt.
       </p>
 
       <div className="mt-7 space-y-5">
@@ -120,15 +121,64 @@ export default function StartPagina() {
           />
         </Veld>
 
-        <Veld label="Jouw rol" hint="Bepaalt door welke bril je kijkt en welke privé-opdracht je krijgt.">
-          <select className={invoerStijl} value={rolId} onChange={(e) => setRolId(e.target.value)}>
-            {rollen.rollen.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.naam}
-              </option>
+        <Veld label="Doe je ook zelf mee?">
+          <div className="space-y-2">
+            {(
+              [
+                {
+                  waarde: true,
+                  titel: "Ik begeleid én speel mee",
+                  omschrijving:
+                    "Je kiest een rol, denkt inhoudelijk mee en krijgt een privé-opdracht — naast het openen en sluiten van de fases.",
+                },
+                {
+                  waarde: false,
+                  titel: "Ik begeleid alleen",
+                  omschrijving:
+                    "Geen rol en geen plek in het spelbord. Je stuurt de sessie aan en kijkt mee, zonder zelf mee te doen.",
+                },
+              ] as const
+            ).map((optie) => (
+              <label
+                key={String(optie.waarde)}
+                className={`keuze flex cursor-pointer items-start gap-3 rounded-kaart border p-3 transition-colors ${
+                  speeltMee === optie.waarde
+                    ? "border-accent bg-accent-zacht"
+                    : "border-rand bg-vlak hover:border-rand-sterk"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="speeltMee"
+                  className="mt-1"
+                  checked={speeltMee === optie.waarde}
+                  onChange={() => setSpeeltMee(optie.waarde)}
+                />
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium text-inkt">{optie.titel}</span>
+                  <span className="mt-0.5 block text-xs leading-relaxed text-inkt-zacht">
+                    {optie.omschrijving}
+                  </span>
+                </span>
+              </label>
             ))}
-          </select>
+          </div>
         </Veld>
+
+        {speeltMee ? (
+          <Veld
+            label="Jouw rol"
+            hint="Bepaalt door welke bril je kijkt en welke privé-opdracht je krijgt."
+          >
+            <select className={invoerStijl} value={rolId} onChange={(e) => setRolId(e.target.value)}>
+              {rollen.rollen.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.naam}
+                </option>
+              ))}
+            </select>
+          </Veld>
+        ) : null}
 
         {fout ? <Melding toon="risico">{fout}</Melding> : null}
 

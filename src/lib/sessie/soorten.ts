@@ -21,7 +21,8 @@ export type NieuweSessie = {
   organisatieId: string;
   speelmodusId: string;
   facilitatorNaam: string;
-  facilitatorRolId: string;
+  /** Null als de facilitator ervoor kiest alleen te begeleiden, zonder zelf een rol te spelen. */
+  facilitatorRolId: string | null;
   budgetGeld?: number;
   budgetCapaciteit?: number;
 };
