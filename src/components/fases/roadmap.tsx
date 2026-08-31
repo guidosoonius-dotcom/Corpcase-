@@ -70,7 +70,7 @@ export function Roadmap({
                 </div>
                 <p className="mt-0.5 text-xs text-inkt-licht">{horizon.vraag}</p>
 
-                <ul className="mt-2 space-y-2">
+                <ul className="mt-2 space-y-2 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
                   {items.map((item) => {
                     const beeld = inPortfolio.find((b) => b.usecase.id === item.usecase_id);
                     if (!beeld) return null;

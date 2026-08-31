@@ -45,7 +45,7 @@ function Formulier() {
   }
 
   return (
-    <main className="relative mx-auto w-full max-w-md overflow-hidden px-5 py-10">
+    <main className="relative mx-auto w-full max-w-md overflow-hidden px-5 py-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-center">
       <Cirkel
         hoek="rechtsboven"
         formaat={0.55}

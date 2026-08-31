@@ -56,14 +56,22 @@ export function Prioritering({
         onder="Het budget is begrensd, in geld en in wat de organisatie aankan. Kiezen betekent hier dus ook iets niet doen."
       />
 
-      <Matrix beelden={beelden} geselecteerd={gekozen} onKies={setGekozen} />
-
-      <Budgetbalk stand={stand} state={state} />
+      {/*
+        Op een breed scherm hoeft de matrix niet over de volle breedte uit te rekken tot een
+        laag, plat vlak: ernaast is precies genoeg ruimte voor het budgetpaneel, net als bij
+        Opbrengst en de beamer — twee panelen die toch al bij elkaar horen.
+      */}
+      <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-5">
+        <Matrix beelden={beelden} geselecteerd={gekozen} onKies={setGekozen} />
+        <div className="mt-6 lg:mt-0">
+          <Budgetbalk stand={stand} state={state} />
+        </div>
+      </div>
 
       {beelden.length === 0 ? (
         <Leeg>Er is nog niets om te prioriteren.</Leeg>
       ) : (
-        <ul className="space-y-2.5">
+        <ul className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
           {gesorteerd.map((beeld) => (
             <li key={beeld.usecase.id}>
               <Toewijzen

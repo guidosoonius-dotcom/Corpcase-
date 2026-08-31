@@ -52,7 +52,7 @@ export default function StartPagina() {
 
   return (
     <Thema accent={org.thema.accent} className="flex-1">
-      <main className="relative mx-auto w-full max-w-xl overflow-hidden px-5 py-10">
+      <main className="relative mx-auto w-full max-w-xl overflow-hidden px-5 py-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-center">
       <Cirkel hoek="rechtsboven" formaat={0.5} toon="zacht" />
       <Link href="/" className="text-sm text-inkt-licht hover:text-accent-diep">
         ← Terug

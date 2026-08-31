@@ -303,6 +303,11 @@ export function DonkerPaneel({
    * Loopt tegen die schermrand aan: de hoeken aan die kant blijven recht en de marge valt weg.
    * Dat is wat het paneel zijn gewicht geeft — een kaart die netjes binnen de marge blijft,
    * leest als nog een blok in de lijst.
+   *
+   * Vanaf `lg` valt dit weg: de negatieve marge is precies zo groot als de containerpadding
+   * (px-4) om tegen de schermrand van een telefoon aan te lopen, maar op een laptop staat diezelfde
+   * container smal en gecentreerd met een marge van honderden pixels erbuiten — de rand die het
+   * paneel dan "raakt" is niet meer de schermrand, en het paneel bleedt in het luchtledige.
    */
   bloedt?: "links" | "rechts";
 }) {
@@ -310,9 +315,9 @@ export function DonkerPaneel({
   // en er niet overheen schiet.
   const randvorm =
     bloedt === "links"
-      ? "-ml-4 rounded-l-none"
+      ? "-ml-4 rounded-l-none lg:ml-0 lg:rounded-kaart"
       : bloedt === "rechts"
-        ? "-mr-4 rounded-r-none"
+        ? "-mr-4 rounded-r-none lg:mr-0 lg:rounded-kaart"
         : "";
 
   return (

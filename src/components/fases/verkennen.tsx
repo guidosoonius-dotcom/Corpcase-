@@ -141,7 +141,7 @@ export function Verkennen({
         ))}
       </div>
 
-      <ul className="space-y-2.5">
+      <ul className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
         {zichtbaar.map((signaal) => {
           const selectie = mijnSelecties.find((s) => s.signaal_id === signaal.id);
           const isGekozen = Boolean(selectie);

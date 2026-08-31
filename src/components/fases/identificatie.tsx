@@ -86,7 +86,7 @@ export function Identificatie({
             Nog niets op tafel. Kies iets uit de bibliotheek of schrijf zelf een use case.
           </Leeg>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
             {beelden.map((beeld) => (
               <li key={beeld.usecase.id}>
                 <UsecaseKaart state={state} identiteit={identiteit} doe={doe} usecaseId={beeld.usecase.id} />
@@ -228,7 +228,7 @@ function Bibliotheek({
         Bovenaan staat wat aansluit op de signalen die jullie hebben gemarkeerd.
       </p>
 
-      <ul className="space-y-2.5">
+      <ul className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
         {kaarten.map(({ kaart, raakvlak }) => (
           <li key={kaart.id}>
             <Kaart className="p-4">
