@@ -33,8 +33,8 @@ export type Fase =
  *
  * Elke fasenaam komt in precies één reeks voor, op `lobby` na: die is gedeeld. Daardoor blijft een
  * losse fasewaarde ondubbelzinnig — je kunt aan `"afpellen"` zien bij welk spel hij hoort — en kan
- * `spelsoortVanFase` een fase uit het verkeerde spel herkennen in plaats van hem stilzwijgend als
- * "niet gevonden" te behandelen.
+ * de renderketen op het spelersscherm één platte lijst blijven in plaats van eerst de spelsoort te
+ * moeten opzoeken.
  */
 export const FASES_PER_SPELSOORT: Record<Spelsoort, Fase[]> = {
   usecases: [
@@ -246,6 +246,45 @@ export type RealiteitscheckBesluitRij = {
   aangemaakt_op: string;
 };
 
+// De processessie ------------------------------------------------------------
+
+/** Iteratief verbeteren, opnieuw ontwerpen, of bewust laten liggen. */
+export type SpoorKeuze = "iteratief" | "nieuw" | "niet-nu";
+
+export type ProcesRij = {
+  id: string;
+  sessie_id: string;
+  /** Verwijst naar een bedrijfsfunctie in content/, als vrije tekst. */
+  functie_id: string;
+  titel: string;
+  aanleiding: string;
+  /** Null zolang de diagnose loopt. */
+  spoor: SpoorKeuze | null;
+  /** Alleen gevuld als het team afwijkt van het advies. */
+  spoor_motivatie: string;
+  eigenaar_id: string | null;
+  aangemaakt_op: string;
+  bijgewerkt_op: string;
+};
+
+export type ProcesStapRij = {
+  id: string;
+  sessie_id: string;
+  proces_id: string;
+  volgorde: number;
+  naam: string;
+  /** Rol of afdeling; waar die wisselt tussen twee stappen ligt een overdracht. */
+  uitvoerder: string;
+  knelpunt: string;
+  uitzondering: boolean;
+  /** `huidig` is het proces zoals het loopt, `nieuw` het herontwerp ernaast. */
+  soort: "huidig" | "nieuw";
+  vervangt: string[];
+  toegevoegd_door: string | null;
+  aangemaakt_op: string;
+  bijgewerkt_op: string;
+};
+
 export type RoadmapItemRij = {
   usecase_id: string;
   sessie_id: string;
@@ -269,4 +308,7 @@ export type SessieState = {
   allocaties: AllocatieRij[];
   besluiten: RealiteitscheckBesluitRij[];
   roadmap: RoadmapItemRij[];
+  /** Leeg in een use-casesessie; gevuld in een processessie. */
+  processen: ProcesRij[];
+  stappen: ProcesStapRij[];
 };

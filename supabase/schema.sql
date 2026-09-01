@@ -244,6 +244,59 @@ create table roadmap_items (
 
 create index roadmap_items_sessie_idx on roadmap_items (sessie_id);
 
+-- De processessie ------------------------------------------------------------
+--
+-- Fase 1: het proces dat op tafel gaat. `functie_id` verwijst naar een bedrijfsfunctie in
+-- content/processen/cora-bedrijfsfuncties.json — als vrije tekst zonder foreign key, net als bij
+-- de signaalkaarten: de contentbibliotheek leeft buiten de database.
+create table sessie_processen (
+  id uuid primary key default gen_random_uuid(),
+  sessie_id uuid not null references sessies (id) on delete cascade,
+  functie_id text not null,
+  titel text not null,
+  aanleiding text not null default '',
+  -- Wordt in fase 3 gezet: 'iteratief', 'nieuw' of 'niet-nu'. Null zolang de diagnose loopt.
+  spoor text check (spoor in ('iteratief', 'nieuw', 'niet-nu')),
+  -- Alleen gevuld als het team afwijkt van het advies; dan is de onderbouwing verplicht in de UI.
+  spoor_motivatie text not null default '',
+  eigenaar_id uuid references deelnemers (id) on delete set null,
+  aangemaakt_op timestamptz not null default now(),
+  bijgewerkt_op timestamptz not null default now()
+);
+
+create index sessie_processen_sessie_idx on sessie_processen (sessie_id);
+
+-- Fase 2: de stappen op de procesplaat. Eén rechte lijn per `soort`, met uitzonderingen ernaast.
+--
+-- `volgorde` wordt bij het verplaatsen in één keer voor alle stappen van een proces herschreven
+-- (zie herordenStappen), niet per stap opgehoogd: twee mensen die tegelijk schuiven leveren dan
+-- een volledige volgorde op in plaats van twee halve.
+create table proces_stappen (
+  id uuid primary key default gen_random_uuid(),
+  sessie_id uuid not null references sessies (id) on delete cascade,
+  proces_id uuid not null references sessie_processen (id) on delete cascade,
+  volgorde integer not null default 0,
+  naam text not null,
+  -- Rol of afdeling die de stap doet; waar die tussen twee stappen wisselt, markeert de plaat een
+  -- overdracht. Vrije tekst: niet elke uitvoerder is een rol uit het spel.
+  uitvoerder text not null default '',
+  knelpunt text not null default '',
+  -- Een stap die maar in een deel van de gevallen langskomt; hangt naast de hoofdlijn.
+  uitzondering boolean not null default false,
+  -- 'huidig' is het proces zoals het loopt, 'nieuw' het herontwerp dat er in fase 4 naast komt.
+  soort text not null default 'huidig' check (soort in ('huidig', 'nieuw')),
+  -- Welke huidige stappen deze nieuwe stap vervangt. Vrije uuid's, geen foreign key: een stap die
+  -- later wordt weggegooid mag deze rij niet meeslepen.
+  vervangt uuid[] not null default '{}',
+  -- Wie deze stap toevoegde. Staat zichtbaar op de plaat, zodat werk een gezicht houdt.
+  toegevoegd_door uuid references deelnemers (id) on delete set null,
+  aangemaakt_op timestamptz not null default now(),
+  bijgewerkt_op timestamptz not null default now()
+);
+
+create index proces_stappen_sessie_idx on proces_stappen (sessie_id);
+create index proces_stappen_proces_idx on proces_stappen (proces_id);
+
 create trigger sessies_bijgewerkt before update on sessies
 for each row execute function zet_bijgewerkt_op();
 create trigger sessie_usecases_bijgewerkt before update on sessie_usecases
@@ -251,6 +304,10 @@ for each row execute function zet_bijgewerkt_op();
 create trigger waarderingen_bijgewerkt before update on waarderingen
 for each row execute function zet_bijgewerkt_op();
 create trigger allocaties_bijgewerkt before update on allocaties
+for each row execute function zet_bijgewerkt_op();
+create trigger sessie_processen_bijgewerkt before update on sessie_processen
+for each row execute function zet_bijgewerkt_op();
+create trigger proces_stappen_bijgewerkt before update on proces_stappen
 for each row execute function zet_bijgewerkt_op();
 create trigger roadmap_items_bijgewerkt before update on roadmap_items
 for each row execute function zet_bijgewerkt_op();
@@ -332,6 +389,8 @@ alter table bijdragen enable row level security;
 alter table allocaties enable row level security;
 alter table realiteitscheck_besluiten enable row level security;
 alter table roadmap_items enable row level security;
+alter table sessie_processen enable row level security;
+alter table proces_stappen enable row level security;
 
 -- De basistabel is met opzet alleen leesbaar met bewezen facilitatorstatus. Een rijbeleid filtert
 -- rijen, geen kolommen: zou deze policy hier ook `is_deelnemer` of de joincode toelaten, dan kon
@@ -406,6 +465,15 @@ create policy realiteitscheck_besluiten_alles on realiteitscheck_besluiten for a
   using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
 
 create policy roadmap_items_alles on roadmap_items for all
+  using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
+
+-- De processessie: spelinhoud, dus dezelfde regel als hierboven. Iedereen aan tafel mag de
+-- procesplaat bewerken; wie wat toevoegde staat erbij, en verwijderen vraagt in de interface om
+-- een bevestiging. Dat is een afspraak tussen collega's, geen rechtenkwestie.
+create policy sessie_processen_alles on sessie_processen for all
+  using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
+
+create policy proces_stappen_alles on proces_stappen for all
   using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
 
 -- Publieke aanzicht op sessies, zonder beheer_code ---------------------------

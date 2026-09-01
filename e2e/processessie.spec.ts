@@ -68,15 +68,130 @@ test("een processessie doorloopt zijn eigen fases, niet die van de use-casesessi
   await expect(wonen.getByRole("button", { name: "Waardebepaling", exact: true })).toHaveCount(0);
 
   // --- De facilitator schuift de groep door alle fases ---------------------
+  // De eerste twee fases hebben een eigen scherm; de rest toont voorlopig wat er komt. Beide
+  // gevallen bewijzen hetzelfde: de speler volgt automatisch mee, zonder te verversen.
+  // In deze test wordt geen proces gekozen, dus het afpellen toont zijn lege staat — precies wat
+  // een team te zien hoort te krijgen dat een fase overslaat.
+  const METEIGENScherm: Record<string, RegExp> = {
+    Proceskeuze: /Welk proces leggen we op tafel\?/,
+    Afpellen: /Er ligt nog geen proces op tafel/,
+  };
+
   for (const fase of PROCESFASES) {
     await facilitator.getByRole("button", { name: `Volgende fase: ${fase}` }).click();
-    // De speler volgt automatisch mee, zonder de pagina te verversen.
-    await expect(wonen.getByRole("heading", { name: /Deze fase wordt nog gebouwd/ })).toBeVisible();
-    await expect(wonen.getByText(fase).first()).toBeVisible();
+    const eigenKop = METEIGENScherm[fase];
+    await expect(
+      wonen.getByRole("heading", { name: eigenKop ?? /Deze fase wordt nog gebouwd/ }),
+    ).toBeVisible();
   }
 
   // Na de laatste fase is er niets meer om naar door te schuiven.
   await expect(facilitator.getByRole("button", { name: /^Volgende fase:/ })).toHaveCount(0);
+});
+
+test("twee spelers tekenen samen één procesplaat", async ({ browser }) => {
+  const facilitator = await nieuweSpeler(browser);
+  const wonen = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByRole("radio", { name: /^Processen/ }).check();
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const sessieId = facilitator.url().match(/\/sessie\/([0-9a-f-]+)\//)![1];
+  const code = (await facilitator.getByLabel(/Sessiecode/).innerText()).trim();
+
+  await wonen.goto(`/deelnemen?code=${code}`);
+  await wonen.getByLabel("Jouw naam").fill("Marieke");
+  await wonen.getByLabel("Jouw rol").selectOption({ label: "Manager Wonen / Klant" });
+  await wonen.getByRole("button", { name: "Meedoen" }).click();
+  await wonen.waitForURL(/\/sessie\/[0-9a-f-]+$/);
+
+  // --- Fase 1: een proces kiezen -------------------------------------------
+  await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+
+  await facilitator.getByLabel("Zoeken in de bedrijfsfuncties").fill("reparatieonderhoud");
+  await facilitator.getByRole("button", { name: "Op tafel leggen" }).first().click();
+  await expect(facilitator.getByText("Staat al op tafel.")).toBeVisible();
+
+  // Marieke ziet hetzelfde proces verschijnen, zonder te verversen.
+  await expect(wonen.getByText("Coördineren reparatieonderhoud").first()).toBeVisible();
+
+  // --- Fase 2: samen de plaat tekenen --------------------------------------
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+
+  await facilitator.locator("#nieuwe-stap").fill("Huurder meldt een reparatie");
+  await facilitator.getByRole("button", { name: "Toevoegen", exact: true }).click();
+
+  // Marieke vult aan op de plaat van een ander. Dat is de kern van deze fase.
+  await expect(wonen.getByText("Huurder meldt een reparatie")).toBeVisible();
+  await wonen.locator("#nieuwe-stap").fill("Aannemer inplannen");
+  await wonen.getByRole("button", { name: "Toevoegen", exact: true }).click();
+  await expect(facilitator.getByText("Aannemer inplannen")).toBeVisible();
+
+  // Wie wat toevoegde staat erbij; anders verdwijnt het werk van een collega in de massa.
+  await expect(facilitator.getByText("toegevoegd door Marieke")).toBeVisible();
+
+  // --- De overdracht verschijnt zodra de uitvoerders verschillen -----------
+  const eerste = facilitator.locator("li").filter({ hasText: "Huurder meldt een reparatie" }).first();
+  await eerste.getByRole("button", { name: "Bewerken" }).click();
+  await eerste.getByLabel("Wie voert deze stap uit?").fill("Klantcontact");
+  await eerste.getByLabel("Wie voert deze stap uit?").blur();
+
+  const tweede = facilitator.locator("li").filter({ hasText: "Aannemer inplannen" }).first();
+  await tweede.getByRole("button", { name: "Bewerken" }).click();
+  await tweede.getByLabel("Wie voert deze stap uit?").fill("Onderhoud");
+  await tweede.getByLabel("Wie voert deze stap uit?").blur();
+
+  await expect(facilitator.getByText("overdracht naar Onderhoud")).toBeVisible();
+  await expect(wonen.getByText("overdracht naar Onderhoud")).toBeVisible();
+
+  // --- Verplaatsen komt bij iedereen in dezelfde volgorde terug ------------
+  await facilitator
+    .getByRole("button", { name: '"Aannemer inplannen" naar voren' })
+    .click();
+
+  /*
+   * Dat de volgorde is omgedraaid blijkt uit de richting van de overdracht: die liep naar
+   * Onderhoud en loopt nu naar Klantcontact. Dat is een sterker bewijs dan de positie in de lijst
+   * — het toont dat de plaat de nieuwe volgorde ook echt heeft doorgerekend — en het is niet
+   * afhankelijk van welke andere lijsten er nog op de pagina staan.
+   */
+  await expect(wonen.getByText("overdracht naar Klantcontact")).toBeVisible();
+  await expect(wonen.getByText("overdracht naar Onderhoud")).toHaveCount(0);
+
+  // --- De beamer toont dezelfde plaat, horizontaal en zonder bediening -----
+  // Zonder een eigen beamervariant klapte dit scherm om op een processessie: het rekende op een
+  // speelmodus uit het andere spel. Vandaar dat hier expliciet naar gekeken wordt.
+  // In dezelfde browsercontext als de facilitator: het beamerscherm hangt aan zijn apparaat, en
+  // een verse browser heeft geen toegang tot de sessie — precies zoals bedoeld.
+  const beamer = await facilitator.context().newPage();
+  await beamer.goto(`/sessie/${sessieId}/scherm`);
+  await expect(beamer.getByRole("heading", { name: "Hoe het nu loopt" })).toBeVisible();
+  await expect(beamer.getByText("Zo vaak wisselt het werk van hand")).toBeVisible();
+  // Op de beamer wordt niet bewerkt.
+  await expect(beamer.getByRole("button", { name: "Bewerken" })).toHaveCount(0);
+
+  // --- Verwijderen gaat pas na een bevestiging -----------------------------
+  const teVerwijderen = facilitator
+    .locator("li")
+    .filter({ hasText: "Huurder meldt een reparatie" })
+    .first();
+  await teVerwijderen.getByRole("button", { name: '"Huurder meldt een reparatie" verwijderen' }).click();
+  await expect(facilitator.getByRole("button", { name: "Laat maar staan" })).toBeVisible();
+
+  // Bedenken kan: de stap blijft staan.
+  await facilitator.getByRole("button", { name: "Laat maar staan" }).click();
+  await expect(facilitator.getByText("Huurder meldt een reparatie")).toBeVisible();
+
+  // En pas na bevestigen is hij echt weg, ook bij de ander.
+  await teVerwijderen.getByRole("button", { name: '"Huurder meldt een reparatie" verwijderen' }).click();
+  await facilitator.getByRole("button", { name: "Verwijderen", exact: true }).click();
+  await expect(wonen.getByText("Huurder meldt een reparatie")).toHaveCount(0);
 });
 
 test("een speler die vooruitloopt in een processessie krijgt daar een waarschuwing bij", async ({

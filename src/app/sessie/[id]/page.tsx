@@ -11,18 +11,20 @@ import { Waardebepaling } from "@/components/fases/waardebepaling";
 import { Prioritering } from "@/components/fases/prioritering";
 import { Roadmap } from "@/components/fases/roadmap";
 import { Opbrengst } from "@/components/fases/opbrengst";
+import { Proceskeuze } from "@/components/fases/proceskeuze";
+import { Afpellen } from "@/components/fases/afpellen";
 import { Hoofdregel, Knop, Kop, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
 import { organisatie } from "@/lib/content";
 import { eigenFase } from "@/lib/sessie/afgeleid";
 import { FASE_LABELS, FASES_PER_SPELSOORT, type Fase } from "@/lib/supabase/types";
 
-/** De fases van de processessie, op de gedeelde lobby na. */
-const PROCESFASES: Fase[] = FASES_PER_SPELSOORT.proces.filter((f) => f !== "lobby");
+/** De fases van de processessie die nog geen eigen scherm hebben. */
+const NOG_TE_BOUWEN: Fase[] = FASES_PER_SPELSOORT.proces.filter(
+  (f) => !["lobby", "proceskeuze", "afpellen"].includes(f),
+);
 
 const WAT_ER_KOMT: Record<string, string> = {
-  proceskeuze: "Kiezen welk bedrijfsproces op tafel gaat.",
-  afpellen: "Het proces stap voor stap uittekenen op de procesplaat.",
   diagnose: "Het proces scoren, en zien welk spoor eruit volgt.",
   herontwerp: "Verbeteren of opnieuw ontwerpen.",
   doorrekenen: "Wat de verbetering per jaar oplevert, met een bandbreedte.",
@@ -109,7 +111,13 @@ export default function SpelerPagina() {
          * waar hij staat. Fasenamen zijn uniek over de twee spellen heen, dus deze ketting kan naast
          * die van de use-casesessie blijven staan.
          */}
-        {PROCESFASES.includes(fase) ? <NogTeBouwen fase={fase} /> : null}
+        {fase === "proceskeuze" ? (
+          <Proceskeuze state={state} identiteit={identiteit} doe={doe} />
+        ) : null}
+        {fase === "afpellen" ? (
+          <Afpellen state={state} identiteit={identiteit} doe={doe} />
+        ) : null}
+        {NOG_TE_BOUWEN.includes(fase) ? <NogTeBouwen fase={fase} /> : null}
       </main>
     </Thema>
   );

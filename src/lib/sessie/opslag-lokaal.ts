@@ -2,6 +2,8 @@ import type {
   BijdrageRij,
   EigenSignaalRij,
   Fase,
+  ProcesRij,
+  ProcesStapRij,
   SessieRij,
   SessieState,
   SessieUsecaseRij,
@@ -15,6 +17,8 @@ import {
   type EigenUitdagingInvoer,
   type Identiteit,
   type NieuweSessie,
+  type NieuwProces,
+  type NieuweStap,
   type NieuweUsecase,
   type Opslag,
   type RoadmapInvoer,
@@ -76,6 +80,20 @@ export const lokaleOpslag: Opslag = {
     roep<void>("verwijderSignaalSelectie", identiteit, args),
   voegEigenUitdagingToe: (identiteit, invoer: EigenUitdagingInvoer) =>
     roep<EigenSignaalRij>("voegEigenUitdagingToe", identiteit, invoer),
+
+  voegProcesToe: (identiteit, invoer: NieuwProces) =>
+    roep<ProcesRij>("voegProcesToe", identiteit, invoer),
+  verwijderProces: (identiteit, procesId) =>
+    roep<void>("verwijderProces", identiteit, { procesId }),
+  voegStapToe: (identiteit, invoer: NieuweStap) =>
+    roep<ProcesStapRij>("voegStapToe", identiteit, invoer),
+  wijzigStap: (identiteit, stapId, velden) =>
+    roep<void>("wijzigStap", identiteit, { stapId, velden }),
+  verwijderStap: (identiteit, stapId) => roep<void>("verwijderStap", identiteit, { stapId }),
+  herordenStappen: (identiteit, procesId, stapIds) =>
+    roep<void>("herordenStappen", identiteit, { procesId, stapIds }),
+  laadStappenVoorzet: (identiteit, procesId, deelnemerId) =>
+    roep<void>("laadStappenVoorzet", identiteit, { procesId, deelnemerId }),
 
   voegUsecaseToe: (identiteit, invoer: NieuweUsecase) =>
     roep<SessieUsecaseRij>("voegUsecaseToe", identiteit, invoer),

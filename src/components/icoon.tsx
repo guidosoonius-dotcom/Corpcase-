@@ -123,6 +123,45 @@ export function GroepenIcoon({ className = "h-4 w-4" }: IcoonProps) {
   );
 }
 
+/*
+ * De procesplaat. Verplaatsen en verwijderen zijn handelingen waar een woord ernaast de plaat vol
+ * zou zetten — bij tien stappen staat er dan dertig keer "omhoog", "omlaag", "verwijder". Het
+ * label reist mee als `aria-label` op de knop, zodat de betekenis er wel is voor wie de plaat niet
+ * ziet.
+ */
+
+export function OmhoogIcoon({ className = "h-4 w-4" }: IcoonProps) {
+  return (
+    <svg aria-hidden viewBox={VIEWBOX} className={className} fill="currentColor">
+      <path d="M450-160v-585L204-499l-42-43 318-318 318 318-42 43-246-246v585h-60Z" />
+    </svg>
+  );
+}
+
+export function OmlaagIcoon({ className = "h-4 w-4" }: IcoonProps) {
+  return (
+    <svg aria-hidden viewBox={VIEWBOX} className={className} fill="currentColor">
+      <path d="M480-160 162-478l42-43 246 246v-585h60v585l246-246 42 43-318 318Z" />
+    </svg>
+  );
+}
+
+export function PrullenbakIcoon({ className = "h-4 w-4" }: IcoonProps) {
+  return (
+    <svg aria-hidden viewBox={VIEWBOX} className={className} fill="currentColor">
+      <path d="M267-120q-26 0-44.5-18.5T204-183v-560h-64v-60h192v-30h296v30h192v60h-64v560q0 26-18.5 44.5T693-120H267Zm426-623H267v560h426v-560ZM361-267h60v-406h-60v406Zm178 0h60v-406h-60v406ZM267-743v560-560Z" />
+    </svg>
+  );
+}
+
+export function PlusIcoon({ className = "h-4 w-4" }: IcoonProps) {
+  return (
+    <svg aria-hidden viewBox={VIEWBOX} className={className} fill="currentColor">
+      <path d="M450-450H200v-60h250v-250h60v250h250v60H510v250h-60v-250Z" />
+    </svg>
+  );
+}
+
 /**
  * Eén icoon per rol, zodat "Jouw bril" in de lobby ook zonder de naam te lezen al een signaal
  * geeft welke blik je meebrengt. Los van `content/spel/rollen.json` gehouden — dat bestand is

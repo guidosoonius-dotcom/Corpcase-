@@ -61,6 +61,23 @@ const acties: Record<string, Handler> = {
   verwijderSignaalSelectie: (i, a) => kern.verwijderSignaalSelectie(i, als(a)),
   voegEigenUitdagingToe: (i, a) => kern.voegEigenUitdagingToe(i, als(a)),
 
+  voegProcesToe: (i, a) => kern.voegProcesToe(i, als(a)),
+  verwijderProces: (i, a) => kern.verwijderProces(i, als<{ procesId: string }>(a).procesId),
+  voegStapToe: (i, a) => kern.voegStapToe(i, als(a)),
+  wijzigStap: (i, a) => {
+    const { stapId, velden } = als<{ stapId: string; velden: Parameters<typeof kern.wijzigStap>[2] }>(a);
+    return kern.wijzigStap(i, stapId, velden);
+  },
+  verwijderStap: (i, a) => kern.verwijderStap(i, als<{ stapId: string }>(a).stapId),
+  herordenStappen: (i, a) => {
+    const { procesId, stapIds } = als<{ procesId: string; stapIds: string[] }>(a);
+    return kern.herordenStappen(i, procesId, stapIds);
+  },
+  laadStappenVoorzet: (i, a) => {
+    const { procesId, deelnemerId } = als<{ procesId: string; deelnemerId: string }>(a);
+    return kern.laadStappenVoorzet(i, procesId, deelnemerId);
+  },
+
   voegUsecaseToe: (i, a) => kern.voegUsecaseToe(i, als(a)),
   koppelSignalen: (i, a) => {
     const { usecaseId, signaalIds } = als<{ usecaseId: string; signaalIds: string[] }>(a);

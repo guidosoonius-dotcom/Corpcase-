@@ -1,10 +1,18 @@
-import { organisatie, procesmodus, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
+import {
+  bedrijfsfunctie,
+  organisatie,
+  procesmodus,
+  rolopdrachtVoorRol,
+  speelmodus,
+} from "@/lib/content";
 import type {
   AllocatieRij,
   BijdrageRij,
   DeelnemerRij,
   EigenSignaalRij,
   Fase,
+  ProcesRij,
+  ProcesStapRij,
   RealiteitscheckBesluitRij,
   RoadmapItemRij,
   SessieRij,
@@ -24,7 +32,10 @@ import {
   type EigenUitdagingInvoer,
   type Identiteit,
   type NieuweSessie,
+  type NieuwProces,
+  type NieuweStap,
   type NieuweUsecase,
+  type StapVelden,
   type RoadmapInvoer,
   type SessieVelden,
   type SignaalInvoer,
@@ -60,6 +71,8 @@ type Dossier = {
   allocaties: AllocatieRij[];
   besluiten: RealiteitscheckBesluitRij[];
   roadmap: RoadmapItemRij[];
+  processen: ProcesRij[];
+  stappen: ProcesStapRij[];
 };
 
 // Overleeft hot reload in ontwikkeling; zonder dit begint elke codewijziging met een lege sessie.
@@ -169,6 +182,8 @@ export function maakSessie(invoer: NieuweSessie): Toegang {
     allocaties: [],
     besluiten: [],
     roadmap: [],
+    processen: [],
+    stappen: [],
   };
   dossiers.set(sessie.id, dossier);
 
@@ -264,6 +279,8 @@ export function haalState(identiteit: Identiteit, sessieId: string): SessieState
     allocaties: [...dossier.allocaties],
     besluiten: [...dossier.besluiten],
     roadmap: [...dossier.roadmap].sort((a, b) => a.volgorde - b.volgorde),
+    processen: [...dossier.processen],
+    stappen: [...dossier.stappen].sort((a, b) => a.volgorde - b.volgorde),
   };
 }
 
@@ -601,6 +618,159 @@ export function verwijderRoadmapItem(identiteit: Identiteit, usecaseId: string):
   const dossier = dossierViaUsecase(usecaseId);
   eisDeelnemer(dossier, identiteit);
   dossier.roadmap = dossier.roadmap.filter((r) => r.usecase_id !== usecaseId);
+}
+
+// De processessie: proceskeuze en de procesplaat ----------------------------
+//
+// Regel voor regel gelijk aan opslag-supabase.ts. Wijkt deze af, dan zegt een geslaagde test in de
+// offline modus niets meer over de Supabase-modus.
+
+export function voegProcesToe(identiteit: Identiteit, invoer: NieuwProces): ProcesRij {
+  const dossier = vindDossier(invoer.sessieId);
+  eisDeelnemer(dossier, identiteit);
+
+  const proces: ProcesRij = {
+    id: crypto.randomUUID(),
+    sessie_id: invoer.sessieId,
+    functie_id: invoer.functieId,
+    titel: invoer.titel,
+    aanleiding: invoer.aanleiding ?? "",
+    spoor: null,
+    spoor_motivatie: "",
+    eigenaar_id: null,
+    aangemaakt_op: nu(),
+    bijgewerkt_op: nu(),
+  };
+  dossier.processen.push(proces);
+  return proces;
+}
+
+function dossierViaProces(procesId: string): Dossier {
+  for (const dossier of dossiers.values()) {
+    if (dossier.processen.some((p) => p.id === procesId)) return dossier;
+  }
+  throw new SessieFout("Proces bestaat niet (meer).");
+}
+
+function dossierViaStap(stapId: string): Dossier {
+  for (const dossier of dossiers.values()) {
+    if (dossier.stappen.some((s) => s.id === stapId)) return dossier;
+  }
+  throw new SessieFout("Stap bestaat niet (meer).");
+}
+
+export function verwijderProces(identiteit: Identiteit, procesId: string): void {
+  const dossier = dossierViaProces(procesId);
+  eisDeelnemer(dossier, identiteit);
+  dossier.processen = dossier.processen.filter((p) => p.id !== procesId);
+  // Komt in de database van de cascade op proces_id.
+  dossier.stappen = dossier.stappen.filter((s) => s.proces_id !== procesId);
+}
+
+export function voegStapToe(identiteit: Identiteit, invoer: NieuweStap): ProcesStapRij {
+  const dossier = vindDossier(invoer.sessieId);
+  eisDeelnemer(dossier, identiteit);
+
+  const soort = invoer.soort ?? "huidig";
+  const bestaande = dossier.stappen
+    .filter((s) => s.proces_id === invoer.procesId && s.soort === soort)
+    .sort((a, b) => a.volgorde - b.volgorde);
+  const positie = invoer.voorVolgorde ?? bestaande.length;
+
+  const stap: ProcesStapRij = {
+    id: crypto.randomUUID(),
+    sessie_id: invoer.sessieId,
+    proces_id: invoer.procesId,
+    volgorde: positie,
+    naam: invoer.naam,
+    uitvoerder: invoer.uitvoerder ?? "",
+    knelpunt: invoer.knelpunt ?? "",
+    uitzondering: invoer.uitzondering ?? false,
+    soort,
+    vervangt: [],
+    toegevoegd_door: invoer.deelnemerId,
+    aangemaakt_op: nu(),
+    bijgewerkt_op: nu(),
+  };
+
+  // Alles vanaf het invoegpunt schuift een plek op, zodat de reeks aaneengesloten blijft.
+  for (const [index, s] of bestaande.filter((s) => s.volgorde >= positie).entries()) {
+    s.volgorde = positie + index + 1;
+    s.bijgewerkt_op = nu();
+  }
+  dossier.stappen.push(stap);
+  return stap;
+}
+
+export function wijzigStap(identiteit: Identiteit, stapId: string, velden: StapVelden): void {
+  const dossier = dossierViaStap(stapId);
+  eisDeelnemer(dossier, identiteit);
+  const stap = dossier.stappen.find((s) => s.id === stapId);
+  if (!stap) return;
+  if (velden.naam !== undefined) stap.naam = velden.naam;
+  if (velden.uitvoerder !== undefined) stap.uitvoerder = velden.uitvoerder;
+  if (velden.knelpunt !== undefined) stap.knelpunt = velden.knelpunt;
+  if (velden.uitzondering !== undefined) stap.uitzondering = velden.uitzondering;
+  if (velden.vervangt !== undefined) stap.vervangt = velden.vervangt;
+  stap.bijgewerkt_op = nu();
+}
+
+export function verwijderStap(identiteit: Identiteit, stapId: string): void {
+  const dossier = dossierViaStap(stapId);
+  eisDeelnemer(dossier, identiteit);
+  dossier.stappen = dossier.stappen.filter((s) => s.id !== stapId);
+}
+
+export function herordenStappen(
+  identiteit: Identiteit,
+  procesId: string,
+  stapIds: string[],
+): void {
+  const dossier = dossierViaProces(procesId);
+  eisDeelnemer(dossier, identiteit);
+  for (const [index, id] of stapIds.entries()) {
+    const stap = dossier.stappen.find((s) => s.id === id && s.proces_id === procesId);
+    if (!stap) continue;
+    stap.volgorde = index;
+    stap.bijgewerkt_op = nu();
+  }
+}
+
+export function laadStappenVoorzet(
+  identiteit: Identiteit,
+  procesId: string,
+  deelnemerId: string,
+): void {
+  const dossier = dossierViaProces(procesId);
+  eisDeelnemer(dossier, identiteit);
+
+  const proces = dossier.processen.find((p) => p.id === procesId);
+  if (!proces) return;
+
+  const voorzet = bedrijfsfunctie(proces.functie_id)?.stappen_voorzet ?? [];
+  if (voorzet.length === 0) return;
+
+  // Doet niets als er al stappen staan: laden mag het werk van het team nooit overschrijven.
+  const alGevuld = dossier.stappen.some((s) => s.proces_id === procesId && s.soort === "huidig");
+  if (alGevuld) return;
+
+  for (const [index, stap] of voorzet.entries()) {
+    dossier.stappen.push({
+      id: crypto.randomUUID(),
+      sessie_id: proces.sessie_id,
+      proces_id: procesId,
+      volgorde: index,
+      naam: stap.naam,
+      uitvoerder: stap.uitvoerder,
+      knelpunt: "",
+      uitzondering: stap.uitzondering ?? false,
+      soort: "huidig",
+      vervangt: [],
+      toegevoegd_door: deelnemerId,
+      aangemaakt_op: nu(),
+      bijgewerkt_op: nu(),
+    });
+  }
 }
 
 export function meldAanwezig(identiteit: Identiteit, deelnemerId: string): void {

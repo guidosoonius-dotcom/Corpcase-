@@ -1,12 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { FASE_LABELS } from "@/lib/supabase/types";
-import { cora, domein as coraDomein, organisatie, speelmodus } from "@/lib/content";
+import { FASE_LABELS, type SessieState } from "@/lib/supabase/types";
+import { cora, domein as coraDomein, organisatie, procesmodus, speelmodus } from "@/lib/content";
 import { useSessie } from "@/lib/sessie/gebruik";
 import { alleBeelden, budgetStand, dekking, teamscore } from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import { Matrix } from "@/components/matrix";
+import { Processtrook, telOverdrachten } from "@/components/processtrook";
 import { Cijfer, DonkerPaneel, Melding } from "@/components/basis";
 import { Cirkel, Halftoon } from "@/components/decoratie";
 import { Thema } from "@/components/thema";
@@ -35,6 +36,21 @@ export default function SchermPagina() {
     );
   }
 
+  return state.sessie.spelsoort === "proces" ? (
+    <ProcesScherm state={state} />
+  ) : (
+    <UsecaseScherm state={state} />
+  );
+}
+
+/**
+ * De beamer van de use-casesessie.
+ *
+ * Bewust gesplitst en niet met if-jes doorregen: dit scherm rekent op een portfolio, een matrix en
+ * een speelmodus uit `speelmodi.json`. Een processessie heeft geen van drieën — `speelmodus()`
+ * gooide daar zelfs een fout — en heeft bovendien iets heel anders nodig om naar te kijken.
+ */
+function UsecaseScherm({ state }: { state: SessieState }) {
   const beelden = alleBeelden(state);
   const score = teamscore(state);
   const gedekt = dekking(state);
@@ -195,6 +211,113 @@ export default function SchermPagina() {
         </section>
       </div>
     </main>
+    </Thema>
+  );
+}
+
+/**
+ * De beamer van de processessie: de plaat waar de zaal samen naar kijkt.
+ *
+ * Hier staat de plaat horizontaal — van links naar rechts, zoals een proces hoort te lezen. Dat is
+ * precies de plek waarvoor die richting bestaat: er wordt niet bewerkt, en de hele keten moet in
+ * één blik te overzien zijn.
+ */
+function ProcesScherm({ state }: { state: SessieState }) {
+  const score = teamscore(state);
+  const modus = procesmodus(state.sessie.speelmodus);
+
+  // Het proces waar de zaal aan werkt: het eerst gekozen proces dat al stappen heeft, anders het
+  // eerste dat er ligt.
+  const stappenVan = (procesId: string) =>
+    state.stappen
+      .filter((s) => s.proces_id === procesId && s.soort === "huidig")
+      .sort((a, b) => a.volgorde - b.volgorde);
+
+  const proces =
+    state.processen.find((p) => stappenVan(p.id).length > 0) ?? state.processen[0] ?? null;
+  const stappen = proces ? stappenVan(proces.id) : [];
+  const overdrachten = telOverdrachten(stappen);
+
+  return (
+    <Thema accent={organisatie(state.sessie.organisatie_id).thema.accent} className="flex-1">
+      <main className="relative mx-auto w-full max-w-6xl overflow-hidden px-8 py-8">
+        <Cirkel hoek="rechtsboven" formaat={0.32} toon="zacht" vanBoven={140} />
+
+        <header className="relative flex items-baseline justify-between gap-6">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-inkt-zacht">
+              {FASE_LABELS[state.sessie.fase]}
+            </p>
+            <h1 className="display mt-1 text-4xl leading-tight text-inkt">
+              {proces?.titel ?? state.sessie.titel}
+            </h1>
+            {proces?.aanleiding ? (
+              <p className="mt-2 max-w-3xl text-lg leading-relaxed text-inkt-zacht">
+                {proces.aanleiding}
+              </p>
+            ) : null}
+          </div>
+          <Cijfer
+            waarde={score.totaal}
+            label="Teamscore"
+            toon="accent"
+            formaat="groot"
+            toelichting="Meet de breedte en onderbouwing van het gesprek, niet wie er wint."
+          />
+        </header>
+
+        {stappen.length > 0 ? (
+          <>
+            <section className="mt-8">
+              <h2 className="display text-2xl text-inkt">Hoe het nu loopt</h2>
+              <div className="mt-3">
+                <Processtrook
+                  stappen={stappen}
+                  deelnemers={state.deelnemers}
+                  richting="horizontaal"
+                />
+              </div>
+            </section>
+
+            {overdrachten > 0 ? (
+              <div className="mt-8 max-w-md">
+                <DonkerPaneel bloedt="links" className="p-5">
+                  <div aria-hidden className="absolute -right-10 -top-14 h-44 w-44 text-white/[0.07]">
+                    <Halftoon />
+                  </div>
+                  <div className="relative">
+                    <p className="text-sm text-houtskool-zacht">
+                      Zo vaak wisselt het werk van hand
+                    </p>
+                    <p className="cijfer mt-2 text-5xl text-accent-op-donker">{overdrachten}</p>
+                    <p className="mt-1 text-sm text-white">
+                      {overdrachten === 1 ? "overdracht" : "overdrachten"} in {stappen.length} stappen
+                    </p>
+                    <p className="mt-3 border-t border-houtskool-rand pt-2.5 text-xs leading-relaxed text-houtskool-zacht">
+                      Bij elke overdracht ligt het werk stil tot de volgende het oppakt. Daar zit
+                      meestal meer doorlooptijd dan in het werk zelf.
+                    </p>
+                  </div>
+                </DonkerPaneel>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <p className="mt-10 text-xl leading-relaxed text-inkt-zacht">
+            {state.processen.length === 0
+              ? "Nog geen proces gekozen."
+              : "Het proces ligt op tafel; de stappen komen zo."}
+          </p>
+        )}
+
+        <section className="mt-10">
+          <h2 className="display text-2xl text-inkt">Aan tafel</h2>
+          <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">
+            {state.deelnemers.map((d) => d.naam).join(" · ")}
+          </p>
+          <p className="mt-2 text-sm text-inkt-zacht">Speelduur: {modus.naam.toLowerCase()}</p>
+        </section>
+      </main>
     </Thema>
   );
 }

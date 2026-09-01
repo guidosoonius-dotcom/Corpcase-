@@ -5,6 +5,8 @@ import type {
   DeelnemerRij,
   EigenSignaalRij,
   Fase,
+  ProcesRij,
+  ProcesStapRij,
   RealiteitscheckBesluitRij,
   RoadmapItemRij,
   SessieRij,
@@ -17,7 +19,13 @@ import type {
   WaarderingRij,
 } from "@/lib/supabase/types";
 import { maakBeheerCode, maakJoinCode, maakToken, normaliseerCode } from "./codes";
-import { organisatie, procesmodus, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
+import {
+  bedrijfsfunctie,
+  organisatie,
+  procesmodus,
+  rolopdrachtVoorRol,
+  speelmodus,
+} from "@/lib/content";
 import {
   SessieFout,
   type AllocatieInvoer,
@@ -26,7 +34,10 @@ import {
   type EigenUitdagingInvoer,
   type Identiteit,
   type NieuweSessie,
+  type NieuwProces,
+  type NieuweStap,
   type NieuweUsecase,
+  type StapVelden,
   type Opslag,
   type RoadmapInvoer,
   type SessieVelden,
@@ -261,6 +272,8 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     allocaties,
     besluiten,
     roadmap,
+    processen,
+    stappen,
   ] = await Promise.all([
     client.from(SESSIE_PUBLIEK).select("*").eq("id", sessieId).single(),
     client.from("deelnemers").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
@@ -273,6 +286,8 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     client.from("allocaties").select("*").eq("sessie_id", sessieId),
     client.from("realiteitscheck_besluiten").select("*").eq("sessie_id", sessieId),
     client.from("roadmap_items").select("*").eq("sessie_id", sessieId).order("volgorde"),
+    client.from("sessie_processen").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
+    client.from("proces_stappen").select("*").eq("sessie_id", sessieId).order("volgorde"),
   ]);
 
   return {
@@ -287,6 +302,8 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     allocaties: controleer(allocaties, "Allocaties laden") as AllocatieRij[],
     besluiten: controleer(besluiten, "Besluiten laden") as RealiteitscheckBesluitRij[],
     roadmap: controleer(roadmap, "Roadmap laden") as RoadmapItemRij[],
+    processen: controleer(processen, "Processen laden") as ProcesRij[],
+    stappen: controleer(stappen, "Processtappen laden") as ProcesStapRij[],
   };
 }
 
@@ -612,6 +629,178 @@ export async function verwijderRoadmapItem(
   if (error) throw new SessieFout(`Roadmap-item verwijderen: ${error.message}`);
 }
 
+// De processessie: proceskeuze en de procesplaat ----------------------------
+
+export async function voegProcesToe(
+  identiteit: Identiteit,
+  invoer: NieuwProces,
+): Promise<ProcesRij> {
+  const client = maakClient(identiteit);
+  return controleer(
+    await client
+      .from("sessie_processen")
+      .insert({
+        sessie_id: invoer.sessieId,
+        functie_id: invoer.functieId,
+        titel: invoer.titel,
+        aanleiding: invoer.aanleiding ?? "",
+      })
+      .select()
+      .single(),
+    "Proces toevoegen",
+  ) as ProcesRij;
+}
+
+export async function verwijderProces(identiteit: Identiteit, procesId: string): Promise<void> {
+  const client = maakClient(identiteit);
+  // De stappen gaan mee via de cascade op proces_id; die hoeven hier niet apart weg.
+  const { error } = await client.from("sessie_processen").delete().eq("id", procesId);
+  if (error) throw new SessieFout(`Proces verwijderen: ${error.message}`);
+}
+
+export async function voegStapToe(
+  identiteit: Identiteit,
+  invoer: NieuweStap,
+): Promise<ProcesStapRij> {
+  const client = maakClient(identiteit);
+  const soort = invoer.soort ?? "huidig";
+
+  /*
+   * Waar komt de stap te staan? Achteraan, tenzij er een invoegpunt is meegegeven.
+   *
+   * De bestaande volgordes worden hier opgehaald in plaats van blind opgehoogd, omdat de plaat
+   * altijd een aaneengesloten reeks moet blijven: een gat of een dubbel nummer verandert stilletjes
+   * de volgorde die iedereen op zijn scherm ziet.
+   */
+  const bestaande = controleer(
+    await client
+      .from("proces_stappen")
+      .select("id, volgorde")
+      .eq("proces_id", invoer.procesId)
+      .eq("soort", soort)
+      .order("volgorde"),
+    "Stappen ophalen",
+  ) as { id: string; volgorde: number }[];
+
+  const positie = invoer.voorVolgorde ?? bestaande.length;
+
+  const stap = controleer(
+    await client
+      .from("proces_stappen")
+      .insert({
+        sessie_id: invoer.sessieId,
+        proces_id: invoer.procesId,
+        volgorde: positie,
+        naam: invoer.naam,
+        uitvoerder: invoer.uitvoerder ?? "",
+        knelpunt: invoer.knelpunt ?? "",
+        uitzondering: invoer.uitzondering ?? false,
+        soort,
+        toegevoegd_door: invoer.deelnemerId,
+      })
+      .select()
+      .single(),
+    "Stap toevoegen",
+  ) as ProcesStapRij;
+
+  // Alles vanaf het invoegpunt schuift een plek op. Bij invoegen achteraan is deze lijst leeg.
+  const opschuiven = bestaande.filter((s) => s.volgorde >= positie);
+  for (const [index, s] of opschuiven.entries()) {
+    const { error } = await client
+      .from("proces_stappen")
+      .update({ volgorde: positie + index + 1 })
+      .eq("id", s.id);
+    if (error) throw new SessieFout(`Volgorde bijwerken: ${error.message}`);
+  }
+
+  return stap;
+}
+
+export async function wijzigStap(
+  identiteit: Identiteit,
+  stapId: string,
+  velden: StapVelden,
+): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client.from("proces_stappen").update(velden).eq("id", stapId);
+  if (error) throw new SessieFout(`Stap bijwerken: ${error.message}`);
+}
+
+export async function verwijderStap(identiteit: Identiteit, stapId: string): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client.from("proces_stappen").delete().eq("id", stapId);
+  if (error) throw new SessieFout(`Stap verwijderen: ${error.message}`);
+}
+
+/**
+ * Schrijft de volledige nieuwe volgorde van één proces weg.
+ *
+ * Bewust niet per stap ophogen: als twee mensen tegelijk iets verplaatsen leveren twee complete
+ * volgordes een herkenbare uitkomst op — de laatste wint — terwijl twee losse ophogingen elkaar
+ * kruisen en een reeks achterlaten die niemand heeft bedoeld.
+ */
+export async function herordenStappen(
+  identiteit: Identiteit,
+  procesId: string,
+  stapIds: string[],
+): Promise<void> {
+  const client = maakClient(identiteit);
+  for (const [index, id] of stapIds.entries()) {
+    const { error } = await client
+      .from("proces_stappen")
+      .update({ volgorde: index })
+      .eq("id", id)
+      .eq("proces_id", procesId);
+    if (error) throw new SessieFout(`Volgorde opslaan: ${error.message}`);
+  }
+}
+
+/**
+ * Kopieert de aangeleverde procesplaat naar deze sessie, als startpunt.
+ *
+ * Kopiëren en niet verwijzen: zodra de stappen er staan zijn het gewone stappen die het team
+ * hernoemt, verplaatst en weggooit. Er is dus geen tweede, alleen-lezen soort stap naast de
+ * bewerkbare — één model, en de plaat is niet meer dan een vliegende start.
+ *
+ * Doet niets als er al stappen staan: dan zou laden het werk van het team overschrijven.
+ */
+export async function laadStappenVoorzet(
+  identiteit: Identiteit,
+  procesId: string,
+  deelnemerId: string,
+): Promise<void> {
+  const client = maakClient(identiteit);
+
+  const proces = controleer(
+    await client.from("sessie_processen").select("*").eq("id", procesId).single(),
+    "Proces ophalen",
+  ) as ProcesRij;
+
+  const functie = bedrijfsfunctie(proces.functie_id);
+  const voorzet = functie?.stappen_voorzet ?? [];
+  if (voorzet.length === 0) return;
+
+  const bestaande = controleer(
+    await client.from("proces_stappen").select("id").eq("proces_id", procesId).eq("soort", "huidig"),
+    "Stappen ophalen",
+  ) as { id: string }[];
+  if (bestaande.length > 0) return;
+
+  const { error } = await client.from("proces_stappen").insert(
+    voorzet.map((stap, index) => ({
+      sessie_id: proces.sessie_id,
+      proces_id: procesId,
+      volgorde: index,
+      naam: stap.naam,
+      uitvoerder: stap.uitvoerder,
+      uitzondering: stap.uitzondering ?? false,
+      soort: "huidig",
+      toegevoegd_door: deelnemerId,
+    })),
+  );
+  if (error) throw new SessieFout(`Procesplaat laden: ${error.message}`);
+}
+
 /** Houdt bij wie er nog actief is, voor de aanwezigheidsweergave bij de facilitator. */
 export async function meldAanwezig(identiteit: Identiteit, deelnemerId: string): Promise<void> {
   const client = maakClient(identiteit);
@@ -648,5 +837,12 @@ export const supabaseOpslag: Opslag = {
   bewaarBesluit,
   bewaarRoadmapItem,
   verwijderRoadmapItem,
+  voegProcesToe,
+  verwijderProces,
+  voegStapToe,
+  wijzigStap,
+  verwijderStap,
+  herordenStappen,
+  laadStappenVoorzet,
   meldAanwezig,
 };

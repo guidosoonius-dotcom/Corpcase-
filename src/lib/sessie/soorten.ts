@@ -7,6 +7,8 @@ import type {
   EigenSignaalRij,
   Fase,
   Herkomst,
+  ProcesRij,
+  ProcesStapRij,
   SessieRij,
   SessieState,
   SessieUsecaseRij,
@@ -38,6 +40,40 @@ export type NieuweSessie = {
    * andere sessie gelezen.
    */
   herkomst?: Herkomst | null;
+};
+
+/** Fase 1 van de processessie: een proces op tafel leggen. */
+export type NieuwProces = {
+  sessieId: string;
+  /** Een bedrijfsfunctie-id uit content/processen/cora-bedrijfsfuncties.json. */
+  functieId: string;
+  titel: string;
+  aanleiding?: string;
+};
+
+/** Fase 2: een stap op de procesplaat. */
+export type NieuweStap = {
+  sessieId: string;
+  procesId: string;
+  deelnemerId: string;
+  naam: string;
+  uitvoerder?: string;
+  knelpunt?: string;
+  uitzondering?: boolean;
+  soort?: "huidig" | "nieuw";
+  /**
+   * Waar de stap komt te staan: het volgnummer waarvóór hij wordt ingevoegd. Weggelaten betekent
+   * achteraan. De rest van de stappen schuift op, zodat de volgorde aaneengesloten blijft.
+   */
+  voorVolgorde?: number;
+};
+
+export type StapVelden = {
+  naam?: string;
+  uitvoerder?: string;
+  knelpunt?: string;
+  uitzondering?: boolean;
+  vervangt?: string[];
 };
 
 export type Toegang = {
@@ -187,6 +223,21 @@ export type Opslag = {
     identiteit: Identiteit,
     invoer: EigenUitdagingInvoer,
   ): Promise<EigenSignaalRij>;
+
+  /*
+   * De processessie. `herordenStappen` schrijft de volledige nieuwe volgorde van één proces in
+   * plaats van losse nummers op te hogen: twee mensen die tegelijk een stap verplaatsen leveren
+   * dan twee complete volgordes op, waarvan de laatste wint, in plaats van twee halve die elkaar
+   * kruisen. Bij een poll van 2,5 seconde is dat geen theoretisch geval.
+   */
+  voegProcesToe(identiteit: Identiteit, invoer: NieuwProces): Promise<ProcesRij>;
+  verwijderProces(identiteit: Identiteit, procesId: string): Promise<void>;
+  voegStapToe(identiteit: Identiteit, invoer: NieuweStap): Promise<ProcesStapRij>;
+  wijzigStap(identiteit: Identiteit, stapId: string, velden: StapVelden): Promise<void>;
+  verwijderStap(identiteit: Identiteit, stapId: string): Promise<void>;
+  herordenStappen(identiteit: Identiteit, procesId: string, stapIds: string[]): Promise<void>;
+  /** Kopieert de stappen uit de contentbibliotheek naar dit proces, als startpunt. */
+  laadStappenVoorzet(identiteit: Identiteit, procesId: string, deelnemerId: string): Promise<void>;
 
   voegUsecaseToe(identiteit: Identiteit, invoer: NieuweUsecase): Promise<SessieUsecaseRij>;
   koppelSignalen(identiteit: Identiteit, usecaseId: string, signaalIds: string[]): Promise<void>;
