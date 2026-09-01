@@ -5,6 +5,14 @@
  * en zo blijft het leesbaar naast de queries die het gebruiken.
  */
 
+/**
+ * De app kent twee spellen. `usecases` gaat van signaal naar use case, waarde en roadmap;
+ * `proces` legt daarna een concreet bedrijfsproces op tafel en verbetert of herontwerpt het.
+ *
+ * Ze delen de sessiemachinerie (codes, deelnemers, rollen, bijdragen) maar niet hun fasereeks.
+ */
+export type Spelsoort = "usecases" | "proces";
+
 export type Fase =
   | "lobby"
   | "verkennen"
@@ -12,18 +20,61 @@ export type Fase =
   | "waardebepaling"
   | "prioritering"
   | "roadmap"
-  | "opbrengst";
+  | "opbrengst"
+  | "proceskeuze"
+  | "afpellen"
+  | "diagnose"
+  | "herontwerp"
+  | "doorrekenen"
+  | "besluit";
 
-/** De fases in speelvolgorde. De facilitator schuift hier stap voor stap doorheen. */
-export const FASES: Fase[] = [
-  "lobby",
-  "verkennen",
-  "identificatie",
-  "waardebepaling",
-  "prioritering",
-  "roadmap",
-  "opbrengst",
-];
+/**
+ * De fases in speelvolgorde, per spelsoort. De facilitator schuift hier stap voor stap doorheen.
+ *
+ * Elke fasenaam komt in precies één reeks voor, op `lobby` na: die is gedeeld. Daardoor blijft een
+ * losse fasewaarde ondubbelzinnig — je kunt aan `"afpellen"` zien bij welk spel hij hoort — en kan
+ * `spelsoortVanFase` een fase uit het verkeerde spel herkennen in plaats van hem stilzwijgend als
+ * "niet gevonden" te behandelen.
+ */
+export const FASES_PER_SPELSOORT: Record<Spelsoort, Fase[]> = {
+  usecases: [
+    "lobby",
+    "verkennen",
+    "identificatie",
+    "waardebepaling",
+    "prioritering",
+    "roadmap",
+    "opbrengst",
+  ],
+  proces: [
+    "lobby",
+    "proceskeuze",
+    "afpellen",
+    "diagnose",
+    "herontwerp",
+    "doorrekenen",
+    "besluit",
+  ],
+};
+
+/**
+ * De fasereeks van dit spel. Alles wat met volgorde te maken heeft — de stippenbalk, "loopt voor",
+ * de knop naar de volgende fase — hangt hieraan en niet aan één globale lijst, want de twee
+ * spellen hebben een eigen reeks.
+ */
+export function fasesVoor(spelsoort: Spelsoort): Fase[] {
+  return FASES_PER_SPELSOORT[spelsoort] ?? FASES_PER_SPELSOORT.usecases;
+}
+
+/**
+ * Hoort deze fase bij dit spel?
+ *
+ * Gebruikt om een fase uit het andere spel te weren: `eigen_fase` is vrije invoer vanuit de client,
+ * en een use-casefase in een processessie zou `looptVoor` en de stippenbalk stuurloos maken.
+ */
+export function faseHoortBij(fase: Fase, spelsoort: Spelsoort): boolean {
+  return fasesVoor(spelsoort).includes(fase);
+}
 
 export const FASE_LABELS: Record<Fase, string> = {
   lobby: "Lobby",
@@ -33,6 +84,12 @@ export const FASE_LABELS: Record<Fase, string> = {
   prioritering: "Prioritering",
   roadmap: "Roadmap",
   opbrengst: "Opbrengst",
+  proceskeuze: "Proceskeuze",
+  afpellen: "Afpellen",
+  diagnose: "Diagnose",
+  herontwerp: "Herontwerp",
+  doorrekenen: "Doorrekenen",
+  besluit: "Besluit",
 };
 
 export type UsecaseStatus = "kandidaat" | "portfolio" | "afgevallen";
@@ -40,12 +97,35 @@ export type Waardemodus = "scorekaart" | "businesscase";
 export type BijdrageSoort = "hulpvraag" | "assist" | "challenge" | "opmerking";
 export type CheckBesluit = "aanpassen" | "handhaven";
 
+/**
+ * Wat een processessie meekrijgt uit een afgeronde use-casesessie: een momentopname, geen
+ * koppeling. Bewust een kopie in de nieuwe sessie en geen verwijzing naar de oude, want dan hoeft
+ * niemand toegang te houden tot een sessie waar hij niet meer aan tafel zit, en overleeft deze
+ * sessie het opruimen van de vorige.
+ *
+ * Alleen wat als voorzet bruikbaar is. Geen tweede administratie van het portfolio.
+ */
+export type Herkomst = {
+  sessie_id: string;
+  titel: string;
+  afgerond_op: string | null;
+  /** De use cases die het portfolio haalden, met hun verwachte netto baat per jaar. */
+  portfolio: { id: string; titel: string; domein: string; netto_baat_verwacht: number | null }[];
+  /** Wat er op de roadmap als eerste zou starten. */
+  nu_op_de_roadmap: string[];
+  /** De CORA-domeinen die het team in sessie 1 geraakt heeft. */
+  gedekte_domeinen: string[];
+};
+
 export type SessieRij = {
   id: string;
   titel: string;
   organisatie_id: string;
+  spelsoort: Spelsoort;
   speelmodus: string;
   fase: Fase;
+  /** Alleen gevuld bij een processessie die op een afgeronde use-casesessie volgt. */
+  herkomst: Herkomst | null;
   join_code: string;
   /**
    * `null` betekent hier niet "geen beheercode", maar "niet aan jou getoond": elke plek die deze

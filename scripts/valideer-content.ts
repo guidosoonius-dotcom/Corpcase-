@@ -9,9 +9,12 @@
  */
 import {
   allePersonaSignalen,
+  bedrijfsfuncties,
   bibliotheek,
   cora,
   organisaties,
+  praktijktoetsen,
+  procesmodi,
   realiteitschecks,
   rollen,
   rolopdrachten,
@@ -83,11 +86,38 @@ for (const id of Object.keys(BEREKENINGEN)) {
   }
 }
 
-// Rolopdrachten: precies één per rol
-for (const r of rollen.rollen) {
-  const opdrachten = rolopdrachten.opdrachten.filter((o) => o.rol === r.id);
-  if (opdrachten.length === 0) fouten.push(`Rol "${r.id}" heeft geen rolopdracht`);
-  if (opdrachten.length > 1) fouten.push(`Rol "${r.id}" heeft meer dan één rolopdracht`);
+// Rolopdrachten: precies één per rol, per spelsoort. Elk spel heeft zijn eigen opdrachten — een
+// opdracht over het use-caseportfolio valt in een processessie niet te halen, en andersom.
+for (const spelsoort of ["usecases", "proces"] as const) {
+  for (const r of rollen.rollen) {
+    const opdrachten = rolopdrachten.opdrachten.filter(
+      (o) => o.rol === r.id && o.spelsoort === spelsoort,
+    );
+    if (opdrachten.length === 0) {
+      fouten.push(`Rol "${r.id}" heeft geen rolopdracht voor spelsoort "${spelsoort}"`);
+    }
+    if (opdrachten.length > 1) {
+      fouten.push(`Rol "${r.id}" heeft meer dan één rolopdracht voor spelsoort "${spelsoort}"`);
+    }
+  }
+}
+
+// Praktijktoetsen: genoeg om elke speelduur te vullen, en unieke id's naast de realiteitschecks.
+// Die twee bibliotheken delen één tabel in de database (check_id is vrije tekst), dus een id dat
+// in allebei voorkomt zou twee verschillende scenario's op één besluit laten uitkomen.
+const checkIds = new Set(realiteitschecks.checks.map((c) => c.id));
+for (const t of praktijktoetsen.checks) {
+  if (checkIds.has(t.id)) {
+    fouten.push(`Praktijktoets "${t.id}" heeft dezelfde id als een realiteitscheck`);
+  }
+  checkIds.add(t.id);
+}
+for (const modus of procesmodi.modi) {
+  if (modus.aantal_praktijktoetsen > praktijktoetsen.checks.length) {
+    fouten.push(
+      `Procesmodus "${modus.id}" vraagt ${modus.aantal_praktijktoetsen} praktijktoetsen, er zijn er ${praktijktoetsen.checks.length}`,
+    );
+  }
 }
 for (const o of rolopdrachten.opdrachten) {
   if (!rolIds.has(o.rol)) fouten.push(`Rolopdracht "${o.id}" verwijst naar onbekende rol "${o.rol}"`);
@@ -138,6 +168,57 @@ for (const org of organisaties) {
   }
 }
 
+// Bedrijfsfuncties: elke functie hangt aan een bestaand CORA-domein, en id's zijn uniek.
+const functieIds = new Set<string>();
+for (const f of bedrijfsfuncties.functies) {
+  if (functieIds.has(f.id)) fouten.push(`Bedrijfsfunctie-id "${f.id}" komt meer dan één keer voor`);
+  functieIds.add(f.id);
+  if (!domeinIds.has(f.domein)) {
+    fouten.push(`Bedrijfsfunctie "${f.id}": onbekend CORA-domein "${f.domein}"`);
+  }
+  // Een voorzet zonder bron is precies wat dit project niet wil: verzonnen stappen die als
+  // vaststaand overkomen. Staan er stappen, dan hoort er ook te staan waar ze vandaan komen.
+  if (f.stappen_voorzet.length > 0 && !f.voorzet_bron) {
+    fouten.push(
+      `Bedrijfsfunctie "${f.id}" heeft een stappenvoorzet zonder bron; vul voorzet_bron in`,
+    );
+  }
+  if (f.voorzet_bron && f.voorzet_geverifieerd === undefined) {
+    fouten.push(`Bedrijfsfunctie "${f.id}" heeft een voorzet_bron zonder voorzet_geverifieerd`);
+  }
+}
+
+// Elke manoeuvre die een speelmodus aanbiedt moet ook beschreven zijn.
+const manoeuvreIds = new Set(procesmodi.manoeuvres.map((m) => m.id));
+for (const modus of procesmodi.modi) {
+  for (const id of modus.manoeuvres) {
+    if (!manoeuvreIds.has(id)) {
+      fouten.push(`Procesmodus "${modus.id}": onbekende manoeuvre "${id}"`);
+    }
+  }
+  if (modus.aantal_praktijktoetsen > 0 && modus.min_stappen_per_proces < 1) {
+    fouten.push(`Procesmodus "${modus.id}": een proces zonder stappen valt niet te toetsen`);
+  }
+}
+
+// De twee spellen delen hun speelduren; dat is waar de moduskiezer op rekent.
+const speelduren = speelmodi.modi.map((m) => m.id).sort();
+const procesduren = procesmodi.modi.map((m) => m.id).sort();
+if (speelduren.join() !== procesduren.join()) {
+  fouten.push(
+    `De speelduren van de twee spellen lopen uiteen: ${speelduren.join("/")} tegenover ${procesduren.join("/")}`,
+  );
+}
+
+// Welke domeinen hebben geen enkele bedrijfsfunctie? Dan is daar niets te kiezen in fase 1.
+const domeinenMetFunctie = new Set(bedrijfsfuncties.functies.map((f) => f.domein));
+const zonderFunctie = cora.domeinen.filter((d) => !domeinenMetFunctie.has(d.id));
+if (zonderFunctie.length > 0) {
+  waarschuwingen.push(
+    `Geen bedrijfsfunctie in: ${zonderFunctie.map((d) => d.naam).join(", ")} (daar valt in een processessie niets te kiezen)`,
+  );
+}
+
 // Dekking: welke domeinen hebben nog geen kaart in de bibliotheek?
 const gedekt = new Set(bibliotheek.usecases.map((u) => u.domein));
 const ongedekt = cora.domeinen.filter((d) => !gedekt.has(d.id));
@@ -155,8 +236,9 @@ const onGeverifieerd = organisaties.flatMap((o) =>
 console.log(`Use cases:            ${bibliotheek.usecases.length}`);
 console.log(`CORA-domeinen:        ${cora.domeinen.length} (${gedekt.size} met bibliotheekkaart)`);
 console.log(`Signaalkaarten:       ${uitdagingSignalen.kaarten.length + allePersonaSignalen.length} + jaarverslag`);
-console.log(`Realiteitschecks:     ${realiteitschecks.checks.length}`);
+console.log(`Realiteitschecks:     ${realiteitschecks.checks.length} + ${praktijktoetsen.checks.length} praktijktoetsen`);
 console.log(`Rollen:               ${rollen.rollen.length}`);
+console.log(`Bedrijfsfuncties:     ${bedrijfsfuncties.functies.length} (${domeinenMetFunctie.size} domeinen geraakt)`);
 console.log(`Nog te verifiëren:    ${onGeverifieerd.length} cijfers (zie content/BRONNEN.md)`);
 
 if (waarschuwingen.length > 0) {

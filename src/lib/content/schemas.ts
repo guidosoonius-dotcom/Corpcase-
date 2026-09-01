@@ -228,6 +228,8 @@ export const rollenBestandSchema = z.object({
 export const rolopdrachtSchema = z.object({
   id: z.string().min(1),
   rol: z.string().min(1),
+  /** Voor welk spel deze opdracht geldt. Weggelaten betekent de use-casesessie. */
+  spelsoort: z.enum(["usecases", "proces"]).default("usecases"),
   opdracht: z.string().min(1),
   controle: z.string().min(1),
 });
@@ -246,6 +248,11 @@ export const realiteitscheckSchema = z.object({
   zwaarte: z.number().int().min(1).max(3),
 });
 
+/**
+ * De praktijktoetsen van de processessie hebben dezelfde vorm als de realiteitschecks, en delen
+ * bewust hun tabel in de database: `realiteitscheck_besluiten.check_id` is vrije tekst zonder
+ * verwijzing, precies zodat er inhoud uit meerdere bibliotheken in kan.
+ */
 export const realiteitschecksBestandSchema = z.object({
   toelichting: z.string(),
   checks: z.array(realiteitscheckSchema).min(1),
@@ -285,6 +292,115 @@ export const speelmodiBestandSchema = z.object({
     .length(4),
 });
 
+/**
+ * Een bedrijfsfunctie uit het CORA-functiemodel: het niveau waarop een processessie kiest.
+ *
+ * Een niveau fijner dan de achttien domeinen in `content/cora/domeinen.json` — "Coördineren
+ * reparatieonderhoud" in plaats van "Vastgoedonderhoud" — en een niveau grover dan de stappen
+ * waaruit zo'n functie bestaat. Die stappen staan hier bewust niet standaard in: die tekent het
+ * team zelf op de procesplaat. Is er materiaal van de corporatie zelf, dan komt dat in
+ * `stappen_voorzet` te staan, met een eigen bron, en verschijnt het in de sessie als één knop —
+ * laden en daarna aanpassen — nooit als iets dat er stilzwijgend al staat.
+ */
+export const processtapVoorzetSchema = z.object({
+  naam: z.string().min(1),
+  /** Rol of afdeling die de stap uitvoert; de plaat markeert de overdrachten hiertussen. */
+  uitvoerder: z.string().min(1),
+  /** Een stap die maar in een deel van de gevallen langskomt; hangt naast de hoofdlijn. */
+  uitzondering: z.boolean().optional(),
+});
+
+export const bedrijfsfunctieSchema = z.object({
+  id: z.string().min(1),
+  naam: z.string().min(1),
+  /** Het oranje kader waar de functie in staat: "Verhuurde eenheid", "Richting", "Monitoring". */
+  groep: z.string().min(1),
+  soort: soortBedrijfsfunctie,
+  /** Alleen bij primaire functies: bedient die de huurder, of de eigen organisatie? */
+  klant: z.enum(["extern", "intern"]).optional(),
+  /** Verwijst naar een id in content/cora/domeinen.json. */
+  domein: z.string().min(1),
+  /** Voor wat er in de bron opvalt en nog uitgezocht moet worden. */
+  opmerking: z.string().optional(),
+  stappen_voorzet: z.array(processtapVoorzetSchema),
+  /** Verplicht zodra er een voorzet staat: waar komen die stappen vandaan? */
+  voorzet_bron: z.string().min(1).optional(),
+  voorzet_geverifieerd: z.boolean().optional(),
+});
+
+export const bedrijfsfunctiesBestandSchema = z.object({
+  toelichting: z.string(),
+  bron: z.string().min(1),
+  geverifieerd: z.boolean(),
+  functies: z.array(bedrijfsfunctieSchema).min(1),
+});
+
+/**
+ * De processessie heeft eigen knoppen per speelduur. Bewust een eigen bestand en een eigen schema
+ * naast `speelmodi.json`: de twee spellen delen alleen de drie id's, zodat de facilitator dezelfde
+ * keuze maakt bij het starten, maar verder stelt een proces afpellen andere eisen dan een
+ * portfolio opbouwen.
+ */
+export const procesManoeuvreIds = [
+  "voorkomen",
+  "schrappen",
+  "samenvoegen",
+  "verplaatsen",
+  "automatiseren",
+  "standaardiseren",
+  "verrijken",
+] as const;
+
+export const procesManoeuvreIdSchema = z.enum(procesManoeuvreIds);
+export type ProcesManoeuvreId = (typeof procesManoeuvreIds)[number];
+
+/** Iteratief verbeteren, opnieuw ontwerpen, of bewust niet nu. */
+export const spoorIds = ["iteratief", "nieuw", "niet-nu"] as const;
+export const spoorIdSchema = z.enum(spoorIds);
+export type SpoorId = (typeof spoorIds)[number];
+
+export const procesmodusSchema = z.object({
+  id: z.enum(["kort", "halve-dag", "hele-dag"]),
+  naam: z.string().min(1),
+  duur_minuten: z.number().int().positive(),
+  omschrijving: z.string().min(1),
+  max_processen: z.number().int().positive(),
+  min_stappen_per_proces: z.number().int().positive(),
+  min_processignalen_per_speler: z.number().int().nonnegative(),
+  max_processignalen_per_speler: z.number().int().positive(),
+  verbeteringen_doorrekenen_aantal: z.number().int().nonnegative(),
+  aantal_praktijktoetsen: z.number().int().nonnegative(),
+  eigenaar_verplicht: z.boolean().optional(),
+  /** Welke manoeuvres in deze speelduur op tafel liggen; korter spel, minder keuzes. */
+  manoeuvres: z.array(procesManoeuvreIdSchema).min(1),
+  timers_minuten: z.record(z.string(), z.number().int().positive()),
+});
+
+export const procesmodiBestandSchema = z.object({
+  toelichting: z.string(),
+  modi: z.array(procesmodusSchema).length(3),
+  manoeuvres: z
+    .array(
+      z.object({
+        id: procesManoeuvreIdSchema,
+        naam: z.string().min(1),
+        vraag: z.string().min(1),
+        toelichting: z.string().min(1),
+      }),
+    )
+    .length(7),
+  sporen: z
+    .array(
+      z.object({
+        id: spoorIdSchema,
+        naam: z.string().min(1),
+        omschrijving: z.string().min(1),
+        vraag: z.string().min(1),
+      }),
+    )
+    .length(3),
+});
+
 export type CoraDomein = z.infer<typeof coraDomeinSchema>;
 export type Organisatie = z.infer<typeof organisatieSchema>;
 export type Kengetal = z.infer<typeof kengetalSchema>;
@@ -298,4 +414,9 @@ export type Rol = z.infer<typeof rolSchema>;
 export type Rolopdracht = z.infer<typeof rolopdrachtSchema>;
 export type Realiteitscheck = z.infer<typeof realiteitscheckSchema>;
 export type Speelmodus = z.infer<typeof speelmodusSchema>;
+export type Bedrijfsfunctie = z.infer<typeof bedrijfsfunctieSchema>;
+export type ProcesstapVoorzet = z.infer<typeof processtapVoorzetSchema>;
+export type Procesmodus = z.infer<typeof procesmodusSchema>;
+export type ProcesManoeuvre = z.infer<typeof procesmodiBestandSchema>["manoeuvres"][number];
+export type Spoor = z.infer<typeof procesmodiBestandSchema>["sporen"][number];
 export type Dimensie = z.infer<typeof dimensieSchema>;

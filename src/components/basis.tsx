@@ -98,6 +98,35 @@ export function Veld({
   );
 }
 
+/**
+ * `Veld` voor een groep keuzerondjes — met een `<fieldset>` in plaats van een `<label>`.
+ *
+ * Het verschil is niet cosmetisch. Een `<label>` die om meerdere formuliervelden heen staat, hoort
+ * bij het éérste veld erin: het eerste keuzerondje van een groep kreeg daardoor de vraag als naam
+ * ("Welke sessie speel je?") in plaats van zijn eigen antwoord ("Use cases"), en verdween dus als
+ * herkenbare keuze voor wie de pagina niet ziet. Een fieldset met legend labelt de groep, en elk
+ * rondje houdt zijn eigen label.
+ *
+ * Ziet er hetzelfde uit als `Veld`; alleen de omhulling verschilt.
+ */
+export function Veldgroep({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <fieldset className="block min-w-0 border-0 p-0">
+      <legend className="block text-sm font-medium text-inkt">{label}</legend>
+      {hint ? <span className="mt-0.5 block text-xs text-inkt-licht">{hint}</span> : null}
+      <div className="mt-1.5">{children}</div>
+    </fieldset>
+  );
+}
+
 export const invoerStijl =
   "w-full rounded-kaart border border-rand-sterk bg-vlak px-3 py-2.5 text-base text-inkt outline-none transition-colors placeholder:text-inkt-licht focus:border-accent";
 

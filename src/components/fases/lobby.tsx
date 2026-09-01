@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { organisatie, rol, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
+import { organisatie, rol, rolopdrachten, speelmodus } from "@/lib/content";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import { DonkerPaneel, Hoofdregel, Kaart, PijlActie } from "@/components/basis";
@@ -28,7 +28,10 @@ export function Lobby({
   const modus = speelmodus(state.sessie.speelmodus);
   const ik = state.deelnemers.find((d) => d.id === identiteit.deelnemerId);
   const mijnRol = ik ? rol(ik.rol_id) : undefined;
-  const opdracht = ik ? rolopdrachtVoorRol(ik.rol_id) : undefined;
+  // Op het opgeslagen id zoeken, niet opnieuw op rol: welke opdracht deze speler heeft is bij het
+  // joinen bepaald, en dat is ook de enige plek waar de spelsoort meespeelt. Zo kan hier nooit de
+  // opdracht van het andere spel opduiken.
+  const opdracht = rolopdrachten.opdrachten.find((o) => o.id === ik?.rolopdracht_id);
 
   return (
     <div className="relative">

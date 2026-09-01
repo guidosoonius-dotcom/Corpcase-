@@ -11,12 +11,13 @@ import type {
   SessieState,
   SessieUsecaseRij,
   SignaalSelectieRij,
+  Spelsoort,
   UsecaseSignaalRij,
   UsecaseStatus,
   WaarderingRij,
 } from "@/lib/supabase/types";
 import { maakBeheerCode, maakJoinCode, maakToken, normaliseerCode } from "./codes";
-import { organisatie, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
+import { organisatie, procesmodus, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
 import {
   SessieFout,
   type AllocatieInvoer,
@@ -74,7 +75,9 @@ function maskeerBeheercode(sessie: SessieRij): SessieRij {
  */
 export async function maakSessie(invoer: NieuweSessie): Promise<Toegang> {
   const org = organisatie(invoer.organisatieId);
-  const modus = speelmodus(invoer.speelmodusId);
+  const spelsoort = invoer.spelsoort ?? "usecases";
+  // Beide spellen kennen dezelfde drie speelduren; welke knoppen daaronder hangen verschilt.
+  const modus = spelsoort === "proces" ? procesmodus(invoer.speelmodusId) : speelmodus(invoer.speelmodusId);
   const joinCode = maakJoinCode();
   const beheerCode = maakBeheerCode();
 
@@ -90,7 +93,9 @@ export async function maakSessie(invoer: NieuweSessie): Promise<Toegang> {
       .insert({
         titel: invoer.titel,
         organisatie_id: org.id,
+        spelsoort,
         speelmodus: modus.id,
+        herkomst: invoer.herkomst ?? null,
         join_code: joinCode,
         beheer_code: beheerCode,
         budget_geld: invoer.budgetGeld ?? org.budget_defaults.geld_eur,
@@ -107,6 +112,7 @@ export async function maakSessie(invoer: NieuweSessie): Promise<Toegang> {
     sessieId: sessie.id,
     naam: invoer.facilitatorNaam,
     rolId: invoer.facilitatorRolId,
+    spelsoort,
     isFacilitator: true,
     identiteit: { beheerCode },
   });
@@ -122,11 +128,13 @@ async function voegDeelnemerToe(args: {
   sessieId: string;
   naam: string;
   rolId: string | null;
+  /** Bepaalt welke privé-opdracht bij de rol hoort; die verschilt per spel. */
+  spelsoort: Spelsoort;
   isFacilitator: boolean;
   identiteit: Identiteit;
 }): Promise<DeelnemerRij> {
   const token = maakToken();
-  const opdracht = rolopdrachtVoorRol(args.rolId);
+  const opdracht = rolopdrachtVoorRol(args.rolId, args.spelsoort);
   /*
    * Het eigen token moet als header mee op precies dit verzoek: de RLS-policy `deelnemers_lezen`
    * herkent de zojuist ingevoegde rij aan `token = huidig_token()`, en die header moet er dus al
@@ -183,6 +191,7 @@ export async function neemDeel(args: {
     sessieId: sessie.id,
     naam: args.naam,
     rolId: args.rolId,
+    spelsoort: sessie.spelsoort,
     isFacilitator: false,
     identiteit: { joinCode },
   });

@@ -1,0 +1,149 @@
+{
+  "toelichting": "De speelmodi van de processessie. Dezelfde drie id's als bij de use-casesessie, zodat de facilitator bij het starten dezelfde keuze maakt — maar met eigen knoppen, want een proces afpellen vraagt iets anders dan een portfolio opbouwen. De duur is per modus iets korter dan bij de use-casesessie: er wordt aan één of twee processen gewerkt in plaats van aan een hele bibliotheek.",
+  "modi": [
+    {
+      "id": "kort",
+      "naam": "Kort",
+      "duur_minuten": 75,
+      "omschrijving": "Eén proces, snel afgepeld. Diagnose en spoorkeuze, en de verbeteringen kwalitatief. Past in een MT-overleg.",
+      "max_processen": 1,
+      "min_stappen_per_proces": 4,
+      "min_processignalen_per_speler": 2,
+      "max_processignalen_per_speler": 5,
+      "verbeteringen_doorrekenen_aantal": 0,
+      "aantal_praktijktoetsen": 1,
+      "manoeuvres": ["voorkomen", "schrappen", "samenvoegen", "automatiseren"],
+      "timers_minuten": {
+        "proceskeuze": 10,
+        "afpellen": 20,
+        "diagnose": 10,
+        "herontwerp": 20,
+        "doorrekenen": 5,
+        "besluit": 10
+      }
+    },
+    {
+      "id": "halve-dag",
+      "naam": "Halve dag",
+      "duur_minuten": 180,
+      "omschrijving": "Eén of twee processen, met ruimte om echt door te vragen. Minimaal twee verbeteringen doorgerekend.",
+      "max_processen": 2,
+      "min_stappen_per_proces": 6,
+      "min_processignalen_per_speler": 3,
+      "max_processignalen_per_speler": 8,
+      "verbeteringen_doorrekenen_aantal": 2,
+      "aantal_praktijktoetsen": 2,
+      "manoeuvres": [
+        "voorkomen",
+        "schrappen",
+        "samenvoegen",
+        "verplaatsen",
+        "automatiseren",
+        "standaardiseren",
+        "verrijken"
+      ],
+      "timers_minuten": {
+        "proceskeuze": 20,
+        "afpellen": 45,
+        "diagnose": 20,
+        "herontwerp": 45,
+        "doorrekenen": 25,
+        "besluit": 20
+      }
+    },
+    {
+      "id": "hele-dag",
+      "naam": "Hele dag",
+      "duur_minuten": 360,
+      "omschrijving": "Drie processen, waarvan er minstens één volledig opnieuw wordt ontworpen. Elke verbetering doorgerekend, met een eigenaar en een meetmoment.",
+      "max_processen": 3,
+      "min_stappen_per_proces": 8,
+      "min_processignalen_per_speler": 4,
+      "max_processignalen_per_speler": 12,
+      "verbeteringen_doorrekenen_aantal": 5,
+      "aantal_praktijktoetsen": 3,
+      "eigenaar_verplicht": true,
+      "manoeuvres": [
+        "voorkomen",
+        "schrappen",
+        "samenvoegen",
+        "verplaatsen",
+        "automatiseren",
+        "standaardiseren",
+        "verrijken"
+      ],
+      "timers_minuten": {
+        "proceskeuze": 35,
+        "afpellen": 90,
+        "diagnose": 35,
+        "herontwerp": 90,
+        "doorrekenen": 60,
+        "besluit": 40
+      }
+    }
+  ],
+  "manoeuvres": [
+    {
+      "id": "voorkomen",
+      "naam": "Voorkomen",
+      "vraag": "Kunnen we de aanleiding wegnemen, zodat dit proces helemaal niet meer hoeft te starten?",
+      "toelichting": "De sterkste van de zeven en de eerste die gesteld hoort te worden. De reparatie die niet nodig is, is goedkoper dan de reparatie die je slim inplant."
+    },
+    {
+      "id": "schrappen",
+      "naam": "Schrappen",
+      "vraag": "Wat gebeurt er als deze stap er morgen niet meer is?",
+      "toelichting": "Vaak blijkt een controlestap ooit ingevoerd voor een risico dat er niet meer is."
+    },
+    {
+      "id": "samenvoegen",
+      "naam": "Samenvoegen",
+      "vraag": "Kunnen deze twee stappen op één moment, door één persoon?",
+      "toelichting": "Elke samenvoeging haalt een overdracht weg, en daar zit meestal de wachttijd."
+    },
+    {
+      "id": "verplaatsen",
+      "naam": "Verplaatsen",
+      "vraag": "Kan deze stap eerder, later, of door iemand anders — de huurder zelf inbegrepen?",
+      "toelichting": "Werk naar voren halen voorkomt herstelwerk verderop; werk naar de klant verplaatsen alleen als het hem ook iets oplevert."
+    },
+    {
+      "id": "automatiseren",
+      "naam": "Automatiseren",
+      "vraag": "Kan deze stap zonder mens?",
+      "toelichting": "Pas zinvol nadat de vorige vier zijn gesteld: een overbodige stap automatiseren maakt hem alleen sneller overbodig."
+    },
+    {
+      "id": "standaardiseren",
+      "naam": "Standaardiseren",
+      "vraag": "Doen we dit op één manier, of heeft iedereen zijn eigen werkwijze?",
+      "toelichting": "Variatie die niemand gekozen heeft is de goedkoopste winst die er is."
+    },
+    {
+      "id": "verrijken",
+      "naam": "Verrijken",
+      "vraag": "Zou deze stap beter gaan met betere informatie op het juiste moment?",
+      "toelichting": "Hier haakt een use case uit de eerste sessie het vaakst aan."
+    }
+  ],
+  "sporen": [
+    {
+      "id": "iteratief",
+      "naam": "Iteratief verbeteren",
+      "omschrijving": "Het proces klopt in de kern; de uitvoering kan beter. Kleine ingrepen per stap, snel merkbaar.",
+      "vraag": "Welke stappen kunnen weg, samen, of zonder mens?"
+    },
+    {
+      "id": "nieuw",
+      "naam": "New practice",
+      "omschrijving": "Het proces zelf past niet meer bij wat er gevraagd wordt. Opnieuw ontwerpen vanaf de vraag van de klant.",
+      "vraag": "Als we dit vandaag opnieuw zouden bedenken, hoe zou het er dan uitzien?"
+    },
+    {
+      "id": "niet-nu",
+      "naam": "Niet nu",
+      "omschrijving": "Er is hier weinig te halen. Bewust laten liggen en vastleggen waarom, zodat het gesprek niet elk jaar opnieuw begint.",
+      "vraag": "Waarom laten we dit bewust liggen?"
+    }
+  ]
+}

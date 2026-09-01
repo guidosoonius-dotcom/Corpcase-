@@ -10,7 +10,8 @@ import {
 import type { DrivertypeId } from "@/lib/content/schemas";
 import { cora, personasVoorOrganisatie, speelmodus, usecase as bibliotheekKaart } from "@/lib/content";
 import {
-  FASES,
+  faseHoortBij,
+  fasesVoor,
   type DeelnemerRij,
   type Fase,
   type SessieState,
@@ -188,8 +189,67 @@ export type Teamscore = {
  *
  * De score beloont alleen dingen die het resultaat echt beter maken: breed kijken, elkaar helpen,
  * onderbouwen en doorrekenen. Er zitten bewust geen punten op "veel use cases maken".
+ *
+ * De twee spellen scoren verschillende dingen — een processessie kent geen portfolio en geen
+ * domeindekking — maar de samenwerking telt in allebei even zwaar mee, en op precies dezelfde
+ * manier: dat is wat de score in de eerste plaats moet aanmoedigen.
  */
 export function teamscore(state: SessieState): Teamscore {
+  return state.sessie.spelsoort === "proces" ? procesTeamscore(state) : usecaseTeamscore(state);
+}
+
+/** De onderdelen die in allebei de spellen hetzelfde zijn: hoe het team samenwerkt. */
+function samenwerkingsonderdelen(state: SessieState): Teamscore["onderdelen"] {
+  const assists = state.bijdragen.filter((b) => b.soort === "assist").length;
+  const challenges = state.bijdragen.filter((b) => b.soort === "challenge").length;
+  const opgelosteHulpvragen = state.bijdragen.filter(
+    (b) => b.soort === "hulpvraag" && b.opgelost,
+  ).length;
+
+  return [
+    {
+      id: "assists",
+      label: "Elkaar helpen",
+      punten: assists * 5,
+      maximum: Math.max(30, assists * 5),
+      toelichting:
+        assists === 1 ? "1 aanvulling op andermans werk" : `${assists} aanvullingen op andermans werk`,
+    },
+    {
+      id: "hulpvragen",
+      label: "Vragen opgelost",
+      punten: opgelosteHulpvragen * 3,
+      maximum: Math.max(15, opgelosteHulpvragen * 3),
+      toelichting:
+        opgelosteHulpvragen === 1
+          ? "1 hulpvraag beantwoord"
+          : `${opgelosteHulpvragen} hulpvragen beantwoord`,
+    },
+    {
+      id: "challenges",
+      label: "Kritisch kijken",
+      punten: challenges * 4,
+      maximum: Math.max(20, challenges * 4),
+      toelichting:
+        challenges === 1 ? "1 aanname expliciet gemaakt" : `${challenges} aannames expliciet gemaakt`,
+    },
+  ];
+}
+
+/**
+ * De score van de processessie.
+ *
+ * Nu nog alleen de samenwerking: de onderdelen die diepte van het afpellen, doorgerekende
+ * verbeteringen en een eigenaar per verbetering belonen komen erbij zodra die fases er staan.
+ * Bewust al gesplitst, want `usecaseTeamscore` rekent op een portfolio en een speelmodus die een
+ * processessie niet heeft.
+ */
+function procesTeamscore(state: SessieState): Teamscore {
+  const onderdelen = samenwerkingsonderdelen(state);
+  return { totaal: onderdelen.reduce((som, o) => som + o.punten, 0), onderdelen };
+}
+
+function usecaseTeamscore(state: SessieState): Teamscore {
   const beelden = alleBeelden(state);
   const gedekt = dekking(state);
 
@@ -200,14 +260,6 @@ export function teamscore(state: SessieState): Teamscore {
   const personaPunten = gedekt.personasGeraakt.length * 4;
   const personaMax = personaAantal * 4;
 
-  const assists = state.bijdragen.filter((b) => b.soort === "assist").length;
-  const assistPunten = assists * 5;
-  const assistMax = Math.max(30, assistPunten);
-
-  const challenges = state.bijdragen.filter((b) => b.soort === "challenge").length;
-  const challengePunten = challenges * 4;
-  const challengeMax = Math.max(20, challengePunten);
-
   const onderbouwd = beelden.filter((b) => b.signaalIds.length > 0).length;
   const onderbouwPunten = onderbouwd * 3;
   const onderbouwMax = Math.max(beelden.length * 3, 3);
@@ -216,12 +268,6 @@ export function teamscore(state: SessieState): Teamscore {
   const modus = speelmodus(state.sessie.speelmodus);
   const doorrekenPunten = doorgerekend * 6;
   const doorrekenMax = Math.max(modus.businesscase_verplicht_aantal, 1) * 6;
-
-  const opgelosteHulpvragen = state.bijdragen.filter(
-    (b) => b.soort === "hulpvraag" && b.opgelost,
-  ).length;
-  const hulpPunten = opgelosteHulpvragen * 3;
-  const hulpMax = Math.max(15, hulpPunten);
 
   const onderdelen = [
     {
@@ -258,36 +304,7 @@ export function teamscore(state: SessieState): Teamscore {
           ? "1 volledig doorgerekende business case"
           : `${doorgerekend} volledig doorgerekende business cases`,
     },
-    {
-      id: "assists",
-      label: "Elkaar helpen",
-      punten: assistPunten,
-      maximum: assistMax,
-      toelichting:
-        assists === 1
-          ? "1 aanvulling op andermans use case"
-          : `${assists} aanvullingen op andermans use case`,
-    },
-    {
-      id: "hulpvragen",
-      label: "Vragen opgelost",
-      punten: hulpPunten,
-      maximum: hulpMax,
-      toelichting:
-        opgelosteHulpvragen === 1
-          ? "1 hulpvraag beantwoord"
-          : `${opgelosteHulpvragen} hulpvragen beantwoord`,
-    },
-    {
-      id: "challenges",
-      label: "Kritisch kijken",
-      punten: challengePunten,
-      maximum: challengeMax,
-      toelichting:
-        challenges === 1
-          ? "1 aanname expliciet gemaakt"
-          : `${challenges} aannames expliciet gemaakt`,
-    },
+    ...samenwerkingsonderdelen(state),
   ];
 
   return { totaal: onderdelen.reduce((som, o) => som + o.punten, 0), onderdelen };
@@ -313,14 +330,24 @@ export function aanwezig(state: SessieState, nu = Date.now()) {
 
 // Vrije fasenavigatie ---------------------------------------------------------
 
-/** De fase die deze deelnemer daadwerkelijk bekijkt: zijn eigen keuze, anders de groep. */
+/**
+ * De fase die deze deelnemer daadwerkelijk bekijkt: zijn eigen keuze, anders de groep.
+ *
+ * Een eigen fase die niet bij dit spel hoort wordt genegeerd. `eigen_fase` komt van de client, en
+ * een use-casefase in een processessie zou hier verderop een index van -1 opleveren — waarmee
+ * `looptVoor` en de stippenbalk stuurloos raken. Dit is geen verwachte toestand maar wel een
+ * mogelijke, en teruggevallen op de groepsfase is dan het enige zinnige antwoord.
+ */
 export function eigenFase(deelnemer: DeelnemerRij, state: SessieState): Fase {
-  return deelnemer.eigen_fase ?? state.sessie.fase;
+  const gekozen = deelnemer.eigen_fase;
+  if (!gekozen || !faseHoortBij(gekozen, state.sessie.spelsoort)) return state.sessie.fase;
+  return gekozen;
 }
 
 /** Loopt deze deelnemer voor op waar de facilitator de groep heeft neergezet? */
 export function looptVoor(deelnemer: DeelnemerRij, state: SessieState): boolean {
-  return FASES.indexOf(eigenFase(deelnemer, state)) > FASES.indexOf(state.sessie.fase);
+  const fases = fasesVoor(state.sessie.spelsoort);
+  return fases.indexOf(eigenFase(deelnemer, state)) > fases.indexOf(state.sessie.fase);
 }
 
 // Rolopdrachten -------------------------------------------------------------

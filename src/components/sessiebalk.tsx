@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FASES, FASE_LABELS, type Fase } from "@/lib/supabase/types";
+import { FASE_LABELS, fasesVoor, type Fase } from "@/lib/supabase/types";
 import { rol, rolopdrachten } from "@/lib/content";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import type { SessieState } from "@/lib/supabase/types";
@@ -57,6 +57,7 @@ export function Sessiebalk({
   const teamscoreWeergegeven = useTelOp(score.totaal);
   const bekekenFase = ik ? eigenFase(ik, state) : state.sessie.fase;
   const voorloper = ik ? looptVoor(ik, state) : false;
+  const fases = fasesVoor(state.sessie.spelsoort);
   const naam = mijnRol?.naam ?? ik?.naam ?? "Deelnemer";
   const initiaal = (ik?.naam.trim().charAt(0) ?? "?").toUpperCase();
 
@@ -73,7 +74,7 @@ export function Sessiebalk({
       <div className="mx-auto w-full max-w-4xl px-4">
         <nav aria-label={`Fase, sessie ${sessieId}`} className="py-1">
           <ol className="flex items-center justify-center gap-1">
-            {FASES.map((f, index) => (
+            {fases.map((f, index) => (
               <li key={f}>
                 <button
                   type="button"
@@ -85,7 +86,7 @@ export function Sessiebalk({
                   className="flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <span
-                    className={`cijfer flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-semibold transition-colors ${stijlVoorStap(f, bekekenFase, state.sessie.fase)}`}
+                    className={`cijfer flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-semibold transition-colors ${stijlVoorStap(f, bekekenFase, state.sessie.fase, fases)}`}
                   >
                     {index + 1}
                   </span>
@@ -192,10 +193,10 @@ export function Sessiebalk({
   );
 }
 
-function stijlVoorStap(fase: Fase, bekeken: Fase, sessieFase: Fase): string {
-  const index = FASES.indexOf(fase);
-  const bekekenIndex = FASES.indexOf(bekeken);
-  const sessieIndex = FASES.indexOf(sessieFase);
+function stijlVoorStap(fase: Fase, bekeken: Fase, sessieFase: Fase, fases: Fase[]): string {
+  const index = fases.indexOf(fase);
+  const bekekenIndex = fases.indexOf(bekeken);
+  const sessieIndex = fases.indexOf(sessieFase);
 
   if (fase === bekeken) return "bg-accent-sterk text-white";
   // Waar de groep staat, ook als je daar zelf niet naar kijkt: een eigen, herkenbare tint.

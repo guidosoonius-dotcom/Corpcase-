@@ -1,4 +1,4 @@
-import { organisatie, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
+import { organisatie, procesmodus, rolopdrachtVoorRol, speelmodus } from "@/lib/content";
 import type {
   AllocatieRij,
   BijdrageRij,
@@ -129,14 +129,19 @@ function magBesturen(dossier: Dossier, identiteit: Identiteit): boolean {
 
 export function maakSessie(invoer: NieuweSessie): Toegang {
   const org = organisatie(invoer.organisatieId);
-  const modus = speelmodus(invoer.speelmodusId);
+  const spelsoort = invoer.spelsoort ?? "usecases";
+  // Beide spellen kennen dezelfde drie speelduren; welke knoppen daaronder hangen verschilt.
+  const modus =
+    spelsoort === "proces" ? procesmodus(invoer.speelmodusId) : speelmodus(invoer.speelmodusId);
 
   const sessie: SessieRij = {
     id: crypto.randomUUID(),
     titel: invoer.titel,
     organisatie_id: org.id,
+    spelsoort,
     speelmodus: modus.id,
     fase: "lobby",
+    herkomst: invoer.herkomst ?? null,
     join_code: maakJoinCode(),
     beheer_code: maakBeheerCode(),
     budget_geld: invoer.budgetGeld ?? org.budget_defaults.geld_eur,
@@ -182,12 +187,14 @@ function voegDeelnemerToe(
   rolId: string | null,
   isFacilitatorRol: boolean,
 ): DeelnemerRij {
+  // De privé-opdracht hoort bij het spel dat gespeeld wordt; die van het andere spel valt hier
+  // niet te halen.
   const deelnemer: DeelnemerRij = {
     id: crypto.randomUUID(),
     sessie_id: dossier.sessie.id,
     naam,
     rol_id: rolId,
-    rolopdracht_id: rolopdrachtVoorRol(rolId)?.id ?? null,
+    rolopdracht_id: rolopdrachtVoorRol(rolId, dossier.sessie.spelsoort)?.id ?? null,
     token: maakToken(),
     is_facilitator: isFacilitatorRol,
     laatst_gezien_op: nu(),

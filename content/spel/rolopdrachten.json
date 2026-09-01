@@ -1,12 +1,90 @@
 {
-  "toelichting": "Privé-opdracht per rol. Alleen zichtbaar voor de speler zelf, tot de onthulling in de opbrengstfase. Doel: perspectieven borgen die anders stil wegvallen, zonder rollenspel.",
+  "toelichting": "Privé-opdracht per rol, per spelsoort. Alleen zichtbaar voor de speler zelf, tot de onthulling in de laatste fase. Doel: perspectieven borgen die anders stil wegvallen, zonder rollenspel. Elke rol heeft precies één opdracht per spelsoort; `spelsoort` weggelaten betekent de use-casesessie.",
   "onthulling": "Bij de opbrengst wordt elke opdracht getoond met de vraag: is dit gelukt, en zo nee, wat zegt dat over ons portfolio?",
   "opdrachten": [
-    { "id": "ro-bestuurder", "rol": "bestuurder", "opdracht": "Zorg dat elke use case in het eindportfolio herleidbaar is tot een strategisch thema uit ons eigen jaarverslag.", "controle": "elke_usecase_heeft_thema" },
-    { "id": "ro-manager-wonen", "rol": "manager-wonen", "opdracht": "Zorg dat minstens twee use cases in het eindportfolio de bewoner direct merkbaar raken.", "controle": "minimaal_twee_hoge_huurderswaarde" },
-    { "id": "ro-manager-vastgoed", "rol": "manager-vastgoed", "opdracht": "Zorg dat er iets in het portfolio zit dat binnen zes maanden daadwerkelijk kan landen, niet alleen meerjarige trajecten.", "controle": "minimaal_een_horizon_nu" },
-    { "id": "ro-manager-financien", "rol": "manager-financien", "opdracht": "Zorg dat minstens de helft van het portfolio is doorgerekend, niet alleen op gevoel gescoord.", "controle": "helft_doorgerekend" },
-    { "id": "ro-informatiemanager", "rol": "informatiemanager", "opdracht": "Zorg dat geen enkele use case het portfolio in gaat zonder benoemde databron.", "controle": "elke_usecase_heeft_databron" },
-    { "id": "ro-huurdersvertegenwoordiger", "rol": "huurdersvertegenwoordiger", "opdracht": "Zorg dat elke use case die persoonsgegevens gebruikt een expliciet vastgelegde aanname of aandachtspunt over privacy heeft.", "controle": "privacy_aandachtspunt_vastgelegd" }
+    {
+      "id": "ro-bestuurder",
+      "rol": "bestuurder",
+      "opdracht": "Zorg dat elke use case in het eindportfolio herleidbaar is tot een strategisch thema uit ons eigen jaarverslag.",
+      "controle": "elke_usecase_heeft_thema",
+      "spelsoort": "usecases"
+    },
+    {
+      "id": "ro-manager-wonen",
+      "rol": "manager-wonen",
+      "opdracht": "Zorg dat minstens twee use cases in het eindportfolio de bewoner direct merkbaar raken.",
+      "controle": "minimaal_twee_hoge_huurderswaarde",
+      "spelsoort": "usecases"
+    },
+    {
+      "id": "ro-manager-vastgoed",
+      "rol": "manager-vastgoed",
+      "opdracht": "Zorg dat er iets in het portfolio zit dat binnen zes maanden daadwerkelijk kan landen, niet alleen meerjarige trajecten.",
+      "controle": "minimaal_een_horizon_nu",
+      "spelsoort": "usecases"
+    },
+    {
+      "id": "ro-manager-financien",
+      "rol": "manager-financien",
+      "opdracht": "Zorg dat minstens de helft van het portfolio is doorgerekend, niet alleen op gevoel gescoord.",
+      "controle": "helft_doorgerekend",
+      "spelsoort": "usecases"
+    },
+    {
+      "id": "ro-informatiemanager",
+      "rol": "informatiemanager",
+      "opdracht": "Zorg dat geen enkele use case het portfolio in gaat zonder benoemde databron.",
+      "controle": "elke_usecase_heeft_databron",
+      "spelsoort": "usecases"
+    },
+    {
+      "id": "ro-huurdersvertegenwoordiger",
+      "rol": "huurdersvertegenwoordiger",
+      "opdracht": "Zorg dat elke use case die persoonsgegevens gebruikt een expliciet vastgelegde aanname of aandachtspunt over privacy heeft.",
+      "controle": "privacy_aandachtspunt_vastgelegd",
+      "spelsoort": "usecases"
+    },
+    {
+      "id": "rp-bestuurder",
+      "rol": "bestuurder",
+      "spelsoort": "proces",
+      "opdracht": "Zorg dat het herontworpen proces herleidbaar blijft tot een strategisch thema uit ons eigen jaarverslag — en niet alleen sneller wordt, maar ook de goede kant op.",
+      "controle": "proces_raakt_thema"
+    },
+    {
+      "id": "rp-manager-wonen",
+      "rol": "manager-wonen",
+      "spelsoort": "proces",
+      "opdracht": "Zorg dat minstens één verbetering merkbaar is voor de bewoner zelf, en niet alleen intern werk scheelt.",
+      "controle": "verbetering_merkbaar_voor_bewoner"
+    },
+    {
+      "id": "rp-manager-vastgoed",
+      "rol": "manager-vastgoed",
+      "spelsoort": "proces",
+      "opdracht": "Zorg dat het proces zoals het écht loopt op tafel komt, inclusief de uitzonderingen — niet de versie uit het handboek.",
+      "controle": "proces_heeft_uitzondering"
+    },
+    {
+      "id": "rp-manager-financien",
+      "rol": "manager-financien",
+      "spelsoort": "proces",
+      "opdracht": "Zorg dat er geen verbetering wordt vastgesteld waarvan niemand kan zeggen wat hij oplevert.",
+      "controle": "verbeteringen_doorgerekend"
+    },
+    {
+      "id": "rp-informatiemanager",
+      "rol": "informatiemanager",
+      "spelsoort": "proces",
+      "opdracht": "Zorg dat elke stap die geautomatiseerd of verrijkt wordt, benoemt welke gegevens daarvoor nodig zijn.",
+      "controle": "verbetering_benoemt_gegevens"
+    },
+    {
+      "id": "rp-huurdersvertegenwoordiger",
+      "rol": "huurdersvertegenwoordiger",
+      "spelsoort": "proces",
+      "opdracht": "Zorg dat werk dat naar de bewoner verschuift ook iets voor hém oplevert, en niet alleen voor ons.",
+      "controle": "verplaatsing_naar_bewoner_verantwoord"
+    }
   ]
 }

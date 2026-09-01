@@ -22,6 +22,14 @@
 
 -- Typen ----------------------------------------------------------------------
 
+-- Eén enum voor twee spellen. De eerste zeven waarden zijn de use-casesessie, de zes daarna de
+-- processessie; alleen 'lobby' is gedeeld. Welke reeks bij welk spel hoort staat in
+-- src/lib/supabase/types.ts (FASES_PER_SPELSOORT) — de database bewaakt hier alleen dat er geen
+-- fase in terechtkomt die geen van beide spellen kent.
+--
+-- Bij een bestaande database gaan de zes nieuwe waarden erin met
+-- `alter type fase add value if not exists '<naam>';`, elk in een eigen statement: Postgres staat
+-- `add value` niet toe binnen een transactieblok met ander werk.
 create type fase as enum (
   'lobby',
   'verkennen',
@@ -29,7 +37,13 @@ create type fase as enum (
   'waardebepaling',
   'prioritering',
   'roadmap',
-  'opbrengst'
+  'opbrengst',
+  'proceskeuze',
+  'afpellen',
+  'diagnose',
+  'herontwerp',
+  'doorrekenen',
+  'besluit'
 );
 
 create type usecase_status as enum ('kandidaat', 'portfolio', 'afgevallen');
@@ -54,8 +68,14 @@ create table sessies (
   id uuid primary key default gen_random_uuid(),
   titel text not null,
   organisatie_id text not null,
+  -- Welk van de twee spellen dit is. Default 'usecases', zodat bestaande sessies blijven wat ze zijn.
+  spelsoort text not null default 'usecases' check (spelsoort in ('usecases', 'proces')),
   speelmodus text not null,
   fase fase not null default 'lobby',
+  -- Momentopname van een afgeronde use-casesessie waar deze processessie op volgt; null als hij
+  -- los gespeeld wordt. Bewust een kopie en geen verwijzing: zie het type Herkomst in
+  -- src/lib/supabase/types.ts.
+  herkomst jsonb,
   join_code text not null unique,
   beheer_code text not null unique,
   budget_geld numeric(14, 2) not null,
@@ -406,8 +426,9 @@ create view sessies_publiek
 with (security_invoker = false)
 as
 select
-  id, titel, organisatie_id, speelmodus, fase, join_code, budget_geld, budget_capaciteit,
-  uitgangspunten, onzekerheid_pct, fase_deadline, aangemaakt_op, bijgewerkt_op, afgerond_op
+  id, titel, organisatie_id, spelsoort, speelmodus, fase, herkomst, join_code, budget_geld,
+  budget_capaciteit, uitgangspunten, onzekerheid_pct, fase_deadline, aangemaakt_op, bijgewerkt_op,
+  afgerond_op
 from sessies s
 where
   intern.is_deelnemer(s.id)

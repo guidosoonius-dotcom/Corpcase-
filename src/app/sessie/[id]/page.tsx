@@ -11,10 +11,23 @@ import { Waardebepaling } from "@/components/fases/waardebepaling";
 import { Prioritering } from "@/components/fases/prioritering";
 import { Roadmap } from "@/components/fases/roadmap";
 import { Opbrengst } from "@/components/fases/opbrengst";
-import { Knop, Melding } from "@/components/basis";
+import { Hoofdregel, Knop, Kop, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
 import { organisatie } from "@/lib/content";
 import { eigenFase } from "@/lib/sessie/afgeleid";
+import { FASE_LABELS, FASES_PER_SPELSOORT, type Fase } from "@/lib/supabase/types";
+
+/** De fases van de processessie, op de gedeelde lobby na. */
+const PROCESFASES: Fase[] = FASES_PER_SPELSOORT.proces.filter((f) => f !== "lobby");
+
+const WAT_ER_KOMT: Record<string, string> = {
+  proceskeuze: "Kiezen welk bedrijfsproces op tafel gaat.",
+  afpellen: "Het proces stap voor stap uittekenen op de procesplaat.",
+  diagnose: "Het proces scoren, en zien welk spoor eruit volgt.",
+  herontwerp: "Verbeteren of opnieuw ontwerpen.",
+  doorrekenen: "Wat de verbetering per jaar oplevert, met een bandbreedte.",
+  besluit: "De praktijktoets, een eigenaar en een meetmoment.",
+};
 
 /**
  * Het scherm van de speler, meestal een telefoon.
@@ -89,7 +102,32 @@ export default function SpelerPagina() {
         ) : null}
         {fase === "roadmap" ? <Roadmap state={state} identiteit={identiteit} doe={doe} /> : null}
         {fase === "opbrengst" ? <Opbrengst state={state} /> : null}
+
+        {/*
+         * De processessie. Elke fase hieronder krijgt zijn eigen component; tot die er staat toont
+         * `NogTeBouwen` wat er komt, zodat de fasereeks nu al te doorlopen is en de facilitator ziet
+         * waar hij staat. Fasenamen zijn uniek over de twee spellen heen, dus deze ketting kan naast
+         * die van de use-casesessie blijven staan.
+         */}
+        {PROCESFASES.includes(fase) ? <NogTeBouwen fase={fase} /> : null}
       </main>
     </Thema>
+  );
+}
+
+function NogTeBouwen({ fase }: { fase: Fase }) {
+  return (
+    <div className="space-y-5">
+      <Hoofdregel links="Processessie" rechts={FASE_LABELS[fase]} />
+      <Kop
+        boven={FASE_LABELS[fase]}
+        titel="Deze fase wordt nog gebouwd"
+        onder={WAT_ER_KOMT[fase] ?? ""}
+      />
+      <Melding>
+        De fasereeks staat er al, de inhoud van deze fase nog niet. De facilitator kan wel gewoon
+        doorschuiven.
+      </Melding>
+    </div>
   );
 }

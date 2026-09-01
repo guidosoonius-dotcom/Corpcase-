@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { FASES, FASE_LABELS, type Fase } from "@/lib/supabase/types";
+import { FASE_LABELS, fasesVoor, type Fase } from "@/lib/supabase/types";
 import { rolNaam, speelmodus } from "@/lib/content";
 import { opslag } from "@/lib/sessie/api";
 import { useAanwezigheid, useSessie } from "@/lib/sessie/gebruik";
@@ -63,7 +63,8 @@ export default function BeheerPagina() {
   const vragen = openHulpvragen(state);
   const online = aanwezig(state);
   const stand = budgetStand(state);
-  const huidigeIndex = FASES.indexOf(state.sessie.fase);
+  const fases = fasesVoor(state.sessie.spelsoort);
+  const huidigeIndex = fases.indexOf(state.sessie.fase);
 
   async function naarFase(fase: Fase) {
     await doe(() => opslag.zetFase(identiteit!, sessieId, fase));
@@ -212,7 +213,7 @@ export default function BeheerPagina() {
       <section className="mt-6">
         <h2 className="display text-lg text-inkt">Fase</h2>
         <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-          {FASES.map((fase, index) => {
+          {fases.map((fase, index) => {
             const actief = fase === state.sessie.fase;
             return (
               <Knop
@@ -234,10 +235,10 @@ export default function BeheerPagina() {
             );
           })}
         </div>
-        {huidigeIndex < FASES.length - 1 && ikBenFacilitator ? (
+        {huidigeIndex < fases.length - 1 && ikBenFacilitator ? (
           <div className="mt-3">
-            <Knop onClick={() => void naarFase(FASES[huidigeIndex + 1])}>
-              Volgende fase: {FASE_LABELS[FASES[huidigeIndex + 1]]}
+            <Knop onClick={() => void naarFase(fases[huidigeIndex + 1])}>
+              Volgende fase: {FASE_LABELS[fases[huidigeIndex + 1]]}
             </Knop>
           </div>
         ) : null}

@@ -5,7 +5,10 @@ import driversJson from "@content/waarde/drivers.json";
 import rollenJson from "@content/spel/rollen.json";
 import rolopdrachtenJson from "@content/spel/rolopdrachten.json";
 import realiteitschecksJson from "@content/spel/realiteitschecks.json";
+import praktijktoetsenJson from "@content/spel/praktijktoetsen.json";
 import speelmodiJson from "@content/spel/speelmodi.json";
+import procesmodiJson from "@content/spel/speelmodi-proces.json";
+import bedrijfsfunctiesJson from "@content/processen/cora-bedrijfsfuncties.json";
 
 // Per organisatie horen drie bestanden bij elkaar: het profiel en de twee org-specifieke
 // signaallenzen (jaarverslag, huurders). Nieuwe corporatie? Voeg de drie imports hieronder toe en
@@ -16,12 +19,14 @@ import duwoJaarverslagJson from "@content/signalen/duwo-jaarverslag.json";
 import duwoPersonasJson from "@content/signalen/duwo-personas.json";
 
 import {
+  bedrijfsfunctiesBestandSchema,
   bibliotheekSchema,
   coraBestandSchema,
   driversBestandSchema,
   jaarverslagBestandSchema,
   organisatieSchema,
   personaBestandSchema,
+  procesmodiBestandSchema,
   realiteitschecksBestandSchema,
   rolopdrachtenBestandSchema,
   rollenBestandSchema,
@@ -63,7 +68,11 @@ export const waardeModel = driversBestandSchema.parse(driversJson);
 export const rollen = rollenBestandSchema.parse(rollenJson);
 export const rolopdrachten = rolopdrachtenBestandSchema.parse(rolopdrachtenJson);
 export const realiteitschecks = realiteitschecksBestandSchema.parse(realiteitschecksJson);
+// Zelfde vorm, ander spel: de tegenkracht in de besluitfase van de processessie.
+export const praktijktoetsen = realiteitschecksBestandSchema.parse(praktijktoetsenJson);
 export const speelmodi = speelmodiBestandSchema.parse(speelmodiJson);
+export const procesmodi = procesmodiBestandSchema.parse(procesmodiJson);
+export const bedrijfsfuncties = bedrijfsfunctiesBestandSchema.parse(bedrijfsfunctiesJson);
 
 /**
  * Alle huurderspersona's van alle organisaties samen — voor kruiscontroles in
@@ -96,12 +105,41 @@ export function speelmodus(id: string) {
   return gevonden;
 }
 
+/** De speelduurknoppen van de processessie. Zelfde drie id's, andere inhoud. */
+export function procesmodus(id: string) {
+  const gevonden = procesmodi.modi.find((m) => m.id === id);
+  if (!gevonden) throw new Error(`Onbekende procesmodus: ${id}`);
+  return gevonden;
+}
+
+export function bedrijfsfunctie(id: string) {
+  return bedrijfsfuncties.functies.find((f) => f.id === id);
+}
+
+export function manoeuvre(id: string) {
+  return procesmodi.manoeuvres.find((m) => m.id === id);
+}
+
+export function spoor(id: string | null | undefined) {
+  return procesmodi.sporen.find((s) => s.id === id);
+}
+
 export function rol(id: string | null | undefined) {
   return rollen.rollen.find((r) => r.id === id);
 }
 
-export function rolopdrachtVoorRol(rolId: string | null | undefined) {
-  return rolopdrachten.opdrachten.find((o) => o.rol === rolId);
+/**
+ * De privé-opdracht van een rol, binnen het spel dat gespeeld wordt.
+ *
+ * Elke rol heeft er precies één per spelsoort; `scripts/valideer-content.ts` bewaakt dat. De
+ * spelsoort moet er dus bij: zonder die filter zou een speler in een processessie de opdracht uit
+ * het andere spel krijgen — en dat is een opdracht die daar niet te halen valt.
+ */
+export function rolopdrachtVoorRol(
+  rolId: string | null | undefined,
+  spelsoort: "usecases" | "proces" = "usecases",
+) {
+  return rolopdrachten.opdrachten.find((o) => o.rol === rolId && o.spelsoort === spelsoort);
 }
 
 /**

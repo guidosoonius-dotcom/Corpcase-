@@ -1,0 +1,531 @@
+{
+  "toelichting": "De bedrijfsfuncties uit het CORA-functiemodel: de processen die in een processessie op tafel kunnen. Het niveau eronder — de stappen waaruit een functie bestaat — staat er bewust NIET in: die tekent het team zelf op de procesplaat, of ze worden geladen uit materiaal dat de corporatie zelf aanlevert (dan vult `stappen_voorzet` zich, met een eigen bron per functie). De koppeling van elke functie aan een van de achttien CORA-domeinen in content/cora/domeinen.json is een vertaling van ons, geen uitspraak van CORA zelf; daarom staat dit bestand op geverifieerd: false.",
+  "bron": "CORA-bedrijfsfunctiemodel, sturende en primaire functies — twee platen aangeleverd door de opdrachtgever. Beide platen zijn bijgesneden schermafdrukken: plaat 1 is bovenaan afgekapt en plaat 2 loopt rechts buiten beeld, dus mogelijk ontbreken er functies rechts van Monitoring.",
+  "geverifieerd": false,
+  "functies": [
+    {
+      "id": "inschrijven-woningzoekenden",
+      "naam": "Inschrijven woningzoekenden",
+      "groep": "Passende eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "behandelen-urgentie-aanvragen-woningzoekenden",
+      "naam": "Behandelen urgentie aanvragen woningzoekenden",
+      "groep": "Passende eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "werven-en-selecteren-kandidaten",
+      "naam": "Werven en selecteren kandidaten",
+      "groep": "Passende eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "afhandelen-klantvragen",
+      "naam": "Afhandelen klantvragen",
+      "groep": "Klantrelatie",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "afhandelen-klachten-dienstverlening",
+      "naam": "Afhandelen klachten dienstverlening",
+      "groep": "Klantrelatie",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "managen-klantwaardering",
+      "naam": "Managen klantwaardering",
+      "groep": "Klantrelatie",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "verhuren-eenheden",
+      "naam": "Verhuren eenheden",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "vaststellen-servicecomponenten",
+      "naam": "Vaststellen servicecomponenten",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "leveren-services-door-derden",
+      "naam": "Leveren services door derden",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "opmerking": "In de aangeleverde plaat afwijkend gekleurd ten opzichte van de andere functies; wat die markering in het bronmodel betekent is nog te bevestigen.",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "verrekenen-service-stookkosten",
+      "naam": "Verrekenen service-/stookkosten",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "financien-primair",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "verwerken-energieprestatievergoeding-epv",
+      "naam": "Verwerken Energieprestatievergoeding (EPV)",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "financien-primair",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "voeren-energiecoaching",
+      "naam": "Voeren energiecoaching",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "wonen-leefbaarheid",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "realiseren-geriefverbetering-wmo",
+      "naam": "Realiseren geriefverbetering/WMO",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bevorderen-leefbare-woonomgeving",
+      "naam": "Bevorderen leefbare woonomgeving",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "wonen-leefbaarheid",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "participeren-alv",
+      "naam": "Participeren ALV",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "leveren-urgentieverklaring-herhuisvesting",
+      "naam": "Leveren urgentieverklaring herhuisvesting",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "verkopen-eenheden",
+      "naam": "Verkopen eenheden",
+      "groep": "Verkochte eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "verkopen-appartementsrechten",
+      "naam": "Verkopen appartementsrechten",
+      "groep": "Verkochte eenheid",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "voeren-administratief-beheer-vve",
+      "naam": "Voeren administratief beheer VvE",
+      "groep": "Beheerde VvE",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "voeren-financieel-beheer-vve",
+      "naam": "Voeren financieel beheer VvE",
+      "groep": "Beheerde VvE",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "financien-primair",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "voeren-technisch-beheer-vve",
+      "naam": "Voeren technisch beheer VvE",
+      "groep": "Beheerde VvE",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "besturen-vve",
+      "naam": "Besturen VvE",
+      "groep": "Beheerde VvE",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "voeren-debiteurenbeheer",
+      "naam": "Voeren debiteurenbeheer",
+      "groep": "Primair financieel management",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "financien-primair",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "prolongeren-eenheden",
+      "naam": "Prolongeren eenheden",
+      "groep": "Primair financieel management",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "financien-primair",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "incasseren-vorderingen",
+      "naam": "Incasseren vorderingen",
+      "groep": "Primair financieel management",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "financien-primair",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "faciliteren-woonco-peratie",
+      "naam": "Faciliteren wooncoöperatie",
+      "groep": "Ondersteunde wooncoöperatie",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "wonen-leefbaarheid",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "herontwikkelen-eenheden",
+      "naam": "(Her)Ontwikkelen eenheden",
+      "groep": "Fysieke eenheid",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedontwikkeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "aankopen-eenheden",
+      "naam": "Aankopen eenheden",
+      "groep": "Fysieke eenheid",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "wijzigen-exploitatie",
+      "naam": "Wijzigen exploitatie",
+      "groep": "Fysieke eenheid",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "beheren-energielabels",
+      "naam": "Beheren energielabels",
+      "groep": "Fysieke eenheid",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "co-rdineren-asbestsanering",
+      "naam": "Coördineren asbestsanering",
+      "groep": "Fysieke eenheid",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "co-rdineren-project-planmatig-onderhoud",
+      "naam": "Coördineren project planmatig onderhoud",
+      "groep": "Vastgoedonderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "co-rdineren-mutatieonderhoud",
+      "naam": "Coördineren mutatieonderhoud",
+      "groep": "Vastgoedonderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "co-rdineren-reparatieonderhoud",
+      "naam": "Coördineren reparatieonderhoud",
+      "groep": "Vastgoedonderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "uitvoeren-onderhoudsorder",
+      "naam": "Uitvoeren onderhoudsorder",
+      "groep": "Vastgoedonderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bepalen-missie",
+      "naam": "Bepalen missie",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "besturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bepalen-visie",
+      "naam": "Bepalen visie",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "besturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-ondernemingsstrategie",
+      "naam": "Opstellen ondernemingsstrategie",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "besturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bepalen-portefeuillevisie",
+      "naam": "Bepalen portefeuillevisie",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-marktscan",
+      "naam": "Opstellen marktscan",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-gebiedsvisie",
+      "naam": "Opstellen/actualiseren gebiedsvisie",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bepalen-facetbeleid",
+      "naam": "Bepalen facetbeleid",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "besturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "overeenkomen-prestatieafspraken",
+      "naam": "Overeenkomen prestatieafspraken",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "besturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-jaarplanbrief",
+      "naam": "Opstellen jaarplanbrief",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "analyseren-markt-en-beleidsomgeving-complexen-wijk-buurt",
+      "naam": "Analyseren markt- en beleidsomgeving complexen (wijk/buurt)",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bepalen-strategie-en-positionering-complexen",
+      "naam": "Bepalen strategie en positionering complexen",
+      "groep": "Richting",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-portefeuilleplan",
+      "naam": "Opstellen/actualiseren portefeuilleplan",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-beleidsplannen",
+      "naam": "Opstellen/actualiseren beleidsplannen",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "besturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-meerjaren-onderhoudsbegroting",
+      "naam": "Opstellen/actualiseren (Meerjaren-)Onderhoudsbegroting",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-meerjaren-investeringsbegroting",
+      "naam": "Opstellen/actualiseren (Meerjaren-)Investeringsbegroting",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-complexplannen",
+      "naam": "Opstellen/actualiseren complexplannen",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-projectinvesteringsplan",
+      "naam": "Opstellen projectinvesteringsplan",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "vastgoedontwikkeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-financieel-plan",
+      "naam": "Opstellen/actualiseren financieel plan",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "opstellen-actualiseren-bedrijfsvoeringsplan",
+      "naam": "Opstellen/actualiseren bedrijfsvoeringsplan",
+      "groep": "Plannen",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "uitvoeren-beleidssimulatie-ex-ante-en-accorderen-facetbeleid-en-portefeuilleplan-opstellen-mjb",
+      "naam": "Uitvoeren beleidssimulatie ex-ante en accorderen facetbeleid en portefeuilleplan (opstellen MJB)",
+      "groep": "Evaluatie en terugkoppeling",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "uitvoeren-beleidsevaluatie-ex-ante-vastgoedbeheer-en-vastgoedinvesteringsplannen",
+      "naam": "Uitvoeren beleidsevaluatie ex-ante vastgoedbeheer en vastgoedinvesteringsplannen",
+      "groep": "Evaluatie en terugkoppeling",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "meten-en-evalueren-huidige-prestaties-van-complexen",
+      "naam": "Meten en evalueren huidige prestaties van complexen",
+      "groep": "Evaluatie en terugkoppeling",
+      "soort": "sturend",
+      "domein": "vastgoedsturing",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "uitvoeren-control",
+      "naam": "Uitvoeren control",
+      "groep": "Monitoring",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "uitvoeren-risicomanagement",
+      "naam": "Uitvoeren risicomanagement",
+      "groep": "Monitoring",
+      "soort": "sturend",
+      "domein": "risico-compliance",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "verantwoorden-bedrijfsvoering",
+      "naam": "Verantwoorden bedrijfsvoering",
+      "groep": "Monitoring",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "uitvoeren-benchmark",
+      "naam": "Uitvoeren benchmark",
+      "groep": "Monitoring",
+      "soort": "sturend",
+      "domein": "planning-control",
+      "stappen_voorzet": []
+    }
+  ]
+}

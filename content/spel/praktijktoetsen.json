@@ -1,0 +1,75 @@
+{
+  "toelichting": "De tegenkracht in de besluitfase van de processessie, in de vorm van de realiteitschecks van het eerste spel. Een herontworpen proces ziet er op een scherm altijd beter uit dan het oude; deze toetsen zetten er de weerstand naast die het in het echt tegenkomt. Het team moet per toets kiezen: het ontwerp aanpassen, of het onderbouwd handhaven. Niet beslissen is de enige verkeerde uitkomst.\n\nDit is spelinhoud, geen corporatiefeit: het zijn scenario's die in vrijwel elke corporatie voorkomen, geen uitspraken over deze corporatie. Daarom dragen ze geen bron en geen verificatievlag, net als de realiteitschecks.",
+  "checks": [
+    {
+      "id": "pt-zo-doen-we-dat",
+      "titel": "Zo doen we dat hier al twintig jaar",
+      "scenario": "De medewerker die deze stap al twintig jaar doet, legt uit waarom hij ooit is ingevoerd. Er blijkt een reden voor te zijn die niemand aan tafel kende.",
+      "raakt": ["herontwerp", "afpellen"],
+      "zwaarte": 2
+    },
+    {
+      "id": "pt-systeem-kan-het-niet",
+      "titel": "Het kernsysteem ondersteunt de nieuwe stap niet",
+      "scenario": "De stap die jullie wilden automatiseren kan alleen met een aanpassing in het primaire systeem. De leverancier zet hem op de roadmap voor over achttien maanden.",
+      "raakt": ["herontwerp", "doorrekenen"],
+      "zwaarte": 3
+    },
+    {
+      "id": "pt-ketenpartner",
+      "titel": "De ketenpartner beweegt niet mee",
+      "scenario": "Een deel van het proces ligt bij de aannemer. Die werkt voor vijf corporaties en past zijn werkwijze niet aan voor één van hen.",
+      "raakt": ["herontwerp", "besluit"],
+      "zwaarte": 3
+    },
+    {
+      "id": "pt-uitzondering-is-de-regel",
+      "titel": "De uitzondering blijkt twintig procent",
+      "scenario": "Bij het natellen blijkt het geval dat jullie als uitzondering hebben weggezet in een op de vijf situaties voor te komen. Het nieuwe proces is daar niet op gebouwd.",
+      "raakt": ["afpellen", "diagnose"],
+      "zwaarte": 3
+    },
+    {
+      "id": "pt-or-vraagt-door",
+      "titel": "De ondernemingsraad vraagt wat dit voor mensen betekent",
+      "scenario": "Er verdwijnen stappen die nu iemands werk zijn. De OR wil weten wat er met die uren en met die mensen gebeurt voordat er iets verandert.",
+      "raakt": ["besluit", "herontwerp"],
+      "zwaarte": 2
+    },
+    {
+      "id": "pt-auditor-wil-de-controle-terug",
+      "titel": "De accountant wil de geschrapte controlestap terug",
+      "scenario": "Een stap die jullie hebben geschrapt bleek een controle waar de accountant op steunt. Hij vraagt hoe die zekerheid nu geborgd is.",
+      "raakt": ["herontwerp", "besluit"],
+      "zwaarte": 3
+    },
+    {
+      "id": "pt-bewoner-wil-niet",
+      "titel": "De bewoner wil dit niet zelf doen",
+      "scenario": "Werk dat jullie naar de bewoner verplaatsen — zelf inplannen, zelf melden, zelf doorgeven — blijkt bij een deel van de doelgroep niet te landen. Zij bellen alsnog.",
+      "raakt": ["herontwerp", "besluit"],
+      "zwaarte": 2
+    },
+    {
+      "id": "pt-piek",
+      "titel": "De piek waar het proces op stukloopt",
+      "scenario": "Het nieuwe proces werkt prima bij het gemiddelde volume. In de piekweken komt er drie keer zoveel binnen, en dan valt hij om op precies de stap die jullie hebben samengevoegd.",
+      "raakt": ["herontwerp", "doorrekenen"],
+      "zwaarte": 2
+    },
+    {
+      "id": "pt-niemand-eigenaar",
+      "titel": "Niemand voelt zich eigenaar",
+      "scenario": "Het proces loopt over drie afdelingen. Gevraagd wie er verantwoordelijk is voor het geheel, kijkt iedereen naar iemand anders.",
+      "raakt": ["besluit", "afpellen"],
+      "zwaarte": 3
+    },
+    {
+      "id": "pt-meten-we-het",
+      "titel": "Meten jullie eigenlijk of het werkt?",
+      "scenario": "Over een half jaar wil het bestuur weten of de verbetering iets heeft opgeleverd. Er blijkt geen nulmeting te zijn van hoe het proces het vandaag doet.",
+      "raakt": ["besluit", "diagnose"],
+      "zwaarte": 2
+    }
+  ]
+}

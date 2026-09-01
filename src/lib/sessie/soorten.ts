@@ -6,9 +6,11 @@ import type {
   DeelnemerRij,
   EigenSignaalRij,
   Fase,
+  Herkomst,
   SessieRij,
   SessieState,
   SessieUsecaseRij,
+  Spelsoort,
   UsecaseStatus,
   Waardemodus,
 } from "@/lib/supabase/types";
@@ -20,12 +22,22 @@ export class SessieFout extends Error {}
 export type NieuweSessie = {
   titel: string;
   organisatieId: string;
+  /** Welk spel dit wordt. Weggelaten betekent de use-casesessie. */
+  spelsoort?: Spelsoort;
   speelmodusId: string;
   facilitatorNaam: string;
   /** Null als de facilitator ervoor kiest alleen te begeleiden, zonder zelf een rol te spelen. */
   facilitatorRolId: string | null;
   budgetGeld?: number;
   budgetCapaciteit?: number;
+  /**
+   * Momentopname van een afgeronde use-casesessie waar deze processessie op volgt.
+   *
+   * De client stelt hem samen — die heeft met de beheercode van die sessie legitiem toegang tot
+   * zijn state — en levert hem hier als kopie aan. Er wordt dus nooit vanuit deze sessie in een
+   * andere sessie gelezen.
+   */
+  herkomst?: Herkomst | null;
 };
 
 export type Toegang = {
