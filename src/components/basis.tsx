@@ -1,7 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useTelOp } from "@/lib/animatie/telOp";
+import type { CheckBesluit } from "@/lib/supabase/types";
 
 /**
  * Gedeelde bouwstenen. De toon is boardroom: rustige neutralen, één accent, veel wit.
@@ -169,6 +170,68 @@ export function Melding({
     <div className={`rounded-kaart border-l-2 px-3 py-2 text-sm ${stijlen[toon]}`}>
       {children}
     </div>
+  );
+}
+
+/**
+ * Besluit + motivatie in één kaart: een scenario, een vrije toelichting, en twee knoppen die
+ * meteen beslissen. Eerst gebouwd voor de realiteitschecks in `Prioritering`, hier gedeeld zodra
+ * de praktijktoetsen in de processessie hetzelfde patroon nodig hadden — de knopteksten zijn de
+ * enige plek waar de twee spellen andere woorden gebruiken.
+ */
+export function BesluitKaart({
+  titel,
+  scenario,
+  bestaand,
+  paslabel,
+  handhaaflabel,
+  onBeslis,
+}: {
+  titel: string;
+  scenario: string;
+  bestaand?: { besluit: CheckBesluit; motivatie: string };
+  paslabel: string;
+  handhaaflabel: string;
+  onBeslis: (besluit: CheckBesluit, motivatie: string) => void;
+}) {
+  const [motivatie, setMotivatie] = useState(bestaand?.motivatie ?? "");
+
+  return (
+    <Kaart aandacht={Boolean(bestaand)} className="p-4">
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="text-sm font-medium leading-snug text-inkt">{titel}</h3>
+        {bestaand ? (
+          <Etiket toon={bestaand.besluit === "aanpassen" ? "aandacht" : "waarde"}>
+            {bestaand.besluit === "aanpassen" ? "aangepast" : "gehandhaafd"}
+          </Etiket>
+        ) : null}
+      </div>
+      <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">{scenario}</p>
+
+      <textarea
+        className={`${invoerStijl} mt-3 min-h-16 !text-sm`}
+        value={motivatie}
+        onChange={(e) => setMotivatie(e.target.value)}
+        placeholder="Wat is jullie besluit, en waarom?"
+      />
+
+      <div className="mt-2 flex gap-1.5">
+        <Knop
+          soort={bestaand?.besluit === "aanpassen" ? "primair" : "rand"}
+          onClick={() => onBeslis("aanpassen", motivatie.trim())}
+          className="flex-1 !text-xs"
+        >
+          {paslabel}
+        </Knop>
+        <Knop
+          soort={bestaand?.besluit === "handhaven" ? "primair" : "rand"}
+          onClick={() => onBeslis("handhaven", motivatie.trim())}
+          className="flex-1 !text-xs"
+        >
+          {handhaaflabel}
+        </Knop>
+      </div>
+    </Kaart>
   );
 }
 

@@ -8,12 +8,19 @@ import {
   type Positie,
 } from "@/lib/waarde/berekening";
 import type { DrivertypeId } from "@/lib/content/schemas";
-import { cora, personasVoorOrganisatie, speelmodus, usecase as bibliotheekKaart } from "@/lib/content";
+import {
+  cora,
+  personasVoorOrganisatie,
+  praktijktoetsen,
+  speelmodus,
+  usecase as bibliotheekKaart,
+} from "@/lib/content";
 import {
   faseHoortBij,
   fasesVoor,
   type DeelnemerRij,
   type Fase,
+  type ProcesVerbeteringRij,
   type SessieState,
   type SessieUsecaseRij,
   type WaarderingRij,
@@ -55,6 +62,26 @@ export function businessCaseVan(
   return berekenBusinessCase(
     driversVoorBerekening(waardering),
     waardering.kosten,
+    onzekerheidPct,
+  );
+}
+
+function driversVoorVerbetering(verbetering: ProcesVerbeteringRij) {
+  return verbetering.drivers.map((d) => ({
+    type: d.type as DrivertypeId,
+    waarden: d.waarden,
+  }));
+}
+
+/** Fase 5: dezelfde berekening als `businessCaseVan`, maar dan voor een procesverbetering. */
+export function businessCaseVanVerbetering(
+  verbetering: ProcesVerbeteringRij,
+  onzekerheidPct: number,
+): BusinessCase | null {
+  if (verbetering.drivers.length === 0) return null;
+  return berekenBusinessCase(
+    driversVoorVerbetering(verbetering),
+    verbetering.kosten,
     onzekerheidPct,
   );
 }
@@ -239,15 +266,16 @@ function samenwerkingsonderdelen(state: SessieState): Teamscore["onderdelen"] {
 /**
  * De score van de processessie.
  *
- * Naast de samenwerking (gedeeld met de use-casesessie): diepte van de diagnose en van het
- * herontwerp. Wat nog ontbreekt komt erbij zodra fase 5-6 (doorrekenen, besluit) er staan. Bewust
- * al gesplitst van `usecaseTeamscore`, want die rekent op een portfolio en een speelmodus die een
- * processessie niet heeft.
+ * Naast de samenwerking (gedeeld met de use-casesessie): diepte van de diagnose, van het
+ * herontwerp, van het doorrekenen en van het besluit. Bewust al gesplitst van `usecaseTeamscore`,
+ * want die rekent op een portfolio en een speelmodus die een processessie niet heeft.
  */
 function procesTeamscore(state: SessieState): Teamscore {
   const onderdelen = [
     ...diagnoseOnderdeel(state),
     ...herontwerpOnderdeel(state),
+    ...doorrekenOnderdeel(state),
+    ...besluitOnderdeel(state),
     ...samenwerkingsonderdelen(state),
   ];
   return { totaal: onderdelen.reduce((som, o) => som + o.punten, 0), onderdelen };
@@ -301,6 +329,48 @@ function herontwerpOnderdeel(state: SessieState): Teamscore["onderdelen"] {
         gekoppeld > 0
           ? `${state.verbeteringen.length} verbeteringen genoteerd, ${gekoppeld} gekoppeld aan een use case`
           : `${state.verbeteringen.length} verbeteringen genoteerd`,
+    },
+  ];
+}
+
+/** Punten voor verbeteringen die volledig zijn doorgerekend — zelfde vorm als "Doorrekening" bij de usecases. */
+function doorrekenOnderdeel(state: SessieState): Teamscore["onderdelen"] {
+  if (state.verbeteringen.length === 0) return [];
+
+  const doorgerekend = state.verbeteringen.filter(
+    (v) => businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct)?.volledig,
+  ).length;
+
+  return [
+    {
+      id: "doorrekening",
+      label: "Doorrekening",
+      punten: doorgerekend * 6,
+      maximum: Math.max(state.verbeteringen.length, 1) * 6,
+      toelichting:
+        doorgerekend === 1
+          ? "1 volledig doorgerekende verbetering"
+          : `${doorgerekend} volledig doorgerekende verbeteringen`,
+    },
+  ];
+}
+
+/** Punten voor praktijktoetsen waar het team een besluit over heeft vastgelegd. */
+function besluitOnderdeel(state: SessieState): Teamscore["onderdelen"] {
+  const idsPraktijktoets = new Set(praktijktoetsen.checks.map((c) => c.id));
+  const vastgelegd = state.besluiten.filter((b) => idsPraktijktoets.has(b.check_id)).length;
+  if (vastgelegd === 0) return [];
+
+  return [
+    {
+      id: "besluit",
+      label: "Praktijktoets",
+      punten: vastgelegd * 4,
+      maximum: Math.max(praktijktoetsen.checks.length, 1) * 4,
+      toelichting:
+        vastgelegd === 1
+          ? "1 praktijktoets van een besluit voorzien"
+          : `${vastgelegd} praktijktoetsen van een besluit voorzien`,
     },
   ];
 }

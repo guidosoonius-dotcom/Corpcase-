@@ -1,5 +1,13 @@
-import { domein as coraDomein, organisatie, rolNaam } from "@/lib/content";
-import { alleBeelden, portfolio } from "@/lib/sessie/afgeleid";
+import {
+  bedrijfsfunctie,
+  domein as coraDomein,
+  organisatie,
+  praktijktoetsen,
+  rolNaam,
+  spoor as spoorContent,
+} from "@/lib/content";
+import { alleBeelden, businessCaseVanVerbetering, portfolio } from "@/lib/sessie/afgeleid";
+import { DIAGNOSE_ASSEN, gemiddeldeDiagnoseScores } from "@/lib/waarde/proces";
 import type { SessieState } from "@/lib/supabase/types";
 
 /**
@@ -127,6 +135,94 @@ export function genereerRapportCsv(state: SessieState): string {
       item.randvoorwaarden,
       afhankelijkheden.join("; "),
     ]);
+  }
+  csv += regel([]);
+
+  // --- Deelnemers ------------------------------------------------------------
+  csv += regel(["Deelnemers"]);
+  csv += regel(["Naam", "Rol"]);
+  for (const deelnemer of state.deelnemers) {
+    csv += regel([deelnemer.naam, rolNaam(deelnemer.rol_id)]);
+  }
+
+  return csv;
+}
+
+/** Dezelfde opzet als `genereerRapportCsv`, voor een processessie: processen, verbeteringen, praktijktoetsen, deelnemers. */
+export function genereerProcesRapportCsv(state: SessieState): string {
+  const org = organisatie(state.sessie.organisatie_id);
+
+  let csv = "";
+
+  csv += regel([`Processessie ${org.naam}`, state.sessie.titel]);
+  csv += regel([]);
+
+  // --- Processen -------------------------------------------------------------
+  csv += regel(["Processen"]);
+  csv += regel([
+    "Titel",
+    "Bedrijfsfunctie",
+    "Spoor",
+    "Motivatie bij afwijken",
+    ...DIAGNOSE_ASSEN,
+  ]);
+  for (const proces of state.processen) {
+    const scores = gemiddeldeDiagnoseScores(state.diagnoses.filter((d) => d.proces_id === proces.id));
+    csv += regel([
+      proces.titel,
+      bedrijfsfunctie(proces.functie_id)?.naam ?? proces.functie_id,
+      proces.spoor ? (spoorContent(proces.spoor)?.naam ?? proces.spoor) : "",
+      proces.spoor_motivatie,
+      ...DIAGNOSE_ASSEN.map((as) => scores[as] ?? ""),
+    ]);
+  }
+  csv += regel([]);
+
+  // --- Verbeteringen -----------------------------------------------------------
+  csv += regel(["Verbeteringen"]);
+  csv += regel([
+    "Proces",
+    "Titel",
+    "Manoeuvre",
+    "Gekoppelde use case",
+    "Netto baat laag (EUR/jr)",
+    "Netto baat verwacht (EUR/jr)",
+    "Netto baat hoog (EUR/jr)",
+    "Eenmalige kosten (EUR)",
+    "Jaarlijkse kosten (EUR)",
+    "Eigenaar",
+    "Meetmoment",
+  ]);
+  for (const v of state.verbeteringen) {
+    const proces = state.processen.find((p) => p.id === v.proces_id);
+    const eigenaar = state.deelnemers.find((d) => d.id === v.eigenaar_id);
+    const bc = businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct);
+    const usecase = v.usecase_ref
+      ? state.sessie.herkomst?.portfolio.find((u) => u.id === v.usecase_ref)
+      : undefined;
+    csv += regel([
+      proces?.titel ?? "",
+      v.titel,
+      v.manoeuvre ?? "",
+      usecase?.titel ?? "",
+      bc?.netto_baat?.laag ?? "",
+      bc?.netto_baat?.verwacht ?? "",
+      bc?.netto_baat?.hoog ?? "",
+      v.kosten.eenmalig,
+      v.kosten.jaarlijks,
+      eigenaar?.naam ?? "",
+      v.meetmoment ?? "",
+    ]);
+  }
+  csv += regel([]);
+
+  // --- Praktijktoetsen ---------------------------------------------------------
+  csv += regel(["Praktijktoetsen"]);
+  csv += regel(["Titel", "Besluit", "Motivatie"]);
+  for (const besluit of state.besluiten) {
+    const check = praktijktoetsen.checks.find((c) => c.id === besluit.check_id);
+    if (!check) continue;
+    csv += regel([check.titel, besluit.besluit, besluit.motivatie]);
   }
   csv += regel([]);
 

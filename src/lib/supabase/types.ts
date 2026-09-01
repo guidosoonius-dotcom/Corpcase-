@@ -321,6 +321,9 @@ export type ProcesVerbeteringRij = {
   usecase_ref: string | null;
   drivers: { type: string; waarden: Record<string, number | null> }[];
   kosten: { eenmalig: number; jaarlijks: number; capaciteit: number };
+  /** Fase 6: wie dit oppakt, en wanneer het team teruggaat om te meten of het werkte. */
+  eigenaar_id: string | null;
+  meetmoment: string | null;
   toegevoegd_door: string | null;
   aangemaakt_op: string;
   bijgewerkt_op: string;

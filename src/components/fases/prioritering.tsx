@@ -5,9 +5,10 @@ import { realiteitschecks, speelmodus } from "@/lib/content";
 import { opslag } from "@/lib/sessie/api";
 import { alleBeelden, budgetStand, type UsecaseBeeld } from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
-import type { CheckBesluit, SessieState } from "@/lib/supabase/types";
+import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
 import {
+  BesluitKaart,
   Cijfer,
   DonkerPaneel,
   Hoofdregel,
@@ -367,76 +368,31 @@ function Realiteitschecks({
       </p>
 
       <ul className="mt-3 space-y-2.5">
-        {gekozenChecks.map((check) => (
-          <li key={check.id}>
-            <Check state={state} identiteit={identiteit} doe={doe} check={check} />
-          </li>
-        ))}
+        {gekozenChecks.map((check) => {
+          const bestaand = state.besluiten.find((b) => b.check_id === check.id);
+          return (
+            <li key={check.id}>
+              <BesluitKaart
+                titel={check.titel}
+                scenario={check.scenario}
+                bestaand={bestaand}
+                paslabel="We passen het portfolio aan"
+                handhaaflabel="We handhaven, en dit is waarom"
+                onBeslis={(besluit, motivatie) =>
+                  void doe(() =>
+                    opslag.bewaarBesluit(identiteit, {
+                      sessieId: state.sessie.id,
+                      checkId: check.id,
+                      besluit,
+                      motivatie,
+                    }),
+                  )
+                }
+              />
+            </li>
+          );
+        })}
       </ul>
     </section>
-  );
-}
-
-function Check({
-  state,
-  identiteit,
-  doe,
-  check,
-}: {
-  state: SessieState;
-  identiteit: BewaardeIdentiteit;
-  doe: (actie: () => Promise<unknown>) => Promise<void>;
-  check: (typeof realiteitschecks.checks)[number];
-}) {
-  const bestaand = state.besluiten.find((b) => b.check_id === check.id);
-  const [motivatie, setMotivatie] = useState(bestaand?.motivatie ?? "");
-
-  async function beslis(besluit: CheckBesluit) {
-    await doe(() =>
-      opslag.bewaarBesluit(identiteit, {
-        sessieId: state.sessie.id,
-        checkId: check.id,
-        besluit,
-        motivatie: motivatie.trim(),
-      }),
-    );
-  }
-
-  return (
-    <Kaart aandacht={Boolean(bestaand)} className="p-4">
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="text-sm font-medium leading-snug text-inkt">{check.titel}</h3>
-        {bestaand ? (
-          <Etiket toon={bestaand.besluit === "aanpassen" ? "aandacht" : "waarde"}>
-            {bestaand.besluit === "aanpassen" ? "aangepast" : "gehandhaafd"}
-          </Etiket>
-        ) : null}
-      </div>
-      <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">{check.scenario}</p>
-
-      <textarea
-        className={`${invoerStijl} mt-3 min-h-16 !text-sm`}
-        value={motivatie}
-        onChange={(e) => setMotivatie(e.target.value)}
-        placeholder="Wat is jullie besluit, en waarom?"
-      />
-
-      <div className="mt-2 flex gap-1.5">
-        <Knop
-          soort={bestaand?.besluit === "aanpassen" ? "primair" : "rand"}
-          onClick={() => void beslis("aanpassen")}
-          className="flex-1 !text-xs"
-        >
-          We passen het portfolio aan
-        </Knop>
-        <Knop
-          soort={bestaand?.besluit === "handhaven" ? "primair" : "rand"}
-          onClick={() => void beslis("handhaven")}
-          className="flex-1 !text-xs"
-        >
-          We handhaven, en dit is waarom
-        </Knop>
-      </div>
-    </Kaart>
   );
 }

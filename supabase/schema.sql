@@ -336,6 +336,12 @@ create table proces_verbeteringen (
   usecase_ref text,
   drivers jsonb not null default '[]'::jsonb,
   kosten jsonb not null default '{"eenmalig": 0, "jaarlijks": 0, "capaciteit": 0}'::jsonb,
+  -- Fase 6: wie dit oppakt, en wanneer we teruggaan om te meten of het werkte. Bewust per
+  -- verbetering, niet per proces — sessie_processen.eigenaar_id bestaat al maar dekt niet de
+  -- gevraagde granulariteit (elke verbetering kan een eigen eigenaar en meetmoment hebben, zoals
+  -- usecase_ref dat nu al per verbetering doet).
+  eigenaar_id uuid references deelnemers (id) on delete set null,
+  meetmoment date,
   toegevoegd_door uuid references deelnemers (id) on delete set null,
   aangemaakt_op timestamptz not null default now(),
   bijgewerkt_op timestamptz not null default now()

@@ -30,7 +30,8 @@ import type { SessieState, SpoorKeuze } from "@/lib/supabase/types";
  * roadmap-voorzet in de use-casesessie dat ook niet is.
  */
 
-const ASSEN_TEKST: Record<DiagnoseAs, { naam: string; vraag: string }> = {
+/** Ook gebruikt door het procesrapport, om dezelfde asnamen te tonen bij het diagnoseresultaat. */
+export const ASSEN_TEKST: Record<DiagnoseAs, { naam: string; vraag: string }> = {
   pijn: { naam: "Pijn", vraag: "Hoeveel last heeft de organisatie hier vandaag van?" },
   volume: { naam: "Volume", vraag: "Hoe vaak komt dit voor?" },
   variatie: { naam: "Variatie", vraag: "Hoeveel van de gevallen wijken af van de hoofdlijn?" },

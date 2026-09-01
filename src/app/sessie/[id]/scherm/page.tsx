@@ -4,7 +4,13 @@ import { useParams } from "next/navigation";
 import { FASE_LABELS, type SessieState } from "@/lib/supabase/types";
 import { cora, domein as coraDomein, organisatie, procesmodus, speelmodus } from "@/lib/content";
 import { useSessie } from "@/lib/sessie/gebruik";
-import { alleBeelden, budgetStand, dekking, teamscore } from "@/lib/sessie/afgeleid";
+import {
+  alleBeelden,
+  budgetStand,
+  businessCaseVanVerbetering,
+  dekking,
+  teamscore,
+} from "@/lib/sessie/afgeleid";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import { Matrix } from "@/components/matrix";
 import { Processtrook, telOverdrachten } from "@/components/processtrook";
@@ -228,15 +234,30 @@ function ProcesScherm({ state }: { state: SessieState }) {
 
   // Het proces waar de zaal aan werkt: het eerst gekozen proces dat al stappen heeft, anders het
   // eerste dat er ligt.
-  const stappenVan = (procesId: string) =>
+  const stappenVan = (procesId: string, soort: "huidig" | "nieuw") =>
     state.stappen
-      .filter((s) => s.proces_id === procesId && s.soort === "huidig")
+      .filter((s) => s.proces_id === procesId && s.soort === soort)
       .sort((a, b) => a.volgorde - b.volgorde);
 
   const proces =
-    state.processen.find((p) => stappenVan(p.id).length > 0) ?? state.processen[0] ?? null;
-  const stappen = proces ? stappenVan(proces.id) : [];
+    state.processen.find((p) => stappenVan(p.id, "huidig").length > 0) ??
+    state.processen[0] ??
+    null;
+  const stappen = proces ? stappenVan(proces.id, "huidig") : [];
+  // Op het new-practice-spoor is het herontworpen resultaat wat de zaal wil zien zodra het er is,
+  // niet alleen het huidige proces waar het allemaal mee begon.
+  const nieuweStappen = proces && proces.spoor === "nieuw" ? stappenVan(proces.id, "nieuw") : [];
   const overdrachten = telOverdrachten(stappen);
+
+  const doorgerekend = state.verbeteringen.filter(
+    (v) => businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct)?.volledig,
+  );
+  const totaleBesparing = doorgerekend.reduce(
+    (som, v) =>
+      som +
+      (businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct)?.netto_baat?.verwacht ?? 0),
+    0,
+  );
 
   return (
     <Thema accent={organisatie(state.sessie.organisatie_id).thema.accent} className="flex-1">
@@ -269,7 +290,9 @@ function ProcesScherm({ state }: { state: SessieState }) {
         {stappen.length > 0 ? (
           <>
             <section className="mt-8">
-              <h2 className="display text-2xl text-inkt">Hoe het nu loopt</h2>
+              <h2 className="display text-2xl text-inkt">
+                {nieuweStappen.length > 0 ? "Zoals het nu loopt" : "Hoe het nu loopt"}
+              </h2>
               <div className="mt-3">
                 <Processtrook
                   stappen={stappen}
@@ -279,28 +302,71 @@ function ProcesScherm({ state }: { state: SessieState }) {
               </div>
             </section>
 
-            {overdrachten > 0 ? (
-              <div className="mt-8 max-w-md">
-                <DonkerPaneel bloedt="links" className="p-5">
-                  <div aria-hidden className="absolute -right-10 -top-14 h-44 w-44 text-white/[0.07]">
-                    <Halftoon />
-                  </div>
-                  <div className="relative">
-                    <p className="text-sm text-houtskool-zacht">
-                      Zo vaak wisselt het werk van hand
-                    </p>
-                    <p className="cijfer mt-2 text-5xl text-accent-op-donker">{overdrachten}</p>
-                    <p className="mt-1 text-sm text-white">
-                      {overdrachten === 1 ? "overdracht" : "overdrachten"} in {stappen.length} stappen
-                    </p>
-                    <p className="mt-3 border-t border-houtskool-rand pt-2.5 text-xs leading-relaxed text-houtskool-zacht">
-                      Bij elke overdracht ligt het werk stil tot de volgende het oppakt. Daar zit
-                      meestal meer doorlooptijd dan in het werk zelf.
-                    </p>
-                  </div>
-                </DonkerPaneel>
-              </div>
+            {nieuweStappen.length > 0 ? (
+              <section className="mt-8">
+                <h2 className="display text-2xl text-inkt">Zoals het zou moeten</h2>
+                <div className="mt-3">
+                  <Processtrook
+                    stappen={nieuweStappen}
+                    deelnemers={state.deelnemers}
+                    richting="horizontaal"
+                  />
+                </div>
+              </section>
             ) : null}
+
+            <div className="mt-8 flex flex-wrap gap-6">
+              {overdrachten > 0 ? (
+                <div className="max-w-md flex-1">
+                  <DonkerPaneel bloedt="links" className="p-5">
+                    <div aria-hidden className="absolute -right-10 -top-14 h-44 w-44 text-white/[0.07]">
+                      <Halftoon />
+                    </div>
+                    <div className="relative">
+                      <p className="text-sm text-houtskool-zacht">
+                        Zo vaak wisselt het werk van hand
+                      </p>
+                      <p className="cijfer mt-2 text-5xl text-accent-op-donker">{overdrachten}</p>
+                      <p className="mt-1 text-sm text-white">
+                        {overdrachten === 1 ? "overdracht" : "overdrachten"} in {stappen.length}{" "}
+                        stappen
+                      </p>
+                      <p className="mt-3 border-t border-houtskool-rand pt-2.5 text-xs leading-relaxed text-houtskool-zacht">
+                        Bij elke overdracht ligt het werk stil tot de volgende het oppakt. Daar zit
+                        meestal meer doorlooptijd dan in het werk zelf.
+                      </p>
+                    </div>
+                  </DonkerPaneel>
+                </div>
+              ) : null}
+
+              {doorgerekend.length > 0 ? (
+                <div className="max-w-md flex-1">
+                  <DonkerPaneel bloedt="rechts" className="p-5">
+                    <div aria-hidden className="absolute -right-10 -top-14 h-44 w-44 text-white/[0.07]">
+                      <Halftoon />
+                    </div>
+                    <div className="relative">
+                      <p className="text-sm text-houtskool-zacht">
+                        Verwachte netto besparing van het doorgerekende deel
+                      </p>
+                      <p
+                        className={`cijfer mt-2 text-5xl ${
+                          totaleBesparing >= 0 ? "text-accent-op-donker" : "text-white"
+                        }`}
+                      >
+                        {formatteerEuro(totaleBesparing)}
+                      </p>
+                      <p className="mt-1 text-sm text-white">per jaar</p>
+                      <p className="mt-3 border-t border-houtskool-rand pt-2.5 text-xs leading-relaxed text-houtskool-zacht">
+                        Optelling van verwachte waarden, elk met een onzekerheid van{" "}
+                        {state.sessie.onzekerheid_pct}%. Geen begroting.
+                      </p>
+                    </div>
+                  </DonkerPaneel>
+                </div>
+              ) : null}
+            </div>
           </>
         ) : (
           <p className="mt-10 text-xl leading-relaxed text-inkt-zacht">

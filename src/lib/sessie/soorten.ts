@@ -113,6 +113,12 @@ export type VerbeteringVelden = {
   manoeuvre?: string | null;
   usecase_ref?: string | null;
   stap_id?: string | null;
+  /** Fase 5: dezelfde vorm als `WaarderingInvoer.drivers`/`.kosten` — de rekenmotor leest ze zonder omweg. */
+  drivers?: Driverwaarden[];
+  kosten?: Kosten;
+  /** Fase 6: wie dit oppakt, en wanneer het team teruggaat om te meten of het werkte. */
+  eigenaar_id?: string | null;
+  meetmoment?: string | null;
 };
 
 export type Toegang = {

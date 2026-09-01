@@ -3,11 +3,15 @@
 import { useParams } from "next/navigation";
 import {
   alleSignalen,
+  bedrijfsfunctie,
   domein as coraDomein,
   organisatie,
+  praktijktoetsen,
+  procesmodus,
   realiteitschecks,
   rolNaam,
   rolopdrachten,
+  spoor as spoorContent,
   speelmodi,
   speelmodus,
 } from "@/lib/content";
@@ -17,15 +21,20 @@ import {
   alleBeelden,
   beoordeelRolopdracht,
   budgetStand,
+  businessCaseVanVerbetering,
   dekking,
   onvolledigeBusinessCases,
   portfolio,
 } from "@/lib/sessie/afgeleid";
+import { bepaalSpoorAdvies, gemiddeldeDiagnoseScores } from "@/lib/waarde/proces";
 import { formatteerBandbreedte, formatteerEuro } from "@/lib/waarde/berekening";
 import { Hoofdregel, Knop, Melding } from "@/components/basis";
+import { ASSEN_TEKST } from "@/components/fases/diagnose";
+import { Processtrook, telOverdrachten } from "@/components/processtrook";
 import { Thema } from "@/components/thema";
-import { downloadCsv, genereerRapportCsv } from "@/lib/rapport/csv";
+import { downloadCsv, genereerProcesRapportCsv, genereerRapportCsv } from "@/lib/rapport/csv";
 import { DownloadIcoon } from "@/components/icoon";
+import type { SessieState } from "@/lib/supabase/types";
 
 /**
  * Het eindrapport: wat het team meeneemt naar de volgende vergadering.
@@ -33,6 +42,10 @@ import { DownloadIcoon } from "@/components/icoon";
  * Bewust een gewone webpagina die goed print in plaats van een gegenereerd bestand. Belangrijker
  * dan de vormgeving is de eerlijkheid: elke aanname, elke onvolledige doorrekening en elke bron
  * staat erin. Een rapport dat alleen de mooie helft toont, is bij de eerste kritische vraag waardeloos.
+ *
+ * Twee spellen, twee rapportvormen — dezelfde dispatch-aanpak als het beamerscherm (`scherm/page.tsx`,
+ * `SchermPagina`). Zonder die splitsing gooit dit scherm een fout voor een processessie: het las
+ * onvoorwaardelijk de use-case-speelmodus, die voor een proces-speelmodus-id niet bestaat.
  */
 export default function RapportPagina() {
   const parameters = useParams<{ id: string }>();
@@ -48,6 +61,53 @@ export default function RapportPagina() {
     );
   }
 
+  const org = organisatie(state.sessie.organisatie_id);
+
+  function csvDownloaden() {
+    const datum = new Date(state!.sessie.aangemaakt_op).toISOString().slice(0, 10);
+    const naam = state!.sessie.titel
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const inhoud =
+      state!.sessie.spelsoort === "proces"
+        ? genereerProcesRapportCsv(state!)
+        : genereerRapportCsv(state!);
+    downloadCsv(`${naam || "corpcase-rapport"}-${datum}.csv`, inhoud);
+  }
+
+  return (
+    <Thema accent={org.thema.accent} className="flex-1">
+      <main className="mx-auto w-full max-w-3xl px-6 py-10">
+        <div className="niet-printen mb-8 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-xs text-inkt-licht">
+            Print deze pagina of bewaar hem als pdf. Voor verdere verwerking kan de inhoud ook als
+            spreadsheet mee.
+          </p>
+          <div className="flex shrink-0 gap-2">
+            <Knop soort="rand" onClick={csvDownloaden}>
+              <DownloadIcoon className="h-4 w-4" />
+              CSV downloaden
+            </Knop>
+            <Knop soort="rand" onClick={() => window.print()}>
+              Printen
+            </Knop>
+          </div>
+        </div>
+
+        <Hoofdregel links="Corpcase" rechts="Eindrapport" />
+
+        {state.sessie.spelsoort === "proces" ? (
+          <ProcesRapport state={state} />
+        ) : (
+          <UsecaseRapport state={state} />
+        )}
+      </main>
+    </Thema>
+  );
+}
+
+function UsecaseRapport({ state }: { state: SessieState }) {
   const org = organisatie(state.sessie.organisatie_id);
   const modus = speelmodus(state.sessie.speelmodus);
   const inPortfolio = portfolio(state);
@@ -67,36 +127,8 @@ export default function RapportPagina() {
   // Een negatieve uitkomst is een bevinding, geen reden om het vakje leeg te laten.
   const heeftDoorrekening = doorgerekend.length > 0;
 
-  function csvDownloaden() {
-    const datum = new Date(state!.sessie.aangemaakt_op).toISOString().slice(0, 10);
-    const naam = state!.sessie.titel
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    downloadCsv(`${naam || "corpcase-rapport"}-${datum}.csv`, genereerRapportCsv(state!));
-  }
-
   return (
-    <Thema accent={org.thema.accent} className="flex-1">
-    <main className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="niet-printen mb-8 flex flex-wrap items-center justify-between gap-4">
-        <p className="text-xs text-inkt-licht">
-          Print deze pagina of bewaar hem als pdf. Voor verdere verwerking kan het portfolio,
-          de business cases en de roadmap ook als spreadsheet mee.
-        </p>
-        <div className="flex shrink-0 gap-2">
-          <Knop soort="rand" onClick={csvDownloaden}>
-            <DownloadIcoon className="h-4 w-4" />
-            CSV downloaden
-          </Knop>
-          <Knop soort="rand" onClick={() => window.print()}>
-            Printen
-          </Knop>
-        </div>
-      </div>
-
-      <Hoofdregel links="Corpcase" rechts="Eindrapport" />
-
+    <>
       <header className="print-blok mt-6 border-b border-rand pb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
           Use-caseportfolio · {org.naam}
@@ -348,13 +380,14 @@ export default function RapportPagina() {
           <ul className="mt-3 space-y-3">
             {state.besluiten.map((besluit) => {
               const check = realiteitschecks.checks.find((c) => c.id === besluit.check_id);
+              if (!check) return null;
               return (
                 <li key={besluit.id}>
                   <p className="text-sm font-medium text-inkt">
-                    {check?.titel ?? besluit.check_id}
+                    {check.titel}
                   </p>
                   <p className="mt-0.5 text-xs leading-relaxed text-inkt-licht">
-                    {check?.scenario}
+                    {check.scenario}
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
                     Besluit:{" "}
@@ -445,7 +478,215 @@ export default function RapportPagina() {
           applicatie.
         </p>
       </footer>
-    </main>
-    </Thema>
+    </>
+  );
+}
+
+function ProcesRapport({ state }: { state: SessieState }) {
+  const org = organisatie(state.sessie.organisatie_id);
+  const modus = procesmodus(state.sessie.speelmodus);
+
+  const doorgerekend = state.verbeteringen.filter(
+    (v) => businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct)?.volledig,
+  );
+  const totaleBaat = doorgerekend.reduce(
+    (som, v) =>
+      som +
+      (businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct)?.netto_baat?.verwacht ?? 0),
+    0,
+  );
+
+  return (
+    <>
+      <header className="print-blok mt-6 border-b border-rand pb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
+          Processessie · {org.naam}
+        </p>
+        <h1 className="display mt-2 text-4xl leading-tight text-inkt">{state.sessie.titel}</h1>
+        <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">
+          {new Date(state.sessie.aangemaakt_op).toLocaleDateString("nl-NL", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}{" "}
+          · {modus.naam.toLowerCase()} · {state.deelnemers.length}{" "}
+          {state.deelnemers.length === 1 ? "deelnemer" : "deelnemers"}
+        </p>
+        <p className="mt-1 text-sm text-inkt-zacht">
+          {state.deelnemers.map((d) => `${d.naam} (${rolNaam(d.rol_id)})`).join(", ")}
+        </p>
+      </header>
+
+      <section className="print-blok mt-8">
+        <h2 className="display text-2xl text-inkt">In het kort</h2>
+        <dl className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {[
+            { label: "Processen", waarde: String(state.processen.length) },
+            { label: "Verbeteringen", waarde: String(state.verbeteringen.length) },
+            { label: "Doorgerekend", waarde: String(doorgerekend.length) },
+            {
+              label: "Verwachte netto besparing",
+              waarde:
+                doorgerekend.length > 0 ? `${formatteerEuro(totaleBaat)}/jr` : "niet doorgerekend",
+            },
+          ].map((item) => (
+            <div key={item.label}>
+              <dt className="text-xs leading-snug text-inkt-licht">{item.label}</dt>
+              <dd className="mt-0.5 text-lg font-semibold tabular-nums text-inkt">
+                {item.waarde}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {state.processen.map((proces) => {
+        const stappenHuidig = state.stappen
+          .filter((s) => s.proces_id === proces.id && s.soort === "huidig")
+          .sort((a, b) => a.volgorde - b.volgorde);
+        const stappenNieuw = state.stappen
+          .filter((s) => s.proces_id === proces.id && s.soort === "nieuw")
+          .sort((a, b) => a.volgorde - b.volgorde);
+        const diagnoses = state.diagnoses.filter((d) => d.proces_id === proces.id);
+        const scores = gemiddeldeDiagnoseScores(diagnoses);
+        const advies = bepaalSpoorAdvies(scores);
+        const verbeteringen = state.verbeteringen.filter((v) => v.proces_id === proces.id);
+        const functie = bedrijfsfunctie(proces.functie_id);
+
+        return (
+          <section key={proces.id} className="print-blok mt-10">
+            <h2 className="display text-2xl text-inkt">{proces.titel}</h2>
+            {functie ? <p className="mt-0.5 text-xs text-inkt-licht">{functie.naam}</p> : null}
+            {proces.aanleiding ? (
+              <p className="mt-1.5 text-sm leading-relaxed text-inkt-zacht">{proces.aanleiding}</p>
+            ) : null}
+
+            {stappenHuidig.length > 0 ? (
+              <div className="mt-4">
+                <p className="text-xs font-semibold text-inkt">
+                  Zoals het loopt · {telOverdrachten(stappenHuidig)} overdrachten
+                </p>
+                <div className="mt-2">
+                  <Processtrook
+                    stappen={stappenHuidig}
+                    deelnemers={state.deelnemers}
+                    richting="horizontaal"
+                  />
+                </div>
+              </div>
+            ) : null}
+
+            {proces.spoor === "nieuw" && stappenNieuw.length > 0 ? (
+              <div className="mt-4">
+                <p className="text-xs font-semibold text-inkt">Zoals het zou moeten</p>
+                <div className="mt-2">
+                  <Processtrook
+                    stappen={stappenNieuw}
+                    deelnemers={state.deelnemers}
+                    richting="horizontaal"
+                  />
+                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-4 rounded-kaart border border-rand p-3">
+              <p className="text-xs font-semibold text-inkt">Diagnose</p>
+              <ul className="mt-1 space-y-0.5">
+                {(Object.keys(scores) as (keyof typeof scores)[]).map((as) => (
+                  <li key={as} className="text-xs tabular-nums text-inkt-zacht">
+                    {ASSEN_TEKST[as].naam}:{" "}
+                    {scores[as] === null ? "niet gescoord" : scores[as]!.toFixed(1)}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1.5 text-sm font-medium text-inkt">
+                Spoor: {spoorContent(proces.spoor)?.naam ?? "nog niet gekozen"}
+              </p>
+              {advies.status === "advies" && proces.spoor && proces.spoor !== advies.spoor ? (
+                <p className="mt-1 text-xs leading-relaxed text-aandacht">
+                  Wijkt af van het advies ({spoorContent(advies.spoor)?.naam}).{" "}
+                  {proces.spoor_motivatie || "Geen motivatie vastgelegd."}
+                </p>
+              ) : null}
+            </div>
+
+            {verbeteringen.length > 0 ? (
+              <ul className="mt-3 space-y-1.5">
+                {verbeteringen.map((v) => {
+                  const bc = businessCaseVanVerbetering(v, state.sessie.onzekerheid_pct);
+                  const eigenaar = state.deelnemers.find((d) => d.id === v.eigenaar_id);
+                  return (
+                    <li key={v.id} className="text-sm leading-relaxed text-inkt-zacht">
+                      <span className="font-medium text-inkt">{v.titel}</span>
+                      {v.manoeuvre ? ` · ${v.manoeuvre}` : ""}
+                      {bc?.netto_baat ? ` · ${formatteerBandbreedte(bc.netto_baat)} per jaar` : ""}
+                      {eigenaar ? ` · eigenaar: ${eigenaar.naam}` : ""}
+                      {v.meetmoment
+                        ? ` · meetmoment: ${new Date(v.meetmoment).toLocaleDateString("nl-NL")}`
+                        : ""}
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="mt-3 text-sm text-inkt-licht">Geen verbeteringen genoteerd.</p>
+            )}
+          </section>
+        );
+      })}
+
+      {state.besluiten.length > 0 ? (
+        <section className="print-blok mt-10">
+          <h2 className="display text-2xl text-inkt">Praktijktoetsen</h2>
+          <ul className="mt-3 space-y-3">
+            {state.besluiten.map((besluit) => {
+              const check = praktijktoetsen.checks.find((c) => c.id === besluit.check_id);
+              if (!check) return null;
+              return (
+                <li key={besluit.id}>
+                  <p className="text-sm font-medium text-inkt">{check.titel}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-inkt-licht">{check.scenario}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
+                    Besluit:{" "}
+                    {besluit.besluit === "aanpassen"
+                      ? "het ontwerp is aangepast"
+                      : "het ontwerp blijft staan"}
+                    {besluit.motivatie ? `. ${besluit.motivatie}` : "."}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+
+      <section className="print-blok mt-10">
+        <h2 className="display text-2xl text-inkt">Aannames en onzekerheden</h2>
+        <p className="mt-1 text-sm leading-relaxed text-inkt-zacht">
+          Wat hier staat is het eerste dat je moet toetsen voordat je aan de uitvoering begint.
+        </p>
+        <ul className="mt-3 space-y-2">
+          <li className="text-sm leading-relaxed text-inkt-zacht">
+            De kengetallen van {org.naam} in deze sessie komen uit publieke bronnen en zijn niet
+            geverifieerd tegen het originele jaarverslag. De rekenkundige uitgangspunten
+            (uurtarief, dagopbrengst, volumes) zijn aannames.
+          </li>
+          {state.processen.some((p) => !p.spoor) ? (
+            <li className="text-sm leading-relaxed text-inkt-zacht">
+              Niet elk proces heeft al een spoor gekozen; daar staat dus ook nog geen herontwerp.
+            </li>
+          ) : null}
+        </ul>
+      </section>
+
+      <footer className="mt-10 border-t border-rand pt-5">
+        <p className="text-xs leading-relaxed text-inkt-licht">
+          Samengesteld tijdens een werksessie met Corpcase. De bedrijfsfuncties en de domeinindeling
+          zijn gebaseerd op de CORA-referentiearchitectuur en de VERA-standaard van de
+          corporatiesector. De verantwoording van elk cijfer staat in de bronnenlijst van de
+          applicatie.
+        </p>
+      </footer>
+    </>
   );
 }

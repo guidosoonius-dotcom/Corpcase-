@@ -77,6 +77,8 @@ test("een processessie doorloopt zijn eigen fases, niet die van de use-casesessi
     Afpellen: /Er ligt nog geen proces op tafel/,
     Diagnose: /Er ligt nog geen proces op tafel/,
     Herontwerp: /Er ligt nog geen proces op tafel/,
+    Doorrekenen: /Er ligt nog geen proces op tafel/,
+    Besluit: /Houdt dit stand\?/,
   };
 
   for (const fase of PROCESFASES) {
@@ -352,4 +354,84 @@ test("een team dat afwijkt van het advies moet een motivatie kunnen vastleggen",
   await expect(
     wonen.getByText(/De aannemer loopt hier al maanden op vast/),
   ).toBeVisible();
+});
+
+test("een verbetering wordt doorgerekend, de praktijktoets krijgt een besluit, en het rapport opent", async ({
+  browser,
+}) => {
+  const facilitator = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByRole("radio", { name: /^Processen/ }).check();
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const sessieId = facilitator.url().match(/\/sessie\/([0-9a-f-]+)\//)![1];
+
+  // --- Proceskeuze en een enkele stap op de plaat --------------------------
+  await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await kiesProces(facilitator, "reparatieonderhoud");
+
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await facilitator.locator("#nieuwe-stap").fill("Huurder meldt een reparatie");
+  await facilitator.getByRole("button", { name: "Toevoegen", exact: true }).click();
+  await expect(facilitator.getByText("Huurder meldt een reparatie")).toBeVisible();
+
+  // --- Diagnose: het spoor wordt vastgelegd zonder verdere invoer nodig ----
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Diagnose" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await facilitator.getByRole("button", { name: "Iteratief verbeteren" }).click();
+
+  // --- Herontwerp: een verbetering noteren ---------------------------------
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Herontwerp" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await facilitator.getByPlaceholder("Wat gaat er veranderen?").fill("Automatiseer de herinnering");
+  await facilitator.getByRole("button", { name: "Verbetering toevoegen" }).click();
+  await expect(facilitator.getByText("Automatiseer de herinnering")).toBeVisible();
+
+  // --- Doorrekenen: een driver vullen levert een bandbreedte op ------------
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Doorrekenen" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  const verbeteringKaart = facilitator.locator("li", { hasText: "Automatiseer de herinnering" }).first();
+  await verbeteringKaart.getByRole("button", { name: "Doorrekenen", exact: true }).click();
+  await facilitator.getByRole("button", { name: "+ Minder derving of afboeking" }).click();
+  await facilitator.getByLabel(/Huidige post per jaar/).fill("10000");
+  await facilitator.getByLabel(/Verwachte reductie/).fill("50");
+
+  // Zodra de driver compleet is, staat er een bandbreedte tussen twee bedragen en niet één hard
+  // getal — dezelfde belofte als bij de use cases.
+  await expect(facilitator.getByText(/€[\d.\s]+ – €[\d.\s]+/).first()).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(facilitator.getByText("netto per jaar")).toBeVisible();
+
+  // --- Besluit: de praktijktoets, een eigenaar en een meetmoment ----------
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Besluit" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await expect(facilitator.getByRole("heading", { name: "Houdt dit stand?" })).toBeVisible();
+
+  await facilitator.getByRole("button", { name: /We handhaven/ }).first().click();
+  await expect(facilitator.getByText("gehandhaafd").first()).toBeVisible({ timeout: 20_000 });
+
+  await facilitator.getByLabel("Eigenaar").selectOption({ label: "Guido" });
+  await facilitator.getByLabel("Meetmoment").fill("2026-12-01");
+  await expect(facilitator.getByLabel("Eigenaar")).toHaveValue(/.+/);
+
+  // --- Het rapport opent zonder te crashen, met de proceskern erin --------
+  // Dit scherm rekende tot P5 onvoorwaardelijk op de use-case-speelmodus en gooide dus een fout
+  // voor een processessie; deze test bewijst dat de eigen procesvariant het overneemt.
+  await facilitator.goto(`/sessie/${sessieId}/rapport`);
+  await expect(facilitator.getByRole("heading", { name: "In het kort" })).toBeVisible();
+  await expect(facilitator.getByRole("heading", { name: "Coördineren reparatieonderhoud" })).toBeVisible();
+  await expect(facilitator.getByText("Automatiseer de herinnering")).toBeVisible();
+  await expect(facilitator.getByRole("heading", { name: "Praktijktoetsen" })).toBeVisible();
+  await expect(facilitator.getByRole("button", { name: "CSV downloaden" })).toBeVisible();
 });

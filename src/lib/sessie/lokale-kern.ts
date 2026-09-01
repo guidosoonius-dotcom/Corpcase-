@@ -851,6 +851,8 @@ export function voegVerbeteringToe(
     usecase_ref: invoer.usecaseRef ?? null,
     drivers: [],
     kosten: { eenmalig: 0, jaarlijks: 0, capaciteit: 0 },
+    eigenaar_id: null,
+    meetmoment: null,
     toegevoegd_door: invoer.deelnemerId,
     aangemaakt_op: nu(),
     bijgewerkt_op: nu(),
@@ -880,6 +882,10 @@ export function wijzigVerbetering(
   if (velden.manoeuvre !== undefined) verbetering.manoeuvre = velden.manoeuvre;
   if (velden.usecase_ref !== undefined) verbetering.usecase_ref = velden.usecase_ref;
   if (velden.stap_id !== undefined) verbetering.stap_id = velden.stap_id;
+  if (velden.drivers !== undefined) verbetering.drivers = velden.drivers;
+  if (velden.kosten !== undefined) verbetering.kosten = velden.kosten;
+  if (velden.eigenaar_id !== undefined) verbetering.eigenaar_id = velden.eigenaar_id;
+  if (velden.meetmoment !== undefined) verbetering.meetmoment = velden.meetmoment;
   verbetering.bijgewerkt_op = nu();
 }
 
