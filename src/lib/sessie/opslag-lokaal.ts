@@ -4,6 +4,7 @@ import type {
   Fase,
   ProcesRij,
   ProcesStapRij,
+  ProcesVerbeteringRij,
   SessieRij,
   SessieState,
   SessieUsecaseRij,
@@ -20,7 +21,9 @@ import {
   type NieuwProces,
   type NieuweStap,
   type NieuweUsecase,
+  type NieuweVerbetering,
   type Opslag,
+  type DiagnoseInvoer,
   type RoadmapInvoer,
   type SessieVelden,
   type SignaalInvoer,
@@ -94,6 +97,17 @@ export const lokaleOpslag: Opslag = {
     roep<void>("herordenStappen", identiteit, { procesId, stapIds }),
   laadStappenVoorzet: (identiteit, procesId, deelnemerId) =>
     roep<void>("laadStappenVoorzet", identiteit, { procesId, deelnemerId }),
+
+  bewaarDiagnose: (identiteit, invoer: DiagnoseInvoer) =>
+    roep<void>("bewaarDiagnose", identiteit, invoer),
+  zetSpoor: (identiteit, procesId, spoor, motivatie) =>
+    roep<void>("zetSpoor", identiteit, { procesId, spoor, motivatie }),
+  voegVerbeteringToe: (identiteit, invoer: NieuweVerbetering) =>
+    roep<ProcesVerbeteringRij>("voegVerbeteringToe", identiteit, invoer),
+  wijzigVerbetering: (identiteit, verbeteringId, velden) =>
+    roep<void>("wijzigVerbetering", identiteit, { verbeteringId, velden }),
+  verwijderVerbetering: (identiteit, verbeteringId) =>
+    roep<void>("verwijderVerbetering", identiteit, { verbeteringId }),
 
   voegUsecaseToe: (identiteit, invoer: NieuweUsecase) =>
     roep<SessieUsecaseRij>("voegUsecaseToe", identiteit, invoer),

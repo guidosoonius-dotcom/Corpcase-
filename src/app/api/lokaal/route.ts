@@ -78,6 +78,26 @@ const acties: Record<string, Handler> = {
     return kern.laadStappenVoorzet(i, procesId, deelnemerId);
   },
 
+  bewaarDiagnose: (i, a) => kern.bewaarDiagnose(i, als(a)),
+  zetSpoor: (i, a) => {
+    const { procesId, spoor, motivatie } = als<{
+      procesId: string;
+      spoor: Parameters<typeof kern.zetSpoor>[2];
+      motivatie?: string;
+    }>(a);
+    return kern.zetSpoor(i, procesId, spoor, motivatie);
+  },
+  voegVerbeteringToe: (i, a) => kern.voegVerbeteringToe(i, als(a)),
+  wijzigVerbetering: (i, a) => {
+    const { verbeteringId, velden } = als<{
+      verbeteringId: string;
+      velden: Parameters<typeof kern.wijzigVerbetering>[2];
+    }>(a);
+    return kern.wijzigVerbetering(i, verbeteringId, velden);
+  },
+  verwijderVerbetering: (i, a) =>
+    kern.verwijderVerbetering(i, als<{ verbeteringId: string }>(a).verbeteringId),
+
   voegUsecaseToe: (i, a) => kern.voegUsecaseToe(i, als(a)),
   koppelSignalen: (i, a) => {
     const { usecaseId, signaalIds } = als<{ usecaseId: string; signaalIds: string[] }>(a);

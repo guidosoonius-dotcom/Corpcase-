@@ -239,14 +239,70 @@ function samenwerkingsonderdelen(state: SessieState): Teamscore["onderdelen"] {
 /**
  * De score van de processessie.
  *
- * Nu nog alleen de samenwerking: de onderdelen die diepte van het afpellen, doorgerekende
- * verbeteringen en een eigenaar per verbetering belonen komen erbij zodra die fases er staan.
- * Bewust al gesplitst, want `usecaseTeamscore` rekent op een portfolio en een speelmodus die een
+ * Naast de samenwerking (gedeeld met de use-casesessie): diepte van de diagnose en van het
+ * herontwerp. Wat nog ontbreekt komt erbij zodra fase 5-6 (doorrekenen, besluit) er staan. Bewust
+ * al gesplitst van `usecaseTeamscore`, want die rekent op een portfolio en een speelmodus die een
  * processessie niet heeft.
  */
 function procesTeamscore(state: SessieState): Teamscore {
-  const onderdelen = samenwerkingsonderdelen(state);
+  const onderdelen = [
+    ...diagnoseOnderdeel(state),
+    ...herontwerpOnderdeel(state),
+    ...samenwerkingsonderdelen(state),
+  ];
   return { totaal: onderdelen.reduce((som, o) => som + o.punten, 0), onderdelen };
+}
+
+/**
+ * Punten voor volledig gescoorde processen — een proces dat door *iedereen* aan tafel is gescoord,
+ * niet per losse score. Per losse score belonen zou een grote groep bevoordelen zonder dat het
+ * iets zegt over hoe goed het gesprek was.
+ */
+function diagnoseOnderdeel(state: SessieState): Teamscore["onderdelen"] {
+  if (state.processen.length === 0) return [];
+
+  const deelnemersAantal = Math.max(state.deelnemers.length, 1);
+  const volledig = state.processen.filter(
+    (proces) =>
+      state.diagnoses.filter((d) => d.proces_id === proces.id).length >= deelnemersAantal,
+  ).length;
+
+  return [
+    {
+      id: "diagnose",
+      label: "Diagnose",
+      punten: volledig * 5,
+      maximum: state.processen.length * 5,
+      toelichting:
+        volledig === 1
+          ? "1 proces door iedereen gescoord"
+          : `${volledig} van de ${state.processen.length} processen door iedereen gescoord`,
+    },
+  ];
+}
+
+/**
+ * Punten voor genoteerde verbeteringen, met een bonus als een verbetering een use case uit
+ * `herkomst` koppelt — dat is de brug tussen de twee sessies expliciet belonen.
+ */
+function herontwerpOnderdeel(state: SessieState): Teamscore["onderdelen"] {
+  if (state.verbeteringen.length === 0) return [];
+
+  const gekoppeld = state.verbeteringen.filter((v) => v.usecase_ref).length;
+  const punten = state.verbeteringen.length * 4 + gekoppeld * 3;
+
+  return [
+    {
+      id: "herontwerp",
+      label: "Herontwerp",
+      punten,
+      maximum: Math.max(20, punten),
+      toelichting:
+        gekoppeld > 0
+          ? `${state.verbeteringen.length} verbeteringen genoteerd, ${gekoppeld} gekoppeld aan een use case`
+          : `${state.verbeteringen.length} verbeteringen genoteerd`,
+    },
+  ];
 }
 
 function usecaseTeamscore(state: SessieState): Teamscore {

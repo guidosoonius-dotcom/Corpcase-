@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Etiket, Kaart, Knop, invoerStijl } from "@/components/basis";
 import { OmhoogIcoon, OmlaagIcoon, PlusIcoon, PrullenbakIcoon } from "@/components/icoon";
-import type { DeelnemerRij, ProcesStapRij } from "@/lib/supabase/types";
+import type { DeelnemerRij, ProcesRij, ProcesStapRij } from "@/lib/supabase/types";
 
 /**
  * De procesplaat: de stappen van één proces, met hun uitvoerder en hun overdrachten.
@@ -358,5 +358,42 @@ function IcoonKnop({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * Een sessie kan meerdere processen op tafel hebben. Deze kiezer verschijnt vanzelf pas bij het
+ * tweede proces — bij één proces is er niets te kiezen — en wordt door elke fase hergebruikt die
+ * per proces werkt (afpellen, diagnose, herontwerp).
+ */
+export function ProcesTabs({
+  processen,
+  actiefId,
+  onKies,
+}: {
+  processen: ProcesRij[];
+  actiefId: string | undefined;
+  onKies: (procesId: string) => void;
+}) {
+  if (processen.length <= 1) return null;
+
+  return (
+    <div className="scroll-x flex gap-1.5">
+      {processen.map((proces) => (
+        <button
+          key={proces.id}
+          type="button"
+          onClick={() => onKies(proces.id)}
+          aria-current={proces.id === actiefId ? "true" : undefined}
+          className={`shrink-0 rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
+            proces.id === actiefId
+              ? "border-accent bg-accent-zacht text-accent-diep"
+              : "border-rand bg-vlak text-inkt-zacht hover:border-rand-sterk"
+          }`}
+        >
+          {proces.titel}
+        </button>
+      ))}
+    </div>
   );
 }

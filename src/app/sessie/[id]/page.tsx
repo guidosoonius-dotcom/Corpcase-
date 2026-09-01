@@ -13,6 +13,8 @@ import { Roadmap } from "@/components/fases/roadmap";
 import { Opbrengst } from "@/components/fases/opbrengst";
 import { Proceskeuze } from "@/components/fases/proceskeuze";
 import { Afpellen } from "@/components/fases/afpellen";
+import { Diagnose } from "@/components/fases/diagnose";
+import { Herontwerp } from "@/components/fases/herontwerp";
 import { Hoofdregel, Knop, Kop, Melding } from "@/components/basis";
 import { Thema } from "@/components/thema";
 import { organisatie } from "@/lib/content";
@@ -21,12 +23,10 @@ import { FASE_LABELS, FASES_PER_SPELSOORT, type Fase } from "@/lib/supabase/type
 
 /** De fases van de processessie die nog geen eigen scherm hebben. */
 const NOG_TE_BOUWEN: Fase[] = FASES_PER_SPELSOORT.proces.filter(
-  (f) => !["lobby", "proceskeuze", "afpellen"].includes(f),
+  (f) => !["lobby", "proceskeuze", "afpellen", "diagnose", "herontwerp"].includes(f),
 );
 
 const WAT_ER_KOMT: Record<string, string> = {
-  diagnose: "Het proces scoren, en zien welk spoor eruit volgt.",
-  herontwerp: "Verbeteren of opnieuw ontwerpen.",
   doorrekenen: "Wat de verbetering per jaar oplevert, met een bandbreedte.",
   besluit: "De praktijktoets, een eigenaar en een meetmoment.",
 };
@@ -116,6 +116,12 @@ export default function SpelerPagina() {
         ) : null}
         {fase === "afpellen" ? (
           <Afpellen state={state} identiteit={identiteit} doe={doe} />
+        ) : null}
+        {fase === "diagnose" ? (
+          <Diagnose state={state} identiteit={identiteit} doe={doe} />
+        ) : null}
+        {fase === "herontwerp" ? (
+          <Herontwerp state={state} identiteit={identiteit} doe={doe} />
         ) : null}
         {NOG_TE_BOUWEN.includes(fase) ? <NogTeBouwen fase={fase} /> : null}
       </main>

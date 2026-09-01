@@ -5,8 +5,10 @@ import type {
   DeelnemerRij,
   EigenSignaalRij,
   Fase,
+  ProcesDiagnoseRij,
   ProcesRij,
   ProcesStapRij,
+  ProcesVerbeteringRij,
   RealiteitscheckBesluitRij,
   RoadmapItemRij,
   SessieRij,
@@ -14,6 +16,7 @@ import type {
   SessieUsecaseRij,
   SignaalSelectieRij,
   Spelsoort,
+  SpoorKeuze,
   UsecaseSignaalRij,
   UsecaseStatus,
   WaarderingRij,
@@ -37,7 +40,10 @@ import {
   type NieuwProces,
   type NieuweStap,
   type NieuweUsecase,
+  type NieuweVerbetering,
   type StapVelden,
+  type VerbeteringVelden,
+  type DiagnoseInvoer,
   type Opslag,
   type RoadmapInvoer,
   type SessieVelden,
@@ -274,6 +280,8 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     roadmap,
     processen,
     stappen,
+    diagnoses,
+    verbeteringen,
   ] = await Promise.all([
     client.from(SESSIE_PUBLIEK).select("*").eq("id", sessieId).single(),
     client.from("deelnemers").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
@@ -288,6 +296,8 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     client.from("roadmap_items").select("*").eq("sessie_id", sessieId).order("volgorde"),
     client.from("sessie_processen").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
     client.from("proces_stappen").select("*").eq("sessie_id", sessieId).order("volgorde"),
+    client.from("proces_diagnoses").select("*").eq("sessie_id", sessieId),
+    client.from("proces_verbeteringen").select("*").eq("sessie_id", sessieId).order("aangemaakt_op"),
   ]);
 
   return {
@@ -304,6 +314,8 @@ export async function haalState(identiteit: Identiteit, sessieId: string): Promi
     roadmap: controleer(roadmap, "Roadmap laden") as RoadmapItemRij[],
     processen: controleer(processen, "Processen laden") as ProcesRij[],
     stappen: controleer(stappen, "Processtappen laden") as ProcesStapRij[],
+    diagnoses: controleer(diagnoses, "Diagnoses laden") as ProcesDiagnoseRij[],
+    verbeteringen: controleer(verbeteringen, "Verbeteringen laden") as ProcesVerbeteringRij[],
   };
 }
 
@@ -801,6 +813,84 @@ export async function laadStappenVoorzet(
   if (error) throw new SessieFout(`Procesplaat laden: ${error.message}`);
 }
 
+// De processessie: diagnose en herontwerp ------------------------------------
+
+/**
+ * Verwacht de volledige, al gemergde scores van deze deelnemer. Dezelfde afspraak als
+ * `bewaarWaardering` bij `kwalitatief`: de component spreidt zelf het bestaande object en stuurt
+ * het complete resultaat mee, deze functie doet geen eigen read-before-write.
+ */
+export async function bewaarDiagnose(identiteit: Identiteit, invoer: DiagnoseInvoer): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client.from("proces_diagnoses").upsert(
+    {
+      sessie_id: invoer.sessieId,
+      proces_id: invoer.procesId,
+      deelnemer_id: invoer.deelnemerId,
+      scores: invoer.scores,
+    },
+    { onConflict: "proces_id,deelnemer_id" },
+  );
+  if (error) throw new SessieFout(`Diagnose opslaan: ${error.message}`);
+}
+
+export async function zetSpoor(
+  identiteit: Identiteit,
+  procesId: string,
+  spoor: SpoorKeuze,
+  motivatie?: string,
+): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client
+    .from("sessie_processen")
+    .update({ spoor, spoor_motivatie: motivatie ?? "" })
+    .eq("id", procesId);
+  if (error) throw new SessieFout(`Spoor vastleggen: ${error.message}`);
+}
+
+export async function voegVerbeteringToe(
+  identiteit: Identiteit,
+  invoer: NieuweVerbetering,
+): Promise<ProcesVerbeteringRij> {
+  const client = maakClient(identiteit);
+  return controleer(
+    await client
+      .from("proces_verbeteringen")
+      .insert({
+        sessie_id: invoer.sessieId,
+        proces_id: invoer.procesId,
+        stap_id: invoer.stapId ?? null,
+        manoeuvre: invoer.manoeuvre ?? null,
+        titel: invoer.titel,
+        toelichting: invoer.toelichting ?? "",
+        usecase_ref: invoer.usecaseRef ?? null,
+        toegevoegd_door: invoer.deelnemerId,
+      })
+      .select()
+      .single(),
+    "Verbetering toevoegen",
+  ) as ProcesVerbeteringRij;
+}
+
+export async function wijzigVerbetering(
+  identiteit: Identiteit,
+  verbeteringId: string,
+  velden: VerbeteringVelden,
+): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client.from("proces_verbeteringen").update(velden).eq("id", verbeteringId);
+  if (error) throw new SessieFout(`Verbetering bijwerken: ${error.message}`);
+}
+
+export async function verwijderVerbetering(
+  identiteit: Identiteit,
+  verbeteringId: string,
+): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client.from("proces_verbeteringen").delete().eq("id", verbeteringId);
+  if (error) throw new SessieFout(`Verbetering verwijderen: ${error.message}`);
+}
+
 /** Houdt bij wie er nog actief is, voor de aanwezigheidsweergave bij de facilitator. */
 export async function meldAanwezig(identiteit: Identiteit, deelnemerId: string): Promise<void> {
   const client = maakClient(identiteit);
@@ -844,5 +934,10 @@ export const supabaseOpslag: Opslag = {
   verwijderStap,
   herordenStappen,
   laadStappenVoorzet,
+  bewaarDiagnose,
+  zetSpoor,
+  voegVerbeteringToe,
+  wijzigVerbetering,
+  verwijderVerbetering,
   meldAanwezig,
 };

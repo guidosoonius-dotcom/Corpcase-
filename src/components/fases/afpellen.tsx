@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { bedrijfsfunctie, procesmodus } from "@/lib/content";
 import { Cijfer, Hoofdregel, Kaart, Knop, Kop, Leeg, Melding, PijlActie, invoerStijl } from "@/components/basis";
-import { Processtrook, telOverdrachten } from "@/components/processtrook";
+import { ProcesTabs, Processtrook, telOverdrachten } from "@/components/processtrook";
 import { opslag } from "@/lib/sessie/api";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import type { ProcesRij, ProcesStapRij, SessieState } from "@/lib/supabase/types";
+import type { ProcesStapRij, SessieState } from "@/lib/supabase/types";
 
 /**
  * Fase 2 van de processessie: het proces afpellen op de procesplaat.
@@ -103,18 +103,7 @@ export function Afpellen({
         onder="Zet de stappen neer zoals het in de praktijk gaat, niet zoals het in het handboek staat. Vul elkaar aan."
       />
 
-      {state.processen.length > 1 ? (
-        <div className="scroll-x flex gap-1.5">
-          {state.processen.map((proces) => (
-            <ProcesTab
-              key={proces.id}
-              proces={proces}
-              actief={proces.id === actief.id}
-              onKies={() => setActiefId(proces.id)}
-            />
-          ))}
-        </div>
-      ) : null}
+      <ProcesTabs processen={state.processen} actiefId={actief.id} onKies={setActiefId} />
 
       <Kaart className="p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
@@ -198,7 +187,7 @@ export function Afpellen({
         {invoegNa ? (
           <p className="mt-0.5 text-xs font-medium text-accent-diep">
             Komt na &ldquo;{invoegNa.naam}&rdquo;.{" "}
-            <button type="button" onClick={() => setInvoegNa(null)} className="underline">
+            <button type="button" onClick={() => setInvoegNa(null)} className="!min-h-0 underline">
               Toch achteraan
             </button>
           </p>
@@ -237,27 +226,3 @@ export function Afpellen({
   );
 }
 
-function ProcesTab({
-  proces,
-  actief,
-  onKies,
-}: {
-  proces: ProcesRij;
-  actief: boolean;
-  onKies: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onKies}
-      aria-current={actief ? "true" : undefined}
-      className={`shrink-0 rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
-        actief
-          ? "border-accent bg-accent-zacht text-accent-diep"
-          : "border-rand bg-vlak text-inkt-zacht hover:border-rand-sterk"
-      }`}
-    >
-      {proces.titel}
-    </button>
-  );
-}

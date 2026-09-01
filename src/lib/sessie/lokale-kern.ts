@@ -11,14 +11,17 @@ import type {
   DeelnemerRij,
   EigenSignaalRij,
   Fase,
+  ProcesDiagnoseRij,
   ProcesRij,
   ProcesStapRij,
+  ProcesVerbeteringRij,
   RealiteitscheckBesluitRij,
   RoadmapItemRij,
   SessieRij,
   SessieState,
   SessieUsecaseRij,
   SignaalSelectieRij,
+  SpoorKeuze,
   UsecaseSignaalRij,
   UsecaseStatus,
   WaarderingRij,
@@ -35,7 +38,10 @@ import {
   type NieuwProces,
   type NieuweStap,
   type NieuweUsecase,
+  type NieuweVerbetering,
   type StapVelden,
+  type VerbeteringVelden,
+  type DiagnoseInvoer,
   type RoadmapInvoer,
   type SessieVelden,
   type SignaalInvoer,
@@ -73,6 +79,8 @@ type Dossier = {
   roadmap: RoadmapItemRij[];
   processen: ProcesRij[];
   stappen: ProcesStapRij[];
+  diagnoses: ProcesDiagnoseRij[];
+  verbeteringen: ProcesVerbeteringRij[];
 };
 
 // Overleeft hot reload in ontwikkeling; zonder dit begint elke codewijziging met een lege sessie.
@@ -184,6 +192,8 @@ export function maakSessie(invoer: NieuweSessie): Toegang {
     roadmap: [],
     processen: [],
     stappen: [],
+    diagnoses: [],
+    verbeteringen: [],
   };
   dossiers.set(sessie.id, dossier);
 
@@ -281,6 +291,8 @@ export function haalState(identiteit: Identiteit, sessieId: string): SessieState
     roadmap: [...dossier.roadmap].sort((a, b) => a.volgorde - b.volgorde),
     processen: [...dossier.processen],
     stappen: [...dossier.stappen].sort((a, b) => a.volgorde - b.volgorde),
+    diagnoses: [...dossier.diagnoses],
+    verbeteringen: [...dossier.verbeteringen],
   };
 }
 
@@ -771,6 +783,110 @@ export function laadStappenVoorzet(
       bijgewerkt_op: nu(),
     });
   }
+}
+
+// De processessie: diagnose en herontwerp ------------------------------------
+//
+// Regel voor regel gelijk aan opslag-supabase.ts. Wijkt deze af, dan zegt een geslaagde test in de
+// offline modus niets meer over de Supabase-modus.
+
+/**
+ * Verwacht de volledige, al gemergde scores van deze deelnemer. Dezelfde afspraak als
+ * `bewaarWaardering` bij `kwalitatief`: de component spreidt zelf het bestaande object en stuurt
+ * het complete resultaat mee, deze functie doet geen eigen read-before-write.
+ */
+export function bewaarDiagnose(identiteit: Identiteit, invoer: DiagnoseInvoer): void {
+  const dossier = vindDossier(invoer.sessieId);
+  eisDeelnemer(dossier, identiteit);
+
+  const bestaand = dossier.diagnoses.find(
+    (d) => d.proces_id === invoer.procesId && d.deelnemer_id === invoer.deelnemerId,
+  );
+  if (bestaand) {
+    bestaand.scores = invoer.scores;
+    bestaand.bijgewerkt_op = nu();
+    return;
+  }
+  dossier.diagnoses.push({
+    id: crypto.randomUUID(),
+    sessie_id: invoer.sessieId,
+    proces_id: invoer.procesId,
+    deelnemer_id: invoer.deelnemerId,
+    scores: invoer.scores,
+    aangemaakt_op: nu(),
+    bijgewerkt_op: nu(),
+  });
+}
+
+export function zetSpoor(
+  identiteit: Identiteit,
+  procesId: string,
+  spoor: SpoorKeuze,
+  motivatie?: string,
+): void {
+  const dossier = dossierViaProces(procesId);
+  eisDeelnemer(dossier, identiteit);
+  const proces = dossier.processen.find((p) => p.id === procesId);
+  if (!proces) return;
+  proces.spoor = spoor;
+  proces.spoor_motivatie = motivatie ?? "";
+  proces.bijgewerkt_op = nu();
+}
+
+export function voegVerbeteringToe(
+  identiteit: Identiteit,
+  invoer: NieuweVerbetering,
+): ProcesVerbeteringRij {
+  const dossier = vindDossier(invoer.sessieId);
+  eisDeelnemer(dossier, identiteit);
+
+  const verbetering: ProcesVerbeteringRij = {
+    id: crypto.randomUUID(),
+    sessie_id: invoer.sessieId,
+    proces_id: invoer.procesId,
+    stap_id: invoer.stapId ?? null,
+    manoeuvre: invoer.manoeuvre ?? null,
+    titel: invoer.titel,
+    toelichting: invoer.toelichting ?? "",
+    usecase_ref: invoer.usecaseRef ?? null,
+    drivers: [],
+    kosten: { eenmalig: 0, jaarlijks: 0, capaciteit: 0 },
+    toegevoegd_door: invoer.deelnemerId,
+    aangemaakt_op: nu(),
+    bijgewerkt_op: nu(),
+  };
+  dossier.verbeteringen.push(verbetering);
+  return verbetering;
+}
+
+function dossierViaVerbetering(verbeteringId: string): Dossier {
+  for (const dossier of dossiers.values()) {
+    if (dossier.verbeteringen.some((v) => v.id === verbeteringId)) return dossier;
+  }
+  throw new SessieFout("Verbetering bestaat niet (meer).");
+}
+
+export function wijzigVerbetering(
+  identiteit: Identiteit,
+  verbeteringId: string,
+  velden: VerbeteringVelden,
+): void {
+  const dossier = dossierViaVerbetering(verbeteringId);
+  eisDeelnemer(dossier, identiteit);
+  const verbetering = dossier.verbeteringen.find((v) => v.id === verbeteringId);
+  if (!verbetering) return;
+  if (velden.titel !== undefined) verbetering.titel = velden.titel;
+  if (velden.toelichting !== undefined) verbetering.toelichting = velden.toelichting;
+  if (velden.manoeuvre !== undefined) verbetering.manoeuvre = velden.manoeuvre;
+  if (velden.usecase_ref !== undefined) verbetering.usecase_ref = velden.usecase_ref;
+  if (velden.stap_id !== undefined) verbetering.stap_id = velden.stap_id;
+  verbetering.bijgewerkt_op = nu();
+}
+
+export function verwijderVerbetering(identiteit: Identiteit, verbeteringId: string): void {
+  const dossier = dossierViaVerbetering(verbeteringId);
+  eisDeelnemer(dossier, identiteit);
+  dossier.verbeteringen = dossier.verbeteringen.filter((v) => v.id !== verbeteringId);
 }
 
 export function meldAanwezig(identiteit: Identiteit, deelnemerId: string): void {

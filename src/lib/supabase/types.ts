@@ -285,6 +285,47 @@ export type ProcesStapRij = {
   bijgewerkt_op: string;
 };
 
+/**
+ * Fase 3: de score van één deelnemer op één proces. Bewust één rij per deelnemer, niet één gedeeld
+ * document zoals `WaarderingRij` — het gemiddelde moet over ieders eigen score gaan, niet over wie
+ * het laatst een schuif aanraakte. `scores` draagt alleen de assen die deze deelnemer al invulde,
+ * net als `WaarderingRij.kwalitatief`: zo lopen "nog niet gescoord" en "bewust een 1" nooit door
+ * elkaar.
+ */
+export type ProcesDiagnoseRij = {
+  id: string;
+  sessie_id: string;
+  proces_id: string;
+  deelnemer_id: string;
+  scores: Partial<Record<string, number>>;
+  aangemaakt_op: string;
+  bijgewerkt_op: string;
+};
+
+/**
+ * Fase 4: een verbetering. Dekt beide sporen met één tabel: op het iteratieve spoor hangt hij aan
+ * een `huidig`-stap met een manoeuvre; op het new-practice-spoor aan een `nieuw`-stap zonder
+ * manoeuvre (die stap draagt zijn eigen `vervangt` al). `drivers`/`kosten` staan in exact de vorm
+ * van `WaarderingRij`, zodat de rekenmotor ze bij het doorrekenen zonder omweg kan lezen — tot dan
+ * blijven ze op hun lege standaardwaarde.
+ */
+export type ProcesVerbeteringRij = {
+  id: string;
+  sessie_id: string;
+  proces_id: string;
+  stap_id: string | null;
+  manoeuvre: string | null;
+  titel: string;
+  toelichting: string;
+  /** Verwijst naar Herkomst.portfolio[].id — vrije tekst, geen foreign key: leeft in een snapshot. */
+  usecase_ref: string | null;
+  drivers: { type: string; waarden: Record<string, number | null> }[];
+  kosten: { eenmalig: number; jaarlijks: number; capaciteit: number };
+  toegevoegd_door: string | null;
+  aangemaakt_op: string;
+  bijgewerkt_op: string;
+};
+
 export type RoadmapItemRij = {
   usecase_id: string;
   sessie_id: string;
@@ -311,4 +352,6 @@ export type SessieState = {
   /** Leeg in een use-casesessie; gevuld in een processessie. */
   processen: ProcesRij[];
   stappen: ProcesStapRij[];
+  diagnoses: ProcesDiagnoseRij[];
+  verbeteringen: ProcesVerbeteringRij[];
 };

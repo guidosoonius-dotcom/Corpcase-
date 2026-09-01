@@ -9,10 +9,12 @@ import type {
   Herkomst,
   ProcesRij,
   ProcesStapRij,
+  ProcesVerbeteringRij,
   SessieRij,
   SessieState,
   SessieUsecaseRij,
   Spelsoort,
+  SpoorKeuze,
   UsecaseStatus,
   Waardemodus,
 } from "@/lib/supabase/types";
@@ -74,6 +76,43 @@ export type StapVelden = {
   knelpunt?: string;
   uitzondering?: boolean;
   vervangt?: string[];
+};
+
+/**
+ * Fase 3: de score van één deelnemer op de vijf diagnose-assen.
+ *
+ * `scores` draagt alleen de assen die de client meestuurt en overschrijft de rest niet — de
+ * merge (bestaande score van deze deelnemer + de nieuwe as) gebeurt in de component, precies zoals
+ * `waardebepaling.tsx` dat al doet voor `WaarderingInvoer.kwalitatief`. De opslagfunctie zelf voegt
+ * dus geen eigen mergelogica toe.
+ */
+export type DiagnoseInvoer = {
+  sessieId: string;
+  procesId: string;
+  deelnemerId: string;
+  scores: Partial<Record<string, number>>;
+};
+
+/** Fase 4, iteratief of new practice: een genoteerde verbetering. */
+export type NieuweVerbetering = {
+  sessieId: string;
+  procesId: string;
+  deelnemerId: string;
+  /** Gezet op het iteratieve spoor (welke stap wordt verbeterd); leeg op new practice. */
+  stapId?: string | null;
+  manoeuvre?: string | null;
+  titel: string;
+  toelichting?: string;
+  /** Een use case uit `Herkomst.portfolio[].id` — de brug tussen de twee sessies. */
+  usecaseRef?: string | null;
+};
+
+export type VerbeteringVelden = {
+  titel?: string;
+  toelichting?: string;
+  manoeuvre?: string | null;
+  usecase_ref?: string | null;
+  stap_id?: string | null;
 };
 
 export type Toegang = {
@@ -238,6 +277,28 @@ export type Opslag = {
   herordenStappen(identiteit: Identiteit, procesId: string, stapIds: string[]): Promise<void>;
   /** Kopieert de stappen uit de contentbibliotheek naar dit proces, als startpunt. */
   laadStappenVoorzet(identiteit: Identiteit, procesId: string, deelnemerId: string): Promise<void>;
+
+  /*
+   * Fase 3-4 van de processessie: de diagnose en het herontwerp. `bewaarDiagnose` verwacht de
+   * volledige, al gemergde scores van deze deelnemer (dezelfde afspraak als `bewaarWaardering` bij
+   * `kwalitatief`: de component spreidt het bestaande object en stuurt het complete resultaat mee,
+   * de opslag doet geen eigen read-before-write).
+   */
+  bewaarDiagnose(identiteit: Identiteit, invoer: DiagnoseInvoer): Promise<void>;
+  /** Legt het gekozen spoor vast op `sessie_processen`; motivatie is verplicht bij afwijken van het advies. */
+  zetSpoor(
+    identiteit: Identiteit,
+    procesId: string,
+    spoor: SpoorKeuze,
+    motivatie?: string,
+  ): Promise<void>;
+  voegVerbeteringToe(identiteit: Identiteit, invoer: NieuweVerbetering): Promise<ProcesVerbeteringRij>;
+  wijzigVerbetering(
+    identiteit: Identiteit,
+    verbeteringId: string,
+    velden: VerbeteringVelden,
+  ): Promise<void>;
+  verwijderVerbetering(identiteit: Identiteit, verbeteringId: string): Promise<void>;
 
   voegUsecaseToe(identiteit: Identiteit, invoer: NieuweUsecase): Promise<SessieUsecaseRij>;
   koppelSignalen(identiteit: Identiteit, usecaseId: string, signaalIds: string[]): Promise<void>;

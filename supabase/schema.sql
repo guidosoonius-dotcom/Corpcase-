@@ -297,6 +297,54 @@ create table proces_stappen (
 create index proces_stappen_sessie_idx on proces_stappen (sessie_id);
 create index proces_stappen_proces_idx on proces_stappen (proces_id);
 
+-- Fase 3: de diagnose. Eén rij per speler per proces — niet één gedeeld document zoals
+-- `waarderingen` — want het gemiddelde moet over ieders eigen score gaan, niet over wie het laatst
+-- een schuif aanraakte. Zelfde patroon als `signaal_selecties`: een rij per deelnemer, her-upsertbaar.
+create table proces_diagnoses (
+  id uuid primary key default gen_random_uuid(),
+  sessie_id uuid not null references sessies (id) on delete cascade,
+  proces_id uuid not null references sessie_processen (id) on delete cascade,
+  deelnemer_id uuid not null references deelnemers (id) on delete cascade,
+  -- De vijf assen: pijn, volume, variatie, datakwaliteit, strategisch_belang. Een as die nog niet
+  -- gescoord is staat er niet in — net als kwalitatief/haalbaarheid — zodat "nog niet gescoord" en
+  -- "bewust een 1" nooit door elkaar lopen.
+  scores jsonb not null default '{}'::jsonb,
+  aangemaakt_op timestamptz not null default now(),
+  bijgewerkt_op timestamptz not null default now(),
+  unique (proces_id, deelnemer_id)
+);
+
+create index proces_diagnoses_sessie_idx on proces_diagnoses (sessie_id);
+create index proces_diagnoses_proces_idx on proces_diagnoses (proces_id);
+
+-- Fase 4: een verbetering. Dekt beide sporen met één tabel: op het iteratieve spoor hangt hij aan
+-- een 'huidig'-stap met een manoeuvre; op het new-practice-spoor aan een 'nieuw'-stap zonder
+-- manoeuvre (die stap draagt zijn eigen vervangt[] al). drivers/kosten staan er in exact de vorm
+-- van WaarderingRij, zodat berekenBusinessCase ze zonder omweg kan lezen — gevuld worden ze pas
+-- bij het doorrekenen; hier blijven ze op hun default.
+create table proces_verbeteringen (
+  id uuid primary key default gen_random_uuid(),
+  sessie_id uuid not null references sessies (id) on delete cascade,
+  proces_id uuid not null references sessie_processen (id) on delete cascade,
+  stap_id uuid references proces_stappen (id) on delete set null,
+  manoeuvre text check (manoeuvre in
+    ('voorkomen', 'schrappen', 'samenvoegen', 'verplaatsen', 'automatiseren', 'standaardiseren', 'verrijken')),
+  titel text not null,
+  toelichting text not null default '',
+  -- Verwijst naar Herkomst.portfolio[].id (zie types.ts) — vrije tekst zonder foreign key: die use
+  -- case leeft in een snapshot, niet in een tabel die deze sessie kan joinen.
+  usecase_ref text,
+  drivers jsonb not null default '[]'::jsonb,
+  kosten jsonb not null default '{"eenmalig": 0, "jaarlijks": 0, "capaciteit": 0}'::jsonb,
+  toegevoegd_door uuid references deelnemers (id) on delete set null,
+  aangemaakt_op timestamptz not null default now(),
+  bijgewerkt_op timestamptz not null default now()
+);
+
+create index proces_verbeteringen_sessie_idx on proces_verbeteringen (sessie_id);
+create index proces_verbeteringen_proces_idx on proces_verbeteringen (proces_id);
+create index proces_verbeteringen_stap_idx on proces_verbeteringen (stap_id);
+
 create trigger sessies_bijgewerkt before update on sessies
 for each row execute function zet_bijgewerkt_op();
 create trigger sessie_usecases_bijgewerkt before update on sessie_usecases
@@ -308,6 +356,10 @@ for each row execute function zet_bijgewerkt_op();
 create trigger sessie_processen_bijgewerkt before update on sessie_processen
 for each row execute function zet_bijgewerkt_op();
 create trigger proces_stappen_bijgewerkt before update on proces_stappen
+for each row execute function zet_bijgewerkt_op();
+create trigger proces_diagnoses_bijgewerkt before update on proces_diagnoses
+for each row execute function zet_bijgewerkt_op();
+create trigger proces_verbeteringen_bijgewerkt before update on proces_verbeteringen
 for each row execute function zet_bijgewerkt_op();
 create trigger roadmap_items_bijgewerkt before update on roadmap_items
 for each row execute function zet_bijgewerkt_op();
@@ -391,6 +443,8 @@ alter table realiteitscheck_besluiten enable row level security;
 alter table roadmap_items enable row level security;
 alter table sessie_processen enable row level security;
 alter table proces_stappen enable row level security;
+alter table proces_diagnoses enable row level security;
+alter table proces_verbeteringen enable row level security;
 
 -- De basistabel is met opzet alleen leesbaar met bewezen facilitatorstatus. Een rijbeleid filtert
 -- rijen, geen kolommen: zou deze policy hier ook `is_deelnemer` of de joincode toelaten, dan kon
@@ -474,6 +528,12 @@ create policy sessie_processen_alles on sessie_processen for all
   using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
 
 create policy proces_stappen_alles on proces_stappen for all
+  using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
+
+create policy proces_diagnoses_alles on proces_diagnoses for all
+  using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
+
+create policy proces_verbeteringen_alles on proces_verbeteringen for all
   using (intern.is_deelnemer(sessie_id)) with check (intern.is_deelnemer(sessie_id));
 
 -- Publieke aanzicht op sessies, zonder beheer_code ---------------------------

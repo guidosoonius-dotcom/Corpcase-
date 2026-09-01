@@ -75,6 +75,8 @@ test("een processessie doorloopt zijn eigen fases, niet die van de use-casesessi
   const METEIGENScherm: Record<string, RegExp> = {
     Proceskeuze: /Welk proces leggen we op tafel\?/,
     Afpellen: /Er ligt nog geen proces op tafel/,
+    Diagnose: /Er ligt nog geen proces op tafel/,
+    Herontwerp: /Er ligt nog geen proces op tafel/,
   };
 
   for (const fase of PROCESFASES) {
@@ -215,4 +217,139 @@ test("een speler die vooruitloopt in een processessie krijgt daar een waarschuwi
   // "Voorloopt" wordt per spelsoort bepaald; zonder eigen fasereeks zou deze vergelijking
   // stuurloos zijn en de waarschuwing uitblijven.
   await expect(facilitator.getByText(/loopt voor op de groep/i)).toBeVisible();
+});
+
+/** De vijf assen, in de volgorde waarin `Diagnose.tsx` ze rendert. */
+const ASSEN_VOLGORDE = ["Pijn", "Volume", "Variatie", "Datakwaliteit", "Strategisch belang"];
+
+/** Scoort één as voor de speler die op het diagnosescherm staat. */
+async function scoor(page: Page, asNaam: string, waarde: number) {
+  const index = ASSEN_VOLGORDE.indexOf(asNaam);
+  await page
+    .getByRole("button", { name: `Score ${waarde}`, exact: true })
+    .nth(index)
+    .click();
+}
+
+async function kiesProces(page: Page, zoekterm: string) {
+  await page.getByLabel("Zoeken in de bedrijfsfuncties").fill(zoekterm);
+  await page.getByRole("button", { name: "Op tafel leggen" }).first().click();
+}
+
+test("twee spelers scoren een proces en zien hetzelfde gemiddelde advies", async ({ browser }) => {
+  const facilitator = await nieuweSpeler(browser);
+  const wonen = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByRole("radio", { name: /^Processen/ }).check();
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const sessieId = facilitator.url().match(/\/sessie\/([0-9a-f-]+)\//)![1];
+  const code = (await facilitator.getByLabel(/Sessiecode/).innerText()).trim();
+
+  await wonen.goto(`/deelnemen?code=${code}`);
+  await wonen.getByLabel("Jouw naam").fill("Marieke");
+  await wonen.getByLabel("Jouw rol").selectOption({ label: "Manager Wonen / Klant" });
+  await wonen.getByRole("button", { name: "Meedoen" }).click();
+  await wonen.waitForURL(/\/sessie\/[0-9a-f-]+$/);
+
+  await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await kiesProces(facilitator, "reparatieonderhoud");
+
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
+  await facilitator.getByRole("button", { name: "Volgende fase: Diagnose" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+
+  await expect(facilitator.getByText("0 van 2 aan tafel")).toBeVisible();
+
+  /*
+   * Pijn en volume hoog, variatie laag: dat is precies de iteratief-regel, ongeacht wat er op de
+   * andere twee assen staat. Zo blijft de uitkomst voorspelbaar terwijl de twee spelers toch echt
+   * verschillend scoren — het gemiddelde moet het doen, niet toevallig gelijke invoer.
+   */
+  await scoor(facilitator, "Pijn", 4);
+  await scoor(facilitator, "Volume", 4);
+  await scoor(facilitator, "Variatie", 1);
+  await scoor(facilitator, "Datakwaliteit", 4);
+  await scoor(facilitator, "Strategisch belang", 2);
+
+  // Marieke ziet de teller oplopen zodra Guido zijn eerste as scoort — zonder te verversen.
+  await expect(wonen.getByText("1 van 2 aan tafel")).toBeVisible();
+
+  await scoor(wonen, "Pijn", 4);
+  await scoor(wonen, "Volume", 4);
+  await scoor(wonen, "Variatie", 1);
+  await scoor(wonen, "Datakwaliteit", 2);
+  await scoor(wonen, "Strategisch belang", 4);
+
+  // Beiden zien hetzelfde advies, zonder dat iemand ververst heeft. De naam staat twee keer op het
+  // scherm (het advies zelf en de bevestigknop) — "p.cijfer" is specifiek het advies.
+  await expect(facilitator.locator("p.cijfer", { hasText: "Iteratief verbeteren" })).toBeVisible();
+  await expect(wonen.locator("p.cijfer", { hasText: "Iteratief verbeteren" })).toBeVisible();
+  // "Pijn" staat twee keer op het scherm (de scorevraag en het etiket in het advies); het etiket
+  // staat lager op de pagina.
+  await expect(facilitator.getByText("Pijn").last()).toBeVisible();
+});
+
+test("een team dat afwijkt van het advies moet een motivatie kunnen vastleggen", async ({
+  browser,
+}) => {
+  const facilitator = await nieuweSpeler(browser);
+  const wonen = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByRole("radio", { name: /^Processen/ }).check();
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const sessieId = facilitator.url().match(/\/sessie\/([0-9a-f-]+)\//)![1];
+  const code = (await facilitator.getByLabel(/Sessiecode/).innerText()).trim();
+
+  await wonen.goto(`/deelnemen?code=${code}`);
+  await wonen.getByLabel("Jouw naam").fill("Marieke");
+  await wonen.getByLabel("Jouw rol").selectOption({ label: "Manager Wonen / Klant" });
+  await wonen.getByRole("button", { name: "Meedoen" }).click();
+  await wonen.waitForURL(/\/sessie\/[0-9a-f-]+$/);
+
+  await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await kiesProces(facilitator, "reparatieonderhoud");
+
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
+  await facilitator.getByRole("button", { name: "Volgende fase: Diagnose" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+
+  // Weinig pijn, weinig volume: dat adviseert "niet nu", ongeacht de andere assen.
+  for (const [as, waarde] of [
+    ["Pijn", 1],
+    ["Volume", 1],
+    ["Variatie", 3],
+    ["Datakwaliteit", 3],
+    ["Strategisch belang", 3],
+  ] as const) {
+    await scoor(facilitator, as, waarde);
+  }
+  // "Niet nu" staat ook op de spoorknop; "p.cijfer" is specifiek het advies.
+  await expect(facilitator.locator("p.cijfer", { hasText: "Niet nu" })).toBeVisible();
+
+  // Het team kiest toch iteratief verbeteren — dat wijkt af van het advies.
+  await facilitator.getByRole("button", { name: "Iteratief verbeteren" }).click();
+  await expect(facilitator.getByText(/Dit spoor wijkt af van het advies/)).toBeVisible();
+  await expect(wonen.getByText(/Dit spoor wijkt af van het advies/)).toBeVisible();
+
+  // De motivatie wordt pas opgeslagen bij het (opnieuw) bevestigen van het spoor.
+  await facilitator
+    .getByPlaceholder("Motivatie (verplicht bij afwijken van het advies)")
+    .fill("De aannemer loopt hier al maanden op vast; wachten kost meer dan nu ingrijpen.");
+  await facilitator.getByRole("button", { name: "Iteratief verbeteren" }).click();
+
+  await expect(
+    wonen.getByText(/De aannemer loopt hier al maanden op vast/),
+  ).toBeVisible();
 });
