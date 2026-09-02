@@ -1,5 +1,5 @@
 {
-  "toelichting": "De bedrijfsfuncties uit het officiële VERA-domeinmodel (Archi/ArchiMate, beheerd door Aedes): de processen die in een processessie op tafel kunnen. `groep` is onze eigen thematische clustering van deze 25 functies, geen letterlijke CORA-plaat-indeling — die platen zijn met deze bron vervallen als hoofdbron. De koppeling van elke functie aan een van de achttien CORA-domeinen in content/cora/domeinen.json blijft een vertaling van ons, geen uitspraak van CORA zelf; daarom staat dit bestand op geverifieerd: false. `stappen_voorzet` vult zich per functie zodra de bijbehorende procesketen (een van de twaalf `business_process_cooperation`-diagrammen in dezelfde bron) is uitgewerkt tot één rechte lijn — de meeste staan nog leeg, precies zoals vóór deze bron ook al het geval was.",
+  "toelichting": "De bedrijfsfuncties uit het officiële VERA-domeinmodel (Archi/ArchiMate, beheerd door Aedes): de processen die in een processessie op tafel kunnen. `groep` is onze eigen thematische clustering van deze 25 functies, geen letterlijke CORA-plaat-indeling — die platen zijn met deze bron vervallen als hoofdbron. De koppeling van elke functie aan een van de achttien CORA-domeinen in content/cora/domeinen.json blijft een vertaling van ons, geen uitspraak van CORA zelf; daarom staat dit bestand op geverifieerd: false. `stappen_voorzet` vult zich per functie zodra de bijbehorende procesketen (een van de twaalf `business_process_cooperation`-diagrammen in dezelfde bron) genoeg eigen Werkproces-detail bevat om tot één rechte lijn te herleiden — niet elk diagram is daar even rijk voor: sommige zijn architectuur-contextplaten (welk bedrijfsproces praat met welk) zonder stapdetail. Functies zonder stappen_voorzet dragen een `opmerking` die uitlegt wat er in de bron wél en niet staat, in plaats van geforceerd te gokken.",
   "bron": "Aedes-datastandaarden/VERA-Domeinmodellen (github.com/Aedes-datastandaarden/VERA-Domeinmodellen, MIT-licentie), map model/business/*/Bedrijfsfuncties, commit 8041878. Uitgelezen met scripts/vera-import.ts.",
   "geverifieerd": false,
   "functies": [
@@ -10,6 +10,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "klantbeheer",
+      "opmerking": "Komt voor in de legenda van meerdere procesketen-diagrammen (Onderhouden Eenheden, Woonruimteverdeling, Incasso, Beheer Relatiegegevens, Beheer Financiele gegevens, Beheer Overeenkomstgegevens, Beheer Vastgoedgegevens), maar telkens als de generieke verwijzing 'BP Bediening Klant' zonder eigen stapdetail in die diagrammen. Losse stappen van deze functie zitten al verwerkt in de ketens van onderhoudsfunctie, woonruimteverdeelfunctie en incassofunctie.",
       "stappen_voorzet": []
     },
     {
@@ -19,6 +20,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "klantbeheer",
+      "opmerking": "De stap 'Reclamaties afhandelen' bestaat in de bron (als uitzonderingsstap opgenomen in de keten van woonruimteverdeelfunctie), maar er is geen eigen procesketen-diagram voor deze functie om er een volledige lijn van te maken.",
       "stappen_voorzet": []
     },
     {
@@ -28,6 +30,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "klantbeheer",
+      "opmerking": "Genoemd in de legenda van het diagram 'Beheer Relatiegegevens', maar dat diagram bevat zelf maar twee blokken op hoofdlijnen ('BP Bediening Klant', 'BP Beheren Relatiegegevens') zonder Werkproces-detail — een architectuur-contextplaat, geen stappenplaat.",
       "stappen_voorzet": []
     },
     {
@@ -37,6 +40,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "klantbeheer",
+      "opmerking": "De stap 'Aangaan huurovereenkomst' (uit het Woonruimteverdeling-diagram) is aan deze functie toegekend binnen de keten van woonruimteverdeelfunctie. Het eigen diagram 'Beheer Overeenkomstgegevens' is een contextplaat met maar twee blokken, zonder verder stapdetail.",
       "stappen_voorzet": []
     },
     {
@@ -46,6 +50,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "vastgoedbemiddeling",
+      "opmerking": "Heeft een eigen diagram ('Verhuren Eenheden'), maar dat bevat vooral verwijzingen naar processen die al bij andere procesketens horen (Onderhoud, Overeenkomstbeheer, Matchen) en weinig eigen Werkproces-detail — te dun voor een eigen betrouwbare lijn.",
       "stappen_voorzet": []
     },
     {
@@ -55,6 +60,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "vastgoedbemiddeling",
+      "opmerking": "De stap 'Voorbereiden verkoop' bestaat in het Woonruimteverdeling-diagram (als alternatief voor opnieuw verhuren), maar heeft in de bron geen eigen vervolgketen.",
       "stappen_voorzet": []
     },
     {
@@ -64,7 +70,22 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "vastgoedbemiddeling",
-      "stappen_voorzet": []
+      "opmerking": "Stappen_voorzet is afgeleid uit het procesketen-diagram 'Woonruimteverdeling' (viewpoint business_process_cooperation). Net als bij onderhoudsfunctie is dit netwerk teruggebracht tot één hoofdpad — van adverteren tot huurovereenkomst — met de minder frequente vertakkingen (sanctiebeleid, een reclamatie, inschrijven als er al een inschrijving loopt) als uitzondering. Elke stapnaam is een echte Werkproces-naam uit de bron.",
+      "stappen_voorzet": [
+        { "naam": "Advertentie plaatsen", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Publiceren vastgoed", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Inschrijven woningzoekenden", "uitvoerder": "Klantbedieningsfunctie", "uitzondering": true },
+        { "naam": "Inschrijvingen beheren", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Puntenberekenen", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Beheren Punten", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Matchen vastgoed", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Aanbieden vastgoed", "uitvoerder": "Woonruimteverdeelfunctie" },
+        { "naam": "Aangaan huurovereenkomst", "uitvoerder": "Overeenkomstbeheerfunctie" },
+        { "naam": "Sanctiebeleid uitvoeren", "uitvoerder": "Woonruimteverdeelfunctie", "uitzondering": true },
+        { "naam": "Reclamaties afhandelen", "uitvoerder": "Klantbedieningsfunctie", "uitzondering": true }
+      ],
+      "voorzet_bron": "Procesketen-diagram 'Woonruimteverdeling', Aedes-datastandaarden/VERA-Domeinmodellen, commit 8041878.",
+      "voorzet_geverifieerd": false
     },
     {
       "id": "woningwaarderingsfunctie",
@@ -73,6 +94,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedbemiddeling",
+      "opmerking": "De stap 'Vaststellen woningwaardering' bestaat in het Onderhouden-Eenheden-diagram, los van de hoofdketen die daar voor onderhoudsfunctie is uitgewerkt — geen eigen vervolgketen in de bron.",
       "stappen_voorzet": []
     },
     {
@@ -113,6 +135,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "Genoemd in de legenda van 'Onderhouden Eenheden' (rol Onderhoudsbedrijf) en 'Beheer Overeenkomstgegevens', maar heeft geen eigen, onderscheiden laan in die diagrammen — de controle-stap die wél apart zichtbaar is ('Controle uitvoer onderhoudsorder') hoort bij technische-uitvoer-controle-functie.",
       "stappen_voorzet": []
     },
     {
@@ -122,6 +145,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "De inspectiestappen uit de bron (Organiseren inspectie, Intake inspectieopdracht, Plannen inspectie, Uitvoeren inspectie, Beoordelen inspectierapport, Leveren inspectierapport, Afhandelen inspectie) staan al verwerkt in de keten van onderhoudsfunctie, als onderdeel van diezelfde laan. Een eigen, losse keten voor inspectiefunctie zou die stappen dupliceren en is nog niet apart uitgewerkt.",
       "stappen_voorzet": []
     },
     {
@@ -131,6 +155,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "De stappen van deze functie (Intake onderhoudsorder, Voorcalculatie, Plannen en uitvoeren van onderhoudstaken, Bestellen materiaal, Afhandelen onderhoudsorder) staan al verwerkt in de keten van onderhoudsfunctie. Een eigen, losse keten zou die stappen dupliceren.",
       "stappen_voorzet": []
     },
     {
@@ -140,6 +165,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "De stap 'Controle uitvoer onderhoudsorder' van deze functie staat al verwerkt in de keten van onderhoudsfunctie. Geen verder eigen materiaal in de bron.",
       "stappen_voorzet": []
     },
     {
@@ -149,6 +175,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "Geen procesketen-diagram (viewpoint business_process_cooperation) in de bron waarin deze functie met eigen Werkprocessen voorkomt.",
       "stappen_voorzet": []
     },
     {
@@ -158,6 +185,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "De onderzoeksstappen uit de bron (Intake onderzoeksopdracht, Uitnodigen onderzoek, Uitvoeren onderzoek, Leveren onderzoeksresultaat) staan al verwerkt in de keten van kwaliteitsmanagementfunctie, als onderdeel van diezelfde procesketen. Een eigen, losse keten zou die stappen dupliceren.",
       "stappen_voorzet": []
     },
     {
@@ -167,6 +195,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedonderhoud",
+      "opmerking": "Het diagram 'Bepalen Energieprestatie' bestaat in de bron, maar is bij het uitlezen met scripts/vera-import.ts niet als business_process_cooperation-diagram met stapdetail naar boven gekomen (mogelijk een ander viewpoint of een dieper geneste structuur) — nog te onderzoeken voordat hier iets in komt.",
       "stappen_voorzet": []
     },
     {
@@ -176,6 +205,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedsturing",
+      "opmerking": "Relevante stappen bestaan in het Woonruimteverdeling-diagram (Verwerken vastgoedgegevens, Onderhouden basisgegevens, In exploitatie nemen vastgoed) maar zijn daar niet in de hoofdketen van woonruimteverdeelfunctie opgenomen en nog niet apart tot een eigen keten uitgewerkt. Het eigen diagram 'Beheer Vastgoedgegevens' is een contextplaat zonder verder stapdetail.",
       "stappen_voorzet": []
     },
     {
@@ -185,6 +215,7 @@
       "soort": "primair",
       "klant": "intern",
       "domein": "vastgoedsturing",
+      "opmerking": "Werkprocessen met monitoring in de naam bestaan in de bron (Aggregeren monitorgegevens, Ophalen Monitorlogs, Ophalen Monitormetingen, Verzamelen monitorgegevens), maar niet binnen een van de gevonden business_process_cooperation-diagrammen — geen keten te herleiden zonder te gokken.",
       "stappen_voorzet": []
     },
     {
@@ -194,6 +225,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "financien-primair",
+      "opmerking": "Genoemd in de legenda's van 'Onderhouden Eenheden' en (als 'Debiteurbeheerfunctie') 'Beheer Financiele gegevens', maar zonder eigen laan met stappen in die diagrammen. De keten die het dichtst in de buurt komt (Prenotificatie, betalingsregeling, invordering) is toegekend aan incassofunctie en deurwaarderfunctie.",
       "stappen_voorzet": []
     },
     {
@@ -203,7 +235,19 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "financien-primair",
-      "stappen_voorzet": []
+      "opmerking": "Stappen_voorzet is afgeleid uit het procesketen-diagram 'Incasso' (viewpoint business_process_cooperation). Dit diagram is dunner dan dat van onderhoudsfunctie maar wel volledig eigen Werkproces-detail, met een duidelijke escalatielijn van eerste herinnering tot invordering; de laatste stap wordt in de praktijk niet altijd bereikt en staat daarom als uitzondering.",
+      "stappen_voorzet": [
+        { "naam": "Prenotificatie contractant", "uitvoerder": "Incassofunctie" },
+        { "naam": "Aanvragen betalingsregeling", "uitvoerder": "Klantbedieningsfunctie", "uitzondering": true },
+        { "naam": "Afsluiten betalingsregeling", "uitvoerder": "Incassofunctie" },
+        { "naam": "Bewaken betalingsregeling", "uitvoerder": "Incassofunctie" },
+        { "naam": "Incasseren minnelijke vordering", "uitvoerder": "Incassofunctie" },
+        { "naam": "In gebreke stellen", "uitvoerder": "Incassofunctie" },
+        { "naam": "Bewaken Incasso", "uitvoerder": "Incassofunctie" },
+        { "naam": "Invorderen", "uitvoerder": "Deurwaarderfunctie", "uitzondering": true }
+      ],
+      "voorzet_bron": "Procesketen-diagram 'Incasso', Aedes-datastandaarden/VERA-Domeinmodellen, commit 8041878.",
+      "voorzet_geverifieerd": false
     },
     {
       "id": "deurwaarderfunctie",
@@ -212,6 +256,7 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "financien-primair",
+      "opmerking": "De stap 'Invorderen' van deze functie staat al verwerkt in de keten van incassofunctie. Geen verder eigen materiaal in de bron.",
       "stappen_voorzet": []
     },
     {
@@ -220,6 +265,7 @@
       "groep": "Financieel",
       "soort": "ondersteunend",
       "domein": "financien-ondersteunend",
+      "opmerking": "De stappen 'Intake factuur' en 'Betaalbaar stellen factuur' van deze functie staan al verwerkt in de keten van onderhoudsfunctie. Geen eigen procesketen-diagram gevonden voor het bredere crediteurenproces.",
       "stappen_voorzet": []
     },
     {
@@ -228,6 +274,7 @@
       "groep": "Financieel",
       "soort": "ondersteunend",
       "domein": "financien-ondersteunend",
+      "opmerking": "'Betalen facturen' komt in de bron voor als extern triggerpunt richting het Incasso-diagram, maar heeft daar geen eigen laan of vervolgketen.",
       "stappen_voorzet": []
     },
     {
@@ -236,7 +283,18 @@
       "groep": "Sturing",
       "soort": "sturend",
       "domein": "planning-control",
-      "stappen_voorzet": []
+      "opmerking": "Stappen_voorzet is afgeleid uit het procesketen-diagram 'Kwaliteitsmanagement' (viewpoint business_process_cooperation). Dit diagram is kleiner dan dat van onderhoudsfunctie (één gekleurde laan van zeven stappen), maar bevat een duidelijke keten van meetverzoek tot geleverde meting. 'Monitoren kwaliteit' loopt in de bron doorlopend naast de andere stappen en niet per meting, en staat daarom als uitzondering.",
+      "stappen_voorzet": [
+        { "naam": "Intake verzoek kwaliteitsmeting", "uitvoerder": "Kwaliteitsmanagementfunctie" },
+        { "naam": "Intake onderzoeksopdracht", "uitvoerder": "Onderzoeksfunctie" },
+        { "naam": "Uitnodigen onderzoek", "uitvoerder": "Onderzoeksfunctie" },
+        { "naam": "Uitvoeren onderzoek", "uitvoerder": "Onderzoeksfunctie" },
+        { "naam": "Monitoren kwaliteit", "uitvoerder": "Kwaliteitsmanagementfunctie", "uitzondering": true },
+        { "naam": "Leveren onderzoeksresultaat", "uitvoerder": "Onderzoeksfunctie" },
+        { "naam": "Leveren kwaliteitsmeting", "uitvoerder": "Kwaliteitsmanagementfunctie" }
+      ],
+      "voorzet_bron": "Procesketen-diagram 'Kwaliteitsmanagement', Aedes-datastandaarden/VERA-Domeinmodellen, commit 8041878.",
+      "voorzet_geverifieerd": false
     },
     {
       "id": "kennismanagementfunctie",
@@ -244,6 +302,7 @@
       "groep": "Sturing",
       "soort": "ondersteunend",
       "domein": "informatievoorziening",
+      "opmerking": "Geen procesketen-diagram (viewpoint business_process_cooperation) in de bron waarin deze functie met eigen Werkprocessen voorkomt.",
       "stappen_voorzet": []
     }
   ]
