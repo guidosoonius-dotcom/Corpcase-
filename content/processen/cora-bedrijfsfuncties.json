@@ -1,38 +1,11 @@
 {
-  "toelichting": "De bedrijfsfuncties uit het CORA-functiemodel: de processen die in een processessie op tafel kunnen. Het niveau eronder — de stappen waaruit een functie bestaat — staat er bewust NIET in: die tekent het team zelf op de procesplaat, of ze worden geladen uit materiaal dat de corporatie zelf aanlevert (dan vult `stappen_voorzet` zich, met een eigen bron per functie). De koppeling van elke functie aan een van de achttien CORA-domeinen in content/cora/domeinen.json is een vertaling van ons, geen uitspraak van CORA zelf; daarom staat dit bestand op geverifieerd: false.",
-  "bron": "CORA-bedrijfsfunctiemodel, sturende en primaire functies — twee platen aangeleverd door de opdrachtgever. Beide platen zijn bijgesneden schermafdrukken: plaat 1 is bovenaan afgekapt en plaat 2 loopt rechts buiten beeld, dus mogelijk ontbreken er functies rechts van Monitoring.",
+  "toelichting": "De bedrijfsfuncties uit het officiële VERA-domeinmodel (Archi/ArchiMate, beheerd door Aedes): de processen die in een processessie op tafel kunnen. `groep` is onze eigen thematische clustering van deze 25 functies, geen letterlijke CORA-plaat-indeling — die platen zijn met deze bron vervallen als hoofdbron. De koppeling van elke functie aan een van de achttien CORA-domeinen in content/cora/domeinen.json blijft een vertaling van ons, geen uitspraak van CORA zelf; daarom staat dit bestand op geverifieerd: false. `stappen_voorzet` vult zich per functie zodra de bijbehorende procesketen (een van de twaalf `business_process_cooperation`-diagrammen in dezelfde bron) is uitgewerkt tot één rechte lijn — de meeste staan nog leeg, precies zoals vóór deze bron ook al het geval was.",
+  "bron": "Aedes-datastandaarden/VERA-Domeinmodellen (github.com/Aedes-datastandaarden/VERA-Domeinmodellen, MIT-licentie), map model/business/*/Bedrijfsfuncties, commit 8041878. Uitgelezen met scripts/vera-import.ts.",
   "geverifieerd": false,
   "functies": [
     {
-      "id": "inschrijven-woningzoekenden",
-      "naam": "Inschrijven woningzoekenden",
-      "groep": "Passende eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedbemiddeling",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "behandelen-urgentie-aanvragen-woningzoekenden",
-      "naam": "Behandelen urgentie aanvragen woningzoekenden",
-      "groep": "Passende eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedbemiddeling",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "werven-en-selecteren-kandidaten",
-      "naam": "Werven en selecteren kandidaten",
-      "groep": "Passende eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedbemiddeling",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "afhandelen-klantvragen",
-      "naam": "Afhandelen klantvragen",
+      "id": "klantbedieningsfunctie",
+      "naam": "Klantbedieningsfunctie",
       "groep": "Klantrelatie",
       "soort": "primair",
       "klant": "extern",
@@ -40,8 +13,8 @@
       "stappen_voorzet": []
     },
     {
-      "id": "afhandelen-klachten-dienstverlening",
-      "naam": "Afhandelen klachten dienstverlening",
+      "id": "reclamatiefunctie",
+      "naam": "Reclamatiefunctie",
       "groep": "Klantrelatie",
       "soort": "primair",
       "klant": "extern",
@@ -49,8 +22,8 @@
       "stappen_voorzet": []
     },
     {
-      "id": "managen-klantwaardering",
-      "naam": "Managen klantwaardering",
+      "id": "relatiebeheerfunctie",
+      "naam": "Relatiebeheerfunctie",
       "groep": "Klantrelatie",
       "soort": "primair",
       "klant": "extern",
@@ -58,8 +31,17 @@
       "stappen_voorzet": []
     },
     {
-      "id": "verhuren-eenheden",
-      "naam": "Verhuren eenheden",
+      "id": "overeenkomstbeheerfunctie",
+      "naam": "Overeenkomstbeheerfunctie",
+      "groep": "Klantrelatie",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "klantbeheer",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "vastgoedverhuurfunctie",
+      "naam": "Vastgoedverhuurfunctie",
       "groep": "Verhuurde eenheid",
       "soort": "primair",
       "klant": "extern",
@@ -67,81 +49,8 @@
       "stappen_voorzet": []
     },
     {
-      "id": "vaststellen-servicecomponenten",
-      "naam": "Vaststellen servicecomponenten",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "klantbeheer",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "leveren-services-door-derden",
-      "naam": "Leveren services door derden",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "klantbeheer",
-      "opmerking": "In de aangeleverde plaat afwijkend gekleurd ten opzichte van de andere functies; wat die markering in het bronmodel betekent is nog te bevestigen.",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "verrekenen-service-stookkosten",
-      "naam": "Verrekenen service-/stookkosten",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "financien-primair",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "verwerken-energieprestatievergoeding-epv",
-      "naam": "Verwerken Energieprestatievergoeding (EPV)",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "financien-primair",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "voeren-energiecoaching",
-      "naam": "Voeren energiecoaching",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "wonen-leefbaarheid",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "realiseren-geriefverbetering-wmo",
-      "naam": "Realiseren geriefverbetering/WMO",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "bevorderen-leefbare-woonomgeving",
-      "naam": "Bevorderen leefbare woonomgeving",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "wonen-leefbaarheid",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "participeren-alv",
-      "naam": "Participeren ALV",
-      "groep": "Verhuurde eenheid",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "leveren-urgentieverklaring-herhuisvesting",
-      "naam": "Leveren urgentieverklaring herhuisvesting",
+      "id": "vastgoedverkoopfunctie",
+      "naam": "Vastgoedverkoopfunctie",
       "groep": "Verhuurde eenheid",
       "soort": "primair",
       "klant": "extern",
@@ -149,382 +58,192 @@
       "stappen_voorzet": []
     },
     {
-      "id": "verkopen-eenheden",
-      "naam": "Verkopen eenheden",
-      "groep": "Verkochte eenheid",
+      "id": "woonruimteverdeelfunctie",
+      "naam": "Woonruimteverdeelfunctie",
+      "groep": "Verhuurde eenheid",
       "soort": "primair",
       "klant": "extern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "woningwaarderingsfunctie",
+      "naam": "Woningwaarderingsfunctie",
+      "groep": "Verhuurde eenheid",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedbemiddeling",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "onderhoudsfunctie",
+      "naam": "Onderhoudsfunctie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "extern",
+      "domein": "vastgoedonderhoud",
+      "opmerking": "Stappen_voorzet is afgeleid uit het procesketen-diagram 'Onderhouden Eenheden' (viewpoint business_process_cooperation) in dezelfde bron. Dat diagram is zelf geen rechte lijn maar een netwerk van acht rollen met onderling terugkoppelende stappen (offerte heen-en-weer, planning-afstemming); voor de procesplaat is één representatief hoofdpad gekozen — het happy path van melding tot afgehandelde factuur — en zijn stappen die alleen op een nevenpad voorkomen als uitzondering gemarkeerd. Elke stapnaam is een echte Werkproces-naam uit de bron; de keuze én volgorde van dít pad door het netwerk is onze interpretatie, niet een letterlijk citaat van één diagramlijn.",
+      "stappen_voorzet": [
+        { "naam": "Intake melding klant", "uitvoerder": "Klantbedieningsfunctie" },
+        { "naam": "Diagnose melding klant", "uitvoerder": "Klantbedieningsfunctie" },
+        { "naam": "Coördineren melding klant", "uitvoerder": "Klantbedieningsfunctie" },
+        { "naam": "Intake onderhoudsverzoek", "uitvoerder": "Onderhoudsfunctie" },
+        { "naam": "Coördineren onderhoudsverzoek", "uitvoerder": "Onderhoudsfunctie" },
+        { "naam": "Intake onderhoudsorder", "uitvoerder": "Technische uitvoerfunctie" },
+        { "naam": "Voorcalculatie onderhoudsorder", "uitvoerder": "Technische uitvoerfunctie" },
+        { "naam": "Plannen onderhoudsorder", "uitvoerder": "Onderhoudsfunctie" },
+        { "naam": "Afstemming planning", "uitvoerder": "Onderhoudsfunctie", "uitzondering": true },
+        { "naam": "Plannen onderhoudstaken", "uitvoerder": "Technische uitvoerfunctie" },
+        { "naam": "Uitvoeren onderhoudstaken", "uitvoerder": "Technische uitvoerfunctie" },
+        { "naam": "Bestellen materiaal", "uitvoerder": "Technische uitvoerfunctie", "uitzondering": true },
+        { "naam": "Controle uitvoer onderhoudsorder", "uitvoerder": "Technische uitvoer controle functie" },
+        { "naam": "Controleren oplevering", "uitvoerder": "Onderhoudsfunctie" },
+        { "naam": "Afhandelen onderhoudsorder", "uitvoerder": "Technische uitvoerfunctie" },
+        { "naam": "Intake factuur", "uitvoerder": "Crediteurenfunctie" },
+        { "naam": "Betaalbaar stellen factuur", "uitvoerder": "Crediteurenfunctie" },
+        { "naam": "Afhandelen onderhoudsverzoek", "uitvoerder": "Onderhoudsfunctie" }
+      ],
+      "voorzet_bron": "Procesketen-diagram 'Onderhouden Eenheden', Aedes-datastandaarden/VERA-Domeinmodellen, commit 8041878 — zie de opmerking hierboven voor hoe het netwerk tot één lijn is teruggebracht.",
+      "voorzet_geverifieerd": false
+    },
+    {
+      "id": "onderhoudscontrolefunctie",
+      "naam": "Onderhoudscontrolefunctie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "inspectiefunctie",
+      "naam": "Inspectiefunctie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "technische-uitvoer-functie",
+      "naam": "Technische uitvoer functie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "technische-uitvoer-controle-functie",
+      "naam": "Technische uitvoer controle functie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "bouwkundigfunctie",
+      "naam": "Bouwkundigfunctie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "onderzoeksfunctie",
+      "naam": "Onderzoeksfunctie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "energieprestatiefunctie",
+      "naam": "Energieprestatiefunctie",
+      "groep": "Onderhoud",
+      "soort": "primair",
+      "klant": "intern",
+      "domein": "vastgoedonderhoud",
+      "stappen_voorzet": []
+    },
+    {
+      "id": "vastgoedgegevensbeheerfunctie",
+      "naam": "Vastgoedgegevensbeheerfunctie",
+      "groep": "Vastgoedgegevens",
+      "soort": "primair",
+      "klant": "intern",
       "domein": "vastgoedsturing",
       "stappen_voorzet": []
     },
     {
-      "id": "verkopen-appartementsrechten",
-      "naam": "Verkopen appartementsrechten",
-      "groep": "Verkochte eenheid",
+      "id": "eenheidmonitoringfunctie",
+      "naam": "Eenheidmonitoringfunctie",
+      "groep": "Vastgoedgegevens",
       "soort": "primair",
-      "klant": "extern",
+      "klant": "intern",
       "domein": "vastgoedsturing",
       "stappen_voorzet": []
     },
     {
-      "id": "voeren-administratief-beheer-vve",
-      "naam": "Voeren administratief beheer VvE",
-      "groep": "Beheerde VvE",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "klantbeheer",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "voeren-financieel-beheer-vve",
-      "naam": "Voeren financieel beheer VvE",
-      "groep": "Beheerde VvE",
+      "id": "debiteurenfunctie",
+      "naam": "Debiteurenfunctie",
+      "groep": "Financieel",
       "soort": "primair",
       "klant": "extern",
       "domein": "financien-primair",
       "stappen_voorzet": []
     },
     {
-      "id": "voeren-technisch-beheer-vve",
-      "naam": "Voeren technisch beheer VvE",
-      "groep": "Beheerde VvE",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "besturen-vve",
-      "naam": "Besturen VvE",
-      "groep": "Beheerde VvE",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "voeren-debiteurenbeheer",
-      "naam": "Voeren debiteurenbeheer",
-      "groep": "Primair financieel management",
+      "id": "incassofunctie",
+      "naam": "Incassofunctie",
+      "groep": "Financieel",
       "soort": "primair",
       "klant": "extern",
       "domein": "financien-primair",
       "stappen_voorzet": []
     },
     {
-      "id": "prolongeren-eenheden",
-      "naam": "Prolongeren eenheden",
-      "groep": "Primair financieel management",
+      "id": "deurwaarderfunctie",
+      "naam": "Deurwaarderfunctie",
+      "groep": "Financieel",
       "soort": "primair",
       "klant": "extern",
       "domein": "financien-primair",
       "stappen_voorzet": []
     },
     {
-      "id": "incasseren-vorderingen",
-      "naam": "Incasseren vorderingen",
-      "groep": "Primair financieel management",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "financien-primair",
+      "id": "crediteurenfunctie",
+      "naam": "Crediteurenfunctie",
+      "groep": "Financieel",
+      "soort": "ondersteunend",
+      "domein": "financien-ondersteunend",
       "stappen_voorzet": []
     },
     {
-      "id": "faciliteren-woonco-peratie",
-      "naam": "Faciliteren wooncoöperatie",
-      "groep": "Ondersteunde wooncoöperatie",
-      "soort": "primair",
-      "klant": "extern",
-      "domein": "wonen-leefbaarheid",
+      "id": "betaalfunctie",
+      "naam": "Betaalfunctie",
+      "groep": "Financieel",
+      "soort": "ondersteunend",
+      "domein": "financien-ondersteunend",
       "stappen_voorzet": []
     },
     {
-      "id": "herontwikkelen-eenheden",
-      "naam": "(Her)Ontwikkelen eenheden",
-      "groep": "Fysieke eenheid",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedontwikkeling",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "aankopen-eenheden",
-      "naam": "Aankopen eenheden",
-      "groep": "Fysieke eenheid",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "wijzigen-exploitatie",
-      "naam": "Wijzigen exploitatie",
-      "groep": "Fysieke eenheid",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "beheren-energielabels",
-      "naam": "Beheren energielabels",
-      "groep": "Fysieke eenheid",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "co-rdineren-asbestsanering",
-      "naam": "Coördineren asbestsanering",
-      "groep": "Fysieke eenheid",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "co-rdineren-project-planmatig-onderhoud",
-      "naam": "Coördineren project planmatig onderhoud",
-      "groep": "Vastgoedonderhoud",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "co-rdineren-mutatieonderhoud",
-      "naam": "Coördineren mutatieonderhoud",
-      "groep": "Vastgoedonderhoud",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "co-rdineren-reparatieonderhoud",
-      "naam": "Coördineren reparatieonderhoud",
-      "groep": "Vastgoedonderhoud",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "uitvoeren-onderhoudsorder",
-      "naam": "Uitvoeren onderhoudsorder",
-      "groep": "Vastgoedonderhoud",
-      "soort": "primair",
-      "klant": "intern",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "bepalen-missie",
-      "naam": "Bepalen missie",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "besturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "bepalen-visie",
-      "naam": "Bepalen visie",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "besturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-ondernemingsstrategie",
-      "naam": "Opstellen ondernemingsstrategie",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "besturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "bepalen-portefeuillevisie",
-      "naam": "Bepalen portefeuillevisie",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-marktscan",
-      "naam": "Opstellen marktscan",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-gebiedsvisie",
-      "naam": "Opstellen/actualiseren gebiedsvisie",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "bepalen-facetbeleid",
-      "naam": "Bepalen facetbeleid",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "besturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "overeenkomen-prestatieafspraken",
-      "naam": "Overeenkomen prestatieafspraken",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "besturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-jaarplanbrief",
-      "naam": "Opstellen jaarplanbrief",
-      "groep": "Richting",
+      "id": "kwaliteitsmanagementfunctie",
+      "naam": "Kwaliteitsmanagementfunctie",
+      "groep": "Sturing",
       "soort": "sturend",
       "domein": "planning-control",
       "stappen_voorzet": []
     },
     {
-      "id": "analyseren-markt-en-beleidsomgeving-complexen-wijk-buurt",
-      "naam": "Analyseren markt- en beleidsomgeving complexen (wijk/buurt)",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "bepalen-strategie-en-positionering-complexen",
-      "naam": "Bepalen strategie en positionering complexen",
-      "groep": "Richting",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-portefeuilleplan",
-      "naam": "Opstellen/actualiseren portefeuilleplan",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-beleidsplannen",
-      "naam": "Opstellen/actualiseren beleidsplannen",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "besturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-meerjaren-onderhoudsbegroting",
-      "naam": "Opstellen/actualiseren (Meerjaren-)Onderhoudsbegroting",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "vastgoedonderhoud",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-meerjaren-investeringsbegroting",
-      "naam": "Opstellen/actualiseren (Meerjaren-)Investeringsbegroting",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "planning-control",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-complexplannen",
-      "naam": "Opstellen/actualiseren complexplannen",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-projectinvesteringsplan",
-      "naam": "Opstellen projectinvesteringsplan",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "vastgoedontwikkeling",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-financieel-plan",
-      "naam": "Opstellen/actualiseren financieel plan",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "planning-control",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "opstellen-actualiseren-bedrijfsvoeringsplan",
-      "naam": "Opstellen/actualiseren bedrijfsvoeringsplan",
-      "groep": "Plannen",
-      "soort": "sturend",
-      "domein": "planning-control",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "uitvoeren-beleidssimulatie-ex-ante-en-accorderen-facetbeleid-en-portefeuilleplan-opstellen-mjb",
-      "naam": "Uitvoeren beleidssimulatie ex-ante en accorderen facetbeleid en portefeuilleplan (opstellen MJB)",
-      "groep": "Evaluatie en terugkoppeling",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "uitvoeren-beleidsevaluatie-ex-ante-vastgoedbeheer-en-vastgoedinvesteringsplannen",
-      "naam": "Uitvoeren beleidsevaluatie ex-ante vastgoedbeheer en vastgoedinvesteringsplannen",
-      "groep": "Evaluatie en terugkoppeling",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "meten-en-evalueren-huidige-prestaties-van-complexen",
-      "naam": "Meten en evalueren huidige prestaties van complexen",
-      "groep": "Evaluatie en terugkoppeling",
-      "soort": "sturend",
-      "domein": "vastgoedsturing",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "uitvoeren-control",
-      "naam": "Uitvoeren control",
-      "groep": "Monitoring",
-      "soort": "sturend",
-      "domein": "planning-control",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "uitvoeren-risicomanagement",
-      "naam": "Uitvoeren risicomanagement",
-      "groep": "Monitoring",
-      "soort": "sturend",
-      "domein": "risico-compliance",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "verantwoorden-bedrijfsvoering",
-      "naam": "Verantwoorden bedrijfsvoering",
-      "groep": "Monitoring",
-      "soort": "sturend",
-      "domein": "planning-control",
-      "stappen_voorzet": []
-    },
-    {
-      "id": "uitvoeren-benchmark",
-      "naam": "Uitvoeren benchmark",
-      "groep": "Monitoring",
-      "soort": "sturend",
-      "domein": "planning-control",
+      "id": "kennismanagementfunctie",
+      "naam": "Kennismanagementfunctie",
+      "groep": "Sturing",
+      "soort": "ondersteunend",
+      "domein": "informatievoorziening",
       "stappen_voorzet": []
     }
   ]

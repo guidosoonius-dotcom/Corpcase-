@@ -127,7 +127,7 @@ export function Proceskeuze({
             className={invoerStijl}
             value={zoek}
             onChange={(e) => setZoek(e.target.value)}
-            placeholder="Zoeken in de 61 functies…"
+            placeholder={`Zoeken in de ${bedrijfsfuncties.functies.length} functies…`}
             aria-label="Zoeken in de bedrijfsfuncties"
           />
         </div>

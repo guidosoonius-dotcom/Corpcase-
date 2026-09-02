@@ -116,12 +116,12 @@ test("twee spelers tekenen samen één procesplaat", async ({ browser }) => {
   await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
   await facilitator.goto(`/sessie/${sessieId}`);
 
-  await facilitator.getByLabel("Zoeken in de bedrijfsfuncties").fill("reparatieonderhoud");
+  await facilitator.getByLabel("Zoeken in de bedrijfsfuncties").fill("onderhoudsfunctie");
   await facilitator.getByRole("button", { name: "Op tafel leggen" }).first().click();
   await expect(facilitator.getByText("Staat al op tafel.")).toBeVisible();
 
   // Marieke ziet hetzelfde proces verschijnen, zonder te verversen.
-  await expect(wonen.getByText("Coördineren reparatieonderhoud").first()).toBeVisible();
+  await expect(wonen.getByText("Onderhoudsfunctie").first()).toBeVisible();
 
   // --- Fase 2: samen de plaat tekenen --------------------------------------
   await facilitator.goto(`/sessie/${sessieId}/beheer`);
@@ -259,7 +259,7 @@ test("twee spelers scoren een proces en zien hetzelfde gemiddelde advies", async
 
   await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
   await facilitator.goto(`/sessie/${sessieId}`);
-  await kiesProces(facilitator, "reparatieonderhoud");
+  await kiesProces(facilitator, "onderhoudsfunctie");
 
   await facilitator.goto(`/sessie/${sessieId}/beheer`);
   await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
@@ -320,7 +320,7 @@ test("een team dat afwijkt van het advies moet een motivatie kunnen vastleggen",
 
   await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
   await facilitator.goto(`/sessie/${sessieId}`);
-  await kiesProces(facilitator, "reparatieonderhoud");
+  await kiesProces(facilitator, "onderhoudsfunctie");
 
   await facilitator.goto(`/sessie/${sessieId}/beheer`);
   await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
@@ -372,7 +372,7 @@ test("een verbetering wordt doorgerekend, de praktijktoets krijgt een besluit, e
   // --- Proceskeuze en een enkele stap op de plaat --------------------------
   await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
   await facilitator.goto(`/sessie/${sessieId}`);
-  await kiesProces(facilitator, "reparatieonderhoud");
+  await kiesProces(facilitator, "onderhoudsfunctie");
 
   await facilitator.goto(`/sessie/${sessieId}/beheer`);
   await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
@@ -430,8 +430,39 @@ test("een verbetering wordt doorgerekend, de praktijktoets krijgt een besluit, e
   // voor een processessie; deze test bewijst dat de eigen procesvariant het overneemt.
   await facilitator.goto(`/sessie/${sessieId}/rapport`);
   await expect(facilitator.getByRole("heading", { name: "In het kort" })).toBeVisible();
-  await expect(facilitator.getByRole("heading", { name: "Coördineren reparatieonderhoud" })).toBeVisible();
+  await expect(facilitator.getByRole("heading", { name: "Onderhoudsfunctie" })).toBeVisible();
   await expect(facilitator.getByText("Automatiseer de herinnering")).toBeVisible();
   await expect(facilitator.getByRole("heading", { name: "Praktijktoetsen" })).toBeVisible();
   await expect(facilitator.getByRole("button", { name: "CSV downloaden" })).toBeVisible();
+});
+
+test("de voorzet van Onderhoudsfunctie laadt een echte, meerstaps procesplaat", async ({
+  browser,
+}) => {
+  const facilitator = await nieuweSpeler(browser);
+
+  await facilitator.goto("/start");
+  await facilitator.getByRole("radio", { name: /^Processen/ }).check();
+  await facilitator.getByLabel("Jouw naam").fill("Guido");
+  await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
+  await facilitator.getByRole("button", { name: "Sessie starten" }).click();
+  await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
+  const sessieId = facilitator.url().match(/\/sessie\/([0-9a-f-]+)\//)![1];
+
+  await facilitator.getByRole("button", { name: "Volgende fase: Proceskeuze" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+  await kiesProces(facilitator, "onderhoudsfunctie");
+
+  await facilitator.goto(`/sessie/${sessieId}/beheer`);
+  await facilitator.getByRole("button", { name: "Volgende fase: Afpellen" }).click();
+  await facilitator.goto(`/sessie/${sessieId}`);
+
+  // Dit is de eerste bedrijfsfunctie met echt materiaal: de knop laadt nu voor het eerst iets,
+  // in plaats van dat de plaat leeg blijft tot het team zelf typt.
+  await facilitator.getByRole("button", { name: "Laad de plaat als startpunt" }).click();
+
+  await expect(facilitator.getByText("Intake melding klant")).toBeVisible();
+  await expect(facilitator.getByText("Afhandelen onderhoudsverzoek")).toBeVisible();
+  // Meerdere uitvoerders wisselen elkaar af op deze plaat, dus er staat minstens één overdracht.
+  await expect(facilitator.getByText(/overdracht naar/).first()).toBeVisible();
 });

@@ -295,8 +295,8 @@ export const speelmodiBestandSchema = z.object({
 /**
  * Een bedrijfsfunctie uit het CORA-functiemodel: het niveau waarop een processessie kiest.
  *
- * Een niveau fijner dan de achttien domeinen in `content/cora/domeinen.json` — "Coördineren
- * reparatieonderhoud" in plaats van "Vastgoedonderhoud" — en een niveau grover dan de stappen
+ * Een niveau fijner dan de achttien domeinen in `content/cora/domeinen.json` — "Onderhoudsfunctie"
+ * in plaats van "Vastgoedonderhoud" — en een niveau grover dan de stappen
  * waaruit zo'n functie bestaat. Die stappen staan hier bewust niet standaard in: die tekent het
  * team zelf op de procesplaat. Is er materiaal van de corporatie zelf, dan komt dat in
  * `stappen_voorzet` te staan, met een eigen bron, en verschijnt het in de sessie als één knop —
