@@ -11,7 +11,9 @@ ranglijst tussen collega's.
 DUWO is de eerste voorbeeldcorporatie.
 
 **Live:** https://corpcase.vercel.app — elke push naar deze branch deployt automatisch.
-**Een sessie begeleiden:** zie [`docs/FACILITATOR.md`](docs/FACILITATOR.md).
+**Een sessie begeleiden:** de volledige handleiding staat in
+[`docs/handleiding-facilitator-sessie1.docx`](docs/handleiding-facilitator-sessie1.docx); zie
+[`docs/FACILITATOR.md`](docs/FACILITATOR.md) voor de korte verwijzing.
 **Vormgeving en huisstijl per corporatie:** zie [`docs/ONTWERP.md`](docs/ONTWERP.md).
 
 ## Opzet
