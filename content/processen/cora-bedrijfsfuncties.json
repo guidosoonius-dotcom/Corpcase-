@@ -50,8 +50,16 @@
       "soort": "primair",
       "klant": "extern",
       "domein": "vastgoedbemiddeling",
-      "opmerking": "Heeft een eigen diagram ('Verhuren Eenheden'), maar dat bevat vooral verwijzingen naar processen die al bij andere procesketens horen (Onderhoud, Overeenkomstbeheer, Matchen) en weinig eigen Werkproces-detail — te dun voor een eigen betrouwbare lijn.",
-      "stappen_voorzet": []
+      "opmerking": "Stappen_voorzet is afgeleid uit coraveraonline.nl (CORA 4.3.3, CC BY 4.0), niet uit VERA-Domeinmodellen — dat diagram ('Verhuren Eenheden') was zelf te dun. De detailpagina van het bedrijfsproces 'Verhuren eenheden' bevat geen leesbaar volgorde-diagram (de SVG is niet uit te lezen), maar wel een expliciete TriggeringRelationship ('Werven en selecteren kandidaten leidt tot Verhuren eenheden', bevestigt de aansluiting op woonruimteverdeelfunctie) en Werkproces-beschrijvingen die hun eigen precondition noemen: 'Opleveren eenheid' is er expliciet voor een eenheid waarvan de huurovereenkomst al ondertekend is, 'Verantwoorden verhuring' expliciet voor het registreren van zowel de ondertekende overeenkomst als de opgeleverde eenheid — die twee zinnen zijn de bron voor de volgorde, geen diagramlijn. Andere Werkprocessen op dezelfde pagina (huuropzegging, tenaamstelling, woningruil, medehuurderschap, bezwaar huurverhoging, tijdelijke contracten) zijn losstaande deelprocessen van hetzelfde bedrijfsproces en horen niet in déze keten. Deze bron geeft geen swimlane/rol-informatie (die zit alleen in de SVG), dus elke stap staat vooralsnog op de functie zelf.",
+      "stappen_voorzet": [
+        { "naam": "Coördineren verhuurklaar maken eenheid", "uitvoerder": "Vastgoedverhuurfunctie" },
+        { "naam": "Begeleiden huurderskeuzes", "uitvoerder": "Vastgoedverhuurfunctie", "uitzondering": true },
+        { "naam": "Opstellen en ondertekenen huurovereenkomst", "uitvoerder": "Vastgoedverhuurfunctie" },
+        { "naam": "Opleveren eenheid", "uitvoerder": "Vastgoedverhuurfunctie" },
+        { "naam": "Verantwoorden verhuring", "uitvoerder": "Vastgoedverhuurfunctie" }
+      ],
+      "voorzet_bron": "Bedrijfsproces 'Verhuren eenheden', coraveraonline.nl (CORA 4.3.3, CC BY 4.0), https://www.coraveraonline.nl/index.php/Id-9b7ea443-b993-0810-2f0b-e0b18776d83c — geraadpleegd via Tavily-extractie (WebFetch op dit domein is egress-blocked).",
+      "voorzet_geverifieerd": false
     },
     {
       "id": "vastgoedverkoopfunctie",
