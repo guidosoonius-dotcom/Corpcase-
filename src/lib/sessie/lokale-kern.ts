@@ -33,6 +33,7 @@ import {
   type BesluitInvoer,
   type BijdrageInvoer,
   type EigenUitdagingInvoer,
+  type FacilitatorSessieOverzicht,
   type Identiteit,
   type NieuweSessie,
   type NieuwProces,
@@ -268,6 +269,38 @@ export function facilitatorInloggen(beheerCode: string): Toegang {
     };
   }
   throw new SessieFout("Onbekende beheercode.");
+}
+
+function wachtwoordKlopt(opgegeven: string): boolean {
+  const verwacht = process.env.FACILITATOR_WACHTWOORD;
+  return Boolean(verwacht) && opgegeven === verwacht;
+}
+
+/** Het facilitatoroverzicht. In deze modus staat alles toch al in het geheugen van de server. */
+export function lijstAlleSessies(wachtwoord: string): FacilitatorSessieOverzicht[] {
+  if (!wachtwoordKlopt(wachtwoord)) throw new SessieFout("Onjuist wachtwoord.");
+
+  return [...dossiers.values()]
+    .sort((a, b) => b.sessie.aangemaakt_op.localeCompare(a.sessie.aangemaakt_op))
+    .map((dossier) => ({
+      id: dossier.sessie.id,
+      titel: dossier.sessie.titel,
+      spelsoort: dossier.sessie.spelsoort,
+      speelmodus: dossier.sessie.speelmodus,
+      fase: dossier.sessie.fase,
+      join_code: dossier.sessie.join_code,
+      beheer_code: dossier.sessie.beheer_code ?? "",
+      deelnemers_aantal: dossier.deelnemers.length,
+      aangemaakt_op: dossier.sessie.aangemaakt_op,
+      afgerond_op: dossier.sessie.afgerond_op,
+    }));
+}
+
+/** Onomkeerbaar: het hele dossier verdwijnt uit het geheugen. */
+export function verwijderSessie(identiteit: Identiteit, sessieId: string): void {
+  const dossier = vindDossier(sessieId);
+  if (!magBesturen(dossier, identiteit)) throw new SessieFout("Geen toegang tot deze sessie.");
+  dossiers.delete(sessieId);
 }
 
 // Lezen ---------------------------------------------------------------------

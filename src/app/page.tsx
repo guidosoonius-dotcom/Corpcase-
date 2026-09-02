@@ -28,26 +28,18 @@ export default function Home() {
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
-            href="/start"
+            href="/facilitator"
             className="knop inline-flex items-center justify-center rounded-kaart bg-accent-sterk px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-diep"
           >
-            Sessie starten
+            Ik ben facilitator
           </Link>
           <Link
             href="/deelnemen"
             className="knop inline-flex items-center justify-center rounded-kaart border border-rand-sterk bg-vlak px-5 py-3 text-sm font-medium text-inkt transition-colors hover:border-accent-sterk"
           >
-            Deelnemen met een code
+            Ik heb een sessiecode
           </Link>
         </div>
-
-        <p className="mt-4 text-xs text-inkt-licht">
-          Sessie al gestart en op een ander apparaat verder?{" "}
-          <Link href="/facilitator" className="font-medium text-accent-diep hover:underline">
-            Facilitator inloggen
-          </Link>
-          .
-        </p>
 
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
           {[

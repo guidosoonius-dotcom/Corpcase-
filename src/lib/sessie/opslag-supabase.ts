@@ -35,6 +35,7 @@ import {
   type BesluitInvoer,
   type BijdrageInvoer,
   type EigenUitdagingInvoer,
+  type FacilitatorSessieOverzicht,
   type Identiteit,
   type NieuweSessie,
   type NieuwProces,
@@ -253,6 +254,33 @@ export async function facilitatorInloggen(beheerCode: string): Promise<Toegang> 
     deelnemer: deelnemer as DeelnemerRij,
     identiteit: { deelnemerToken: (deelnemer as DeelnemerRij).token, beheerCode: code },
   };
+}
+
+/**
+ * Het facilitatoroverzicht. Anders dan de rest van dit bestand gaat dit niet via `maakClient` en
+ * dus niet via RLS — het roept het wachtwoord-beveiligde `/api/facilitator/sessies` aan, de enige
+ * plek die de service-role-sleutel gebruikt. Zie de toelichting daar en in
+ * src/lib/supabase/service.ts.
+ */
+export async function lijstAlleSessies(wachtwoord: string): Promise<FacilitatorSessieOverzicht[]> {
+  const antwoord = await fetch("/api/facilitator/sessies", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ wachtwoord }),
+  });
+  const lichaam = (await antwoord.json()) as {
+    sessies?: FacilitatorSessieOverzicht[];
+    fout?: string;
+  };
+  if (!antwoord.ok) throw new SessieFout(lichaam.fout ?? "Overzicht ophalen mislukt.");
+  return lichaam.sessies ?? [];
+}
+
+/** Onomkeerbaar: child-tabellen hangen aan `sessies (id) on delete cascade` en gaan mee. */
+export async function verwijderSessie(identiteit: Identiteit, sessieId: string): Promise<void> {
+  const client = maakClient(identiteit);
+  const { error } = await client.from("sessies").delete().eq("id", sessieId);
+  if (error) throw new SessieFout(`Sessie verwijderen: ${error.message}`);
 }
 
 // Lezen ---------------------------------------------------------------------
@@ -906,6 +934,8 @@ export const supabaseOpslag: Opslag = {
   zoekSessie,
   neemDeel,
   facilitatorInloggen,
+  lijstAlleSessies,
+  verwijderSessie,
   haalState,
   zetFase,
   zetFaseDeadline,

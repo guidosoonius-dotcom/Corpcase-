@@ -16,6 +16,7 @@ import {
   type BesluitInvoer,
   type BijdrageInvoer,
   type EigenUitdagingInvoer,
+  type FacilitatorSessieOverzicht,
   type Identiteit,
   type NieuweSessie,
   type NieuwProces,
@@ -62,6 +63,10 @@ export const lokaleOpslag: Opslag = {
   neemDeel: (args) => roep<Toegang>("neemDeel", {}, args),
   facilitatorInloggen: (beheerCode) =>
     roep<Toegang>("facilitatorInloggen", {}, { beheerCode }),
+  lijstAlleSessies: (wachtwoord) =>
+    roep<FacilitatorSessieOverzicht[]>("lijstAlleSessies", {}, { wachtwoord }),
+  verwijderSessie: (identiteit, sessieId) =>
+    roep<void>("verwijderSessie", identiteit, { sessieId }),
   haalState: (identiteit, sessieId) =>
     roep<SessieState>("haalState", identiteit, { sessieId }),
 

@@ -1,6 +1,14 @@
-import { describe, expect, it } from "vitest";
-import { haalState, maakSessie, voegEigenUitdagingToe } from "../lokale-kern";
-import { organisaties, speelmodi } from "@/lib/content";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import {
+  haalState,
+  lijstAlleSessies,
+  maakSessie,
+  neemDeel,
+  verwijderSessie,
+  voegEigenUitdagingToe,
+} from "../lokale-kern";
+import { organisaties, rollen, speelmodi } from "@/lib/content";
+import { SessieFout } from "../soorten";
 
 /**
  * Een facilitator kan bij het starten kiezen om alleen te begeleiden, zonder zelf een rol te
@@ -70,5 +78,81 @@ describe("voegEigenUitdagingToe", () => {
     );
     expect(eigenSelectie).toBeDefined();
     expect(eigenSelectie?.herkenning).toBe(3);
+  });
+});
+
+/**
+ * Het facilitatoroverzicht (/facilitator) werkt achter een gedeeld wachtwoord, niet achter een
+ * per-sessie-identiteit — de enige plek in deze module die dat doet. `verwijderSessie` blijft wél
+ * gewoon identiteitsgebonden, zoals elke andere mutatie.
+ */
+describe("lijstAlleSessies en verwijderSessie", () => {
+  let eerdereWachtwoord: string | undefined;
+  beforeAll(() => {
+    eerdereWachtwoord = process.env.FACILITATOR_WACHTWOORD;
+    process.env.FACILITATOR_WACHTWOORD = "geheim";
+  });
+  afterAll(() => {
+    if (eerdereWachtwoord === undefined) delete process.env.FACILITATOR_WACHTWOORD;
+    else process.env.FACILITATOR_WACHTWOORD = eerdereWachtwoord;
+  });
+
+  it("weigert een onjuist wachtwoord", () => {
+    expect(() => lijstAlleSessies("verkeerd")).toThrow(SessieFout);
+  });
+
+  it("toont een net aangemaakte sessie in het overzicht", () => {
+    const toegang = maakSessie({
+      titel: "Overzichtstest",
+      organisatieId: organisaties[0].id,
+      speelmodusId: speelmodi.modi[0].id,
+      facilitatorNaam: "Guido",
+      facilitatorRolId: "bestuurder",
+    });
+
+    const overzicht = lijstAlleSessies("geheim");
+    const gevonden = overzicht.find((s) => s.id === toegang.sessie.id);
+    expect(gevonden?.titel).toBe("Overzichtstest");
+    expect(gevonden?.beheer_code).toBe(toegang.identiteit.beheerCode);
+    expect(gevonden?.deelnemers_aantal).toBe(1);
+  });
+
+  it("weigert verwijderSessie voor wie geen facilitator is", () => {
+    const toegang = maakSessie({
+      titel: "Beveiligingstest",
+      organisatieId: organisaties[0].id,
+      speelmodusId: speelmodi.modi[0].id,
+      facilitatorNaam: "Guido",
+      facilitatorRolId: null,
+    });
+    const deelnemerToegang = neemDeel({
+      code: toegang.sessie.join_code,
+      naam: "Marieke",
+      rolId: rollen.rollen[1].id,
+    });
+
+    expect(() =>
+      verwijderSessie(
+        { deelnemerToken: deelnemerToegang.identiteit.deelnemerToken },
+        toegang.sessie.id,
+      ),
+    ).toThrow(SessieFout);
+    // De sessie bestaat na de geweigerde poging nog gewoon.
+    expect(haalState(toegang.identiteit, toegang.sessie.id).sessie.id).toBe(toegang.sessie.id);
+  });
+
+  it("verwijdert de sessie voor de facilitator, onomkeerbaar", () => {
+    const toegang = maakSessie({
+      titel: "Verwijdertest",
+      organisatieId: organisaties[0].id,
+      speelmodusId: speelmodi.modi[0].id,
+      facilitatorNaam: "Guido",
+      facilitatorRolId: "bestuurder",
+    });
+
+    verwijderSessie(toegang.identiteit, toegang.sessie.id);
+
+    expect(() => haalState(toegang.identiteit, toegang.sessie.id)).toThrow(SessieFout);
+    expect(lijstAlleSessies("geheim").some((s) => s.id === toegang.sessie.id)).toBe(false);
   });
 });

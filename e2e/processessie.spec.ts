@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { naarFacilitator } from "./hulp";
 
 /**
  * De processessie: het tweede spel.
@@ -32,7 +33,7 @@ test("een processessie doorloopt zijn eigen fases, niet die van de use-casesessi
   const wonen = await nieuweSpeler(browser);
 
   // --- Een processessie starten --------------------------------------------
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Bestuurder" });
@@ -97,7 +98,7 @@ test("twee spelers tekenen samen één procesplaat", async ({ browser }) => {
   const facilitator = await nieuweSpeler(browser);
   const wonen = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
@@ -203,7 +204,7 @@ test("een speler die vooruitloopt in een processessie krijgt daar een waarschuwi
 }) => {
   const facilitator = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Bestuurder" });
@@ -242,7 +243,7 @@ test("twee spelers scoren een proces en zien hetzelfde gemiddelde advies", async
   const facilitator = await nieuweSpeler(browser);
   const wonen = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
@@ -303,7 +304,7 @@ test("een team dat afwijkt van het advies moet een motivatie kunnen vastleggen",
   const facilitator = await nieuweSpeler(browser);
   const wonen = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
@@ -361,7 +362,7 @@ test("een verbetering wordt doorgerekend, de praktijktoets krijgt een besluit, e
 }) => {
   const facilitator = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });
@@ -403,6 +404,13 @@ test("een verbetering wordt doorgerekend, de praktijktoets krijgt een besluit, e
   await verbeteringKaart.getByRole("button", { name: "Doorrekenen", exact: true }).click();
   await facilitator.getByRole("button", { name: "+ Minder derving of afboeking" }).click();
   await facilitator.getByLabel(/Huidige post per jaar/).fill("10000");
+  // Elke invulling stuurt de volledige driver naar de server en ververst van daar terug; de twee
+  // velden na elkaar invullen zonder te wachten laat de tweede sneleren op een nog niet
+  // teruggekomen eerste ronde, die zichzelf dan weer overschrijft. Wachten tot de server de eerste
+  // waarde heeft bevestigd (nog maar één veld "onbekend") voorkomt die race.
+  await expect(facilitator.getByText("Nog onbekend: vul reductie_pct in.")).toBeVisible({
+    timeout: 20_000,
+  });
   await facilitator.getByLabel(/Verwachte reductie/).fill("50");
 
   // Zodra de driver compleet is, staat er een bandbreedte tussen twee bedragen en niet één hard
@@ -441,7 +449,7 @@ test("de voorzet van Onderhoudsfunctie laadt een echte, meerstaps procesplaat", 
 }) => {
   const facilitator = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByRole("radio", { name: /^Processen/ }).check();
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Manager Vastgoed" });

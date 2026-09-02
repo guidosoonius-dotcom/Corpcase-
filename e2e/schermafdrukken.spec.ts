@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { naarFacilitator } from "./hulp";
 
 /**
  * Maakt schermafdrukken van de belangrijkste schermen, om ze met het oog te kunnen beoordelen.
@@ -24,7 +25,7 @@ test("schermafdrukken van een gevulde sessie", async ({ browser }) => {
   const facilitator = await (await browser.newContext()).newPage();
   const speler = await (await browser.newContext()).newPage();
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByRole("button", { name: "Sessie starten" }).click();
   await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);

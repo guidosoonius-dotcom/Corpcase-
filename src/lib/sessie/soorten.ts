@@ -127,6 +127,24 @@ export type Toegang = {
   identiteit: Identiteit;
 };
 
+/**
+ * Eén rij in het facilitatoroverzicht (`/facilitator`). Draagt de échte beheercode — anders dan
+ * `SessieRij` zoals die verder door de app gaat, waar hij altijd gemaskeerd is — omdat het
+ * overzicht hem nodig heeft om per sessie `facilitatorInloggen` te kunnen aanroepen.
+ */
+export type FacilitatorSessieOverzicht = {
+  id: string;
+  titel: string;
+  spelsoort: Spelsoort;
+  speelmodus: string;
+  fase: Fase;
+  join_code: string;
+  beheer_code: string;
+  deelnemers_aantal: number;
+  aangemaakt_op: string;
+  afgerond_op: string | null;
+};
+
 export type NieuweUsecase = {
   sessieId: string;
   eigenaarId: string;
@@ -247,6 +265,15 @@ export type Opslag = {
    * dezelfde `Toegang` op als bij het starten van de sessie.
    */
   facilitatorInloggen(beheerCode: string): Promise<Toegang>;
+  /**
+   * Alle sessies, voor het overzicht op `/facilitator`. Niet identiteitsgebonden zoals de rest van
+   * deze interface: dit werkt bewust buiten het per-sessie-toegangsmodel om, achter een gedeeld
+   * wachtwoord in plaats van een beheercode. Zie src/lib/supabase/service.ts voor hoe dat in de
+   * Supabase-implementatie is begrensd.
+   */
+  lijstAlleSessies(wachtwoord: string): Promise<FacilitatorSessieOverzicht[]>;
+  /** Onomkeerbaar; ruimt via de database-cascade (of het in-memory dossier) alles op wat erbij hoort. */
+  verwijderSessie(identiteit: Identiteit, sessieId: string): Promise<void>;
   haalState(identiteit: Identiteit, sessieId: string): Promise<SessieState>;
 
   zetFase(identiteit: Identiteit, sessieId: string, fase: Fase): Promise<void>;

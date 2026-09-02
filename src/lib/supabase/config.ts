@@ -8,7 +8,8 @@
  * De publiceerbare sleutel mág openbaar zijn. Hij zit sowieso in elke browser die de app opent,
  * en geeft op zichzelf nergens toegang toe: de RLS-policies in supabase/schema.sql weigeren alles
  * zonder een geldig deelnemertoken of een geldige beheercode. De geheime service-sleutel wordt
- * nergens in dit project gebruikt.
+ * verder nergens gebruikt dan in src/lib/supabase/service.ts, voor het wachtwoord-beveiligde
+ * facilitatoroverzicht — zie de toelichting daar en in .env.example.
  */
 
 const STANDAARD_URL = "https://bijycvgfvybcqrmqtywy.supabase.co";

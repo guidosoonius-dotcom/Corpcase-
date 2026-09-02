@@ -38,6 +38,8 @@ export default defineConfig({
       // Voorkomt dat .env.local de opslagkeuze alsnog naar Supabase trekt.
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "",
+      // Vast wachtwoord voor de facilitatoromgeving in de teststand; zie e2e/hulp.ts.
+      FACILITATOR_WACHTWOORD: "test-wachtwoord",
     },
   },
 });

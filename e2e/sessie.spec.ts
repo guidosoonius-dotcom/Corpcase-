@@ -1,5 +1,6 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { naarFacilitator } from "./hulp";
 
 /**
  * De volledige sessie met drie spelers.
@@ -29,7 +30,7 @@ test("drie spelers doorlopen samen een sessie tot en met de roadmap", async ({ b
   const it = await nieuweSpeler(browser);
 
   // --- Sessie starten -------------------------------------------------------
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByLabel("Jouw rol").selectOption({ label: "Bestuurder" });
   await facilitator.getByRole("button", { name: "Sessie starten" }).click();
@@ -221,7 +222,7 @@ test("de facilitator logt op een ander apparaat opnieuw in met de beheercode", a
   const speler = await nieuweSpeler(browser);
   const anderApparaat = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByRole("button", { name: "Sessie starten" }).click();
   await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
@@ -243,10 +244,12 @@ test("de facilitator logt op een ander apparaat opnieuw in met de beheercode", a
   const beheerCode = (await facilitator.getByLabel(/Beheercode/).innerText()).trim();
   expect(beheerCode).toHaveLength(10);
 
-  // Op een nieuwe browser — geen identiteit, geen localStorage — logt hij daarmee weer in.
+  // Op een nieuwe browser — geen identiteit, geen localStorage, en het wachtwoord niet bij de
+  // hand — logt hij daarmee weer in via de ingeklapte beheercode-optie.
   await anderApparaat.goto("/facilitator");
+  await anderApparaat.getByText("Heb je alleen een beheercode van één sessie?").click();
   await anderApparaat.getByLabel("Beheercode").fill(beheerCode);
-  await anderApparaat.getByRole("button", { name: "Inloggen" }).click();
+  await anderApparaat.getByRole("button", { name: "Direct naar die sessie" }).click();
   await anderApparaat.waitForURL(`/sessie/${sessieId}/beheer`);
   await expect(anderApparaat.getByText("Je kijkt mee")).toHaveCount(0);
 
@@ -261,7 +264,7 @@ test("een speler navigeert zelf vooruit en krijgt een waarschuwing dat hij voorl
   const facilitator = await nieuweSpeler(browser);
   const speler = await nieuweSpeler(browser);
 
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByRole("button", { name: "Sessie starten" }).click();
   await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);
@@ -298,7 +301,7 @@ test("een speler navigeert zelf vooruit en krijgt een waarschuwing dat hij voorl
 
 test("een browser zonder identiteit komt niet in de sessie", async ({ browser }) => {
   const facilitator = await nieuweSpeler(browser);
-  await facilitator.goto("/start");
+  await naarFacilitator(facilitator);
   await facilitator.getByLabel("Jouw naam").fill("Guido");
   await facilitator.getByRole("button", { name: "Sessie starten" }).click();
   await facilitator.waitForURL(/\/sessie\/[0-9a-f-]+\/beheer$/);

@@ -37,6 +37,9 @@ const acties: Record<string, Handler> = {
   neemDeel: (_identiteit, a) => kern.neemDeel(als(a)),
   facilitatorInloggen: (_identiteit, a) =>
     kern.facilitatorInloggen(als<{ beheerCode: string }>(a).beheerCode),
+  lijstAlleSessies: (_identiteit, a) =>
+    kern.lijstAlleSessies(als<{ wachtwoord: string }>(a).wachtwoord),
+  verwijderSessie: (i, a) => kern.verwijderSessie(i, als<{ sessieId: string }>(a).sessieId),
 
   haalState: (i, a) => kern.haalState(i, als<{ sessieId: string }>(a).sessieId),
 
