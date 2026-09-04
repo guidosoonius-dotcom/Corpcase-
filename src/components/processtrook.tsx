@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Etiket, Kaart, Knop, invoerStijl } from "@/components/basis";
+import { Etiket, Kaart, Knop, Tabstrip, invoerStijl } from "@/components/basis";
 import { OmhoogIcoon, OmlaagIcoon, PlusIcoon, PrullenbakIcoon } from "@/components/icoon";
 import type { DeelnemerRij, ProcesRij, ProcesStapRij } from "@/lib/supabase/types";
 
@@ -378,22 +378,11 @@ export function ProcesTabs({
   if (processen.length <= 1) return null;
 
   return (
-    <div className="scroll-x flex gap-1.5">
-      {processen.map((proces) => (
-        <button
-          key={proces.id}
-          type="button"
-          onClick={() => onKies(proces.id)}
-          aria-current={proces.id === actiefId ? "true" : undefined}
-          className={`shrink-0 rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
-            proces.id === actiefId
-              ? "border-accent bg-accent-zacht text-accent-diep"
-              : "border-rand bg-vlak text-inkt-zacht hover:border-rand-sterk"
-          }`}
-        >
-          {proces.titel}
-        </button>
-      ))}
-    </div>
+    <Tabstrip
+      opties={processen.map((proces) => ({ id: proces.id, label: proces.titel }))}
+      actief={actiefId ?? null}
+      onKies={onKies}
+      toon="zacht"
+    />
   );
 }

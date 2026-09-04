@@ -14,7 +14,18 @@ import { opslag } from "@/lib/sessie/api";
 import { alleBeelden, dekking } from "@/lib/sessie/afgeleid";
 import type { SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Hoofdregel, Kaart, Knop, Kop, Leeg, Melding, Veld, invoerStijl } from "@/components/basis";
+import {
+  Etiket,
+  Hoofdregel,
+  Kaart,
+  Knop,
+  Kop,
+  Leeg,
+  Melding,
+  Tabstrip,
+  Veld,
+  invoerStijl,
+} from "@/components/basis";
 import { Bijdragen } from "@/components/bijdragen";
 
 /**
@@ -57,28 +68,15 @@ export function Identificatie({
         </Melding>
       ) : null}
 
-      <div className="scroll-x flex gap-1.5">
-        {(
-          [
-            ["portfolio", `Op tafel (${state.usecases.length})`],
-            ["bibliotheek", "Bibliotheek"],
-            ["eigen", "Zelf schrijven"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setTab(id)}
-            className={`shrink-0 rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
-              tab === id
-                ? "border-accent-sterk bg-accent-sterk text-white"
-                : "border-rand-sterk bg-vlak text-inkt-zacht"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <Tabstrip
+        opties={[
+          { id: "portfolio" as const, label: `Op tafel (${state.usecases.length})` },
+          { id: "bibliotheek" as const, label: "Bibliotheek" },
+          { id: "eigen" as const, label: "Zelf schrijven" },
+        ]}
+        actief={tab}
+        onKies={setTab}
+      />
 
       {tab === "portfolio" ? (
         beelden.length === 0 ? (

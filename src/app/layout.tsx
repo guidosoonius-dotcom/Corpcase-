@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 /**
@@ -8,16 +8,20 @@ import "./globals.css";
  * geen bezoekersdata naar Google — voor een corporatie die in deze game zelf over privacy bij
  * huurdersdata praat, is dat geen detail.
  */
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-jakarta",
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-playfair",
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -35,7 +39,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="nl" className={`h-full ${inter.variable} ${playfair.variable}`}>
+    <html lang="nl" className={`h-full ${jakarta.variable} ${fraunces.variable}`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

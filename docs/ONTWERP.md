@@ -49,6 +49,10 @@ wordt.
   en de matrix op de beamer. Geen invoervelden op donker.
 - **Decoratie is aria-hidden en verdwijnt bij het printen.** Het rapport blijft licht, want het
   gaat mee naar een RvC-vergadering op papier.
+- **Filters, tabs en keuze-pillen gaan via `Tabstrip`** (`src/components/basis.tsx`), niet als losse
+  class-string per scherm. Vijf schermen bouwden die pil-rij ooit onafhankelijk van elkaar na; nu is
+  het één component met een `toon` (`vol` voor een keuze die de rest van het scherm bepaalt, `zacht`
+  voor een vrijblijvende keuze) en een `layout` (`scroll`/`gelijk`/`wrap`).
 
 ## De gelaagde compositie
 
@@ -95,6 +99,13 @@ In de eerste opzet bedekte het uitkomstpaneel de invoervelden waarin je net ston
 onderliggende kaart moet ruimte reserveren, en dat mag niet van oplettendheid afhangen: `Kaart`
 heeft daarvoor de prop `onderruimte`.
 
+### 4. Een kaart is een kaart-in-kaart
+
+`Kaart` tekent zichzelf als een dunne buitenschil om een losse binnenkern — fysieke diepte, als glas
+in een lijst. Dat is een lichte, niet-donkere laag en telt dus niet mee voor de "precies één
+houtskoolpaneel per scherm"-regel hierboven. De prop-API is ongewijzigd: `className` landt zoals
+altijd op de binnenkern, dus geen enkele aanroepplek hoeft zich hier bewust van te zijn.
+
 ### Twee dingen over de cirkel
 
 De cirkel wordt vanuit de hoek verschoven met een deel van zijn **eigen breedte**, met `translate`
@@ -107,9 +118,17 @@ blijft de cirkel onder de haarlijnkop of onder de teamscore, in plaats van erond
 
 ## Lettertypen
 
-Playfair Display voor display, Inter voor de rest, allebei via `next/font/google`. Die haalt ze bij
-de build binnen en serveert ze vanaf het eigen domein — er gaat dus geen bezoekersdata naar Google.
-Voor een corporatie die in deze game zelf over privacy bij huurdersdata praat, is dat geen detail.
+Fraunces voor display, Plus Jakarta Sans voor de rest, allebei via `next/font/google`. Die haalt ze
+bij de build binnen en serveert ze vanaf het eigen domein — er gaat dus geen bezoekersdata naar
+Google. Voor een corporatie die in deze game zelf over privacy bij huurdersdata praat, is dat geen
+detail.
+
+Fraunces is een "optical size"-variabel lettertype: `font-optical-sizing: auto` (in de `.display`-
+en `.cijfer`-klassen) laat het bij een groot formaat automatisch de eigen, expressievere
+grote-maat-tekening gebruiken in plaats van een klein lettertje uitvergroot. Een kop kan zo ook
+cursief: de `.kicker`-klasse (het label boven een titel, en de losse kicker op de startpagina) is
+bewust een rustige, cursieve regel geworden in plaats van een pil/badge — dat laatste oogde als een
+los UI-element in plaats van als tekst.
 
 ## Iconen
 

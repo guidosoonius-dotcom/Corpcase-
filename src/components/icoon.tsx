@@ -4,7 +4,7 @@
  * De padgegevens komen letterlijk uit Google's Material Symbols (Apache 2.0), maar worden hier
  * als losse SVG's ingebed in plaats van als lettertype geladen: het volledige subset-lettertype
  * weegt enkele megabytes voor een handvol glyphs, en er gaat zo geen bezoekersverzoek naar
- * Google — dezelfde overweging als bij Playfair en Inter in `app/layout.tsx`.
+ * Google — dezelfde overweging als bij de lettertypen in `app/layout.tsx`.
  *
  * Terughoudend gebruikt: alleen waar het icoon een handeling of status verduidelijkt die de
  * tekst alleen niet snel genoeg overbrengt (waarschuwen, kopiëren, tonen/verbergen, opnieuw

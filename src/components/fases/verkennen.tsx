@@ -5,7 +5,17 @@ import { alleSignalen, rol, speelmodus, type SignaalKaart } from "@/lib/content"
 import { opslag } from "@/lib/sessie/api";
 import type { EigenSignaalRij, SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Hoofdregel, Kaart, Knop, Kop, Melding, Veld, invoerStijl } from "@/components/basis";
+import {
+  Etiket,
+  Hoofdregel,
+  Kaart,
+  Knop,
+  Kop,
+  Melding,
+  Tabstrip,
+  Veld,
+  invoerStijl,
+} from "@/components/basis";
 
 const PER_PORTIE = 12;
 
@@ -147,25 +157,17 @@ export function Verkennen({
         )}
       </div>
 
-      <div className="scroll-x flex gap-1.5 pb-1">
-        {(["alle", "jaarverslag", "huurder", "uitdaging", "domein"] as const).map((l) => (
-          <button
-            key={l}
-            type="button"
-            onClick={() => {
-              setLens(l);
-              setPortie(1);
-            }}
-            className={`shrink-0 rounded-kaart border px-3 py-1.5 text-xs font-medium transition-colors ${
-              lens === l
-                ? "border-accent-sterk bg-accent-sterk text-white"
-                : "border-rand-sterk bg-vlak text-inkt-zacht"
-            }`}
-          >
-            {l === "alle" ? "Alles" : LENS_LABELS[l]}
-          </button>
-        ))}
-      </div>
+      <Tabstrip
+        opties={(["alle", "jaarverslag", "huurder", "uitdaging", "domein"] as const).map((l) => ({
+          id: l,
+          label: l === "alle" ? "Alles" : LENS_LABELS[l],
+        }))}
+        actief={lens}
+        onKies={(l) => {
+          setLens(l);
+          setPortie(1);
+        }}
+      />
 
       {lens === "uitdaging" ? (
         eigenFormulierOpen ? (

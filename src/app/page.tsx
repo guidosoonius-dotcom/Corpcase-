@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { bibliotheek, cora, organisaties, realiteitschecks, rollen } from "@/lib/content";
-import { Cijfer } from "@/components/basis";
+import { Cijfer, Kaart } from "@/components/basis";
 import { Cirkel, RasterCirkel } from "@/components/decoratie";
 import { Thema } from "@/components/thema";
 
@@ -12,9 +12,7 @@ export default function Home() {
       <main className="relative mx-auto w-full max-w-3xl overflow-hidden px-5 py-12 sm:py-20">
         <Cirkel hoek="rechtsboven" formaat={0.62} />
 
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-inkt-licht">
-          Corpcase
-        </p>
+        <p className="kicker text-base sm:text-lg">Corpcase</p>
 
         <h1 className="display mt-4 max-w-xl text-4xl leading-[1.08] text-inkt sm:text-6xl">
           Van jaarverslag naar een gedragen roadmap
@@ -52,18 +50,20 @@ export default function Home() {
           ))}
         </div>
 
-        <section className="mt-14 flex items-start gap-5 border-t border-rand pt-8">
-          <RasterCirkel formaat={84} className="hidden shrink-0 sm:block" />
-          <div>
-            <h2 className="display text-xl text-inkt">Voorbeeldcorporatie: {org.naam}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">{org.pitch}</p>
-            <p className="mt-3 text-xs leading-relaxed text-inkt-licht">
-              De cijfers in deze demo komen uit publieke bronnen en zijn nog niet geverifieerd tegen
-              het originele jaarverslag. Elk cijfer toont zijn bron; zie{" "}
-              <code>content/BRONNEN.md</code>.
-            </p>
+        <Kaart className="mt-14 p-6 sm:p-8">
+          <div className="flex items-start gap-5">
+            <RasterCirkel formaat={84} className="hidden shrink-0 sm:block" />
+            <div>
+              <h2 className="display text-xl text-inkt">Voorbeeldcorporatie: {org.naam}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-inkt-zacht">{org.pitch}</p>
+              <p className="mt-3 text-xs leading-relaxed text-inkt-licht">
+                De cijfers in deze demo komen uit publieke bronnen en zijn nog niet geverifieerd
+                tegen het originele jaarverslag. Elk cijfer toont zijn bron; zie{" "}
+                <code>content/BRONNEN.md</code>.
+              </p>
+            </div>
           </div>
-        </section>
+        </Kaart>
       </main>
     </Thema>
   );

@@ -49,9 +49,9 @@
   --color-risico: #93332f;
   --color-risico-zacht: #fbeceb;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --radius-kaart: 0.625rem;
@@ -141,19 +141,33 @@ label.keuze:active {
 }
 
 /*
- * Display-tekst. Playfair heeft van zichzelf ruime letterafstand bij grote formaten; die wordt
- * hier ingehaald zodat koppen als één geheel lezen in plaats van als losse letters.
+ * Display-tekst. Fraunces is een variabele "optical size"-serif: `font-optical-sizing: auto`
+ * laat de letter bij een groot formaat automatisch de eigen, expressievere grote-maat-tekening
+ * gebruiken in plaats van een klein lettertje uitvergroot. Fraunces staat van zichzelf al vrij
+ * strak (rondere ink-traps dan Playfair, minder brede letterafstand), dus de correctie hier is
+ * bewust kleiner dan de oude Playfair-waarde.
  */
 .display {
   font-family: var(--font-display);
-  letter-spacing: -0.015em;
+  font-optical-sizing: auto;
+  letter-spacing: -0.008em;
+}
+
+/* Cursieve kicker boven een titel — vervangt de vorige pil/badge-achtige eyebrow-behandeling. */
+.kicker {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 460;
+  color: var(--color-accent-diep);
 }
 
 .cijfer {
   font-family: var(--font-display);
+  font-optical-sizing: auto;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.03em;
-  line-height: 0.85;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
 }
 
 /* Tabellen en matrixen mogen zelf scrollen; de pagina nooit horizontaal. */

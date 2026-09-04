@@ -6,7 +6,17 @@ import { portfolio, alleBeelden, type UsecaseBeeld } from "@/lib/sessie/afgeleid
 import { formatteerBandbreedte, voorgesteldeHorizon } from "@/lib/waarde/berekening";
 import type { SessieState, SessieUsecaseRij } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Hoofdregel, Kaart, Knop, Kop, Leeg, Melding, invoerStijl } from "@/components/basis";
+import {
+  Etiket,
+  Hoofdregel,
+  Kaart,
+  Knop,
+  Kop,
+  Leeg,
+  Melding,
+  Tabstrip,
+  invoerStijl,
+} from "@/components/basis";
 
 /**
  * Een voorzet voor de randvoorwaarden, opgebouwd uit wat er in Identificatie al over deze use case
@@ -196,28 +206,31 @@ function RoadmapKaart({
         ) : null}
       </div>
 
-      <div className="mt-2.5 flex flex-wrap gap-1.5">
-        {speelmodi.horizonnen
-          .filter((h) => horizonIds.includes(h.id))
-          .map((h) => (
-            <Knop
-              key={h.id}
-              soort={item?.horizon === h.id ? "primair" : "rand"}
-              onClick={() => void bewaar({ horizon: h.id })}
-              className={`!px-3 !py-2 !text-xs ${
-                voorstel === h.id ? "!border-dashed !border-accent" : ""
-              }`}
-            >
-              {h.naam}
-              {voorstel === h.id ? (
-                // aria-hidden: telt niet mee in de toegankelijke naam van de knop, anders wordt
-                // "Nu" ineens "Nu · voorstel" voor wie met een schermlezer of test op naam kiest.
-                <span aria-hidden className="ml-1 text-accent-diep">
-                  · voorstel
-                </span>
-              ) : null}
-            </Knop>
-          ))}
+      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+        <Tabstrip
+          layout="wrap"
+          actief={item?.horizon ?? null}
+          onKies={(id) => void bewaar({ horizon: id })}
+          opties={speelmodi.horizonnen
+            .filter((h) => horizonIds.includes(h.id))
+            .map((h) => ({
+              id: h.id,
+              voorstel: voorstel === h.id,
+              label: (
+                <>
+                  {h.naam}
+                  {voorstel === h.id ? (
+                    // aria-hidden: telt niet mee in de toegankelijke naam van de knop, anders
+                    // wordt "Nu" ineens "Nu · voorstel" voor wie op naam kiest (schermlezer of
+                    // test).
+                    <span aria-hidden className="ml-1 text-accent-diep">
+                      · voorstel
+                    </span>
+                  ) : null}
+                </>
+              ),
+            }))}
+        />
         {item ? (
           <Knop
             soort="stil"

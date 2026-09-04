@@ -4,7 +4,7 @@ import { useState } from "react";
 import { opslag } from "@/lib/sessie/api";
 import type { BijdrageSoort, SessieState } from "@/lib/supabase/types";
 import type { BewaardeIdentiteit } from "@/lib/sessie/identiteit";
-import { Etiket, Knop, invoerStijl } from "./basis";
+import { Etiket, Knop, Tabstrip, invoerStijl } from "./basis";
 
 /**
  * Elkaar helpen bij één use case.
@@ -134,25 +134,18 @@ export function Bijdragen({
       )}
 
       <div className="mt-3 space-y-2">
-        <div className="flex gap-1.5">
-          {(["hulpvraag", "assist", "challenge"] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => {
-                setSoort(s);
-                if (s !== "assist") setBeantwoordt(null);
-              }}
-              className={`flex-1 rounded-kaart border px-2 py-2 text-xs font-medium transition-colors ${
-                soort === s
-                  ? "border-accent-sterk bg-accent-sterk text-white"
-                  : "border-rand-sterk bg-vlak text-inkt-zacht"
-              }`}
-            >
-              {SOORT_LABEL[s]}
-            </button>
-          ))}
-        </div>
+        <Tabstrip
+          opties={(["hulpvraag", "assist", "challenge"] as const).map((s) => ({
+            id: s,
+            label: SOORT_LABEL[s],
+          }))}
+          actief={soort}
+          layout="gelijk"
+          onKies={(s) => {
+            setSoort(s);
+            if (s !== "assist") setBeantwoordt(null);
+          }}
+        />
 
         {beantwoordt ? (
           <p className="text-[11px] text-inkt-licht">

@@ -10,6 +10,16 @@ import type { CheckBesluit } from "@/lib/supabase/types";
  * blijven, vandaar de losse `groot`-varianten.
  */
 
+/**
+ * Kaart-in-kaart: een dunne buitenschil (zelfde toon als een rand elders in de app) om een losse
+ * binnenkern. Geeft een kaart wat fysieke diepte — als glas in een lijst — zonder een nieuw, tweede
+ * "zwaar" oppervlak naast het houtskoolpaneel te introduceren: de schil is licht, niet donker, en
+ * telt dus niet mee voor de "precies één donker paneel per scherm"-regel.
+ *
+ * De buitenschil draagt geen van de props: `className` (en dus elke opvulling/lay-outklasse die een
+ * aanroeper meegeeft) landt zoals voorheen op de binnenkern, zodat geen van de bestaande
+ * aanroepplekken hoeft te veranderen.
+ */
 export function Kaart({
   children,
   className = "",
@@ -28,12 +38,14 @@ export function Kaart({
   onderruimte?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-kaart border bg-vlak ${
-        aandacht ? "border-accent" : "border-rand"
-      } ${onderruimte ? "pb-12" : ""} ${className}`}
-    >
-      {children}
+    <div className="rounded-[calc(var(--radius-kaart)+0.3rem)] border border-rand-sterk bg-rand p-[0.3rem]">
+      <div
+        className={`rounded-kaart border bg-vlak ${
+          aandacht ? "border-accent" : "border-rand"
+        } ${onderruimte ? "pb-12" : ""} ${className}`}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -249,11 +261,7 @@ export function Kop({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
       <div className="min-w-0">
-        {boven ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-inkt-licht">
-            {boven}
-          </p>
-        ) : null}
+        {boven ? <p className="kicker text-base sm:text-lg">{boven}</p> : null}
         <h1 className="display mt-1 text-2xl leading-[1.15] text-inkt sm:text-3xl">
           {titel}
         </h1>
@@ -308,9 +316,75 @@ export function Schaal({
 }
 
 /**
+ * Rij van keuze-pillen: filters, tabs, en andere "kies er één"-groepen.
+ *
+ * Vijf schermen bouwden dit los van elkaar met dezelfde class-string na (lens-filter in Verkennen,
+ * de Op-tafel/Bibliotheek/Zelf-schrijven-tabs in Identificatie, ProcesTabs, de hulpvraag/assist/
+ * challenge-kiezer in Bijdragen, en de horizon-knoppen in Roadmap). Hier één keer goed opgeschreven.
+ */
+export function Tabstrip<T extends string>({
+  opties,
+  actief,
+  onKies,
+  toon = "vol",
+  layout = "scroll",
+}: {
+  opties: { id: T; label: ReactNode; voorstel?: boolean }[];
+  actief: T | null | undefined;
+  onKies: (id: T) => void;
+  /**
+   * "vol" = volle accentvulling bij selectie — voor een keuze die de rest van het scherm bepaalt
+   * (welk filter, welke tab, welke horizon). "zacht" = zachte tint — voor een keuze zonder gevolg
+   * die je zomaar weer kunt wijzigen, zoals welk proces je op dit moment bekijkt.
+   */
+  toon?: "vol" | "zacht";
+  /**
+   * "scroll" = horizontaal scrollende rij van eigen breedte (filters/tabs die niet altijd passen).
+   * "gelijk" = vult de rij gelijk verdeeld over alle opties (een vaste, korte keuzeset).
+   * "wrap" = breekt af naar een nieuwe regel als het niet past (een langere, vaste keuzeset).
+   */
+  layout?: "scroll" | "gelijk" | "wrap";
+}) {
+  const buitenklasse =
+    layout === "scroll"
+      ? "scroll-x flex gap-1.5 pb-1"
+      : layout === "gelijk"
+        ? "flex gap-1.5"
+        : "flex flex-wrap gap-1.5";
+
+  return (
+    <div className={buitenklasse}>
+      {opties.map((optie) => {
+        const isActief = actief === optie.id;
+        const kleur = isActief
+          ? toon === "vol"
+            ? "border-accent-sterk bg-accent-sterk text-white"
+            : "border-accent bg-accent-zacht text-accent-diep"
+          : optie.voorstel
+            ? "border-dashed border-accent bg-vlak text-inkt-zacht"
+            : "border-rand-sterk bg-vlak text-inkt-zacht hover:border-accent-sterk";
+        return (
+          <button
+            key={optie.id}
+            type="button"
+            onClick={() => onKies(optie.id)}
+            aria-pressed={isActief}
+            className={`rounded-kaart border px-3 py-2 text-xs font-medium transition-colors ${
+              layout === "gelijk" ? "flex-1" : "shrink-0"
+            } ${kleur}`}
+          >
+            {optie.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
  * Een getal dat het beeld draagt in plaats van een bijschrift.
  *
- * Playfair met strakke letterafstand en tabulaire cijfers, zodat een oplopende teller niet
+ * Fraunces met strakke letterafstand en tabulaire cijfers, zodat een oplopende teller niet
  * zit te schuiven. Gebruikt voor de teamscore, de netto waarde en de tellers op de beamer.
  */
 export function Cijfer({
