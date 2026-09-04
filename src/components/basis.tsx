@@ -18,7 +18,12 @@ import type { CheckBesluit } from "@/lib/supabase/types";
  *
  * De buitenschil draagt geen van de props: `className` (en dus elke opvulling/lay-outklasse die een
  * aanroeper meegeeft) landt zoals voorheen op de binnenkern, zodat geen van de bestaande
- * aanroepplekken hoeft te veranderen.
+ * aanroepplekken hoeft te veranderen. Twee dingen die daaruit volgen voor wie een Kaart in een grid-
+ * of flex-rij met ongelijke buren zet: de binnenkern krijgt `h-full` zodat hij, als de buitenschil
+ * door de standaard `align-items: stretch` hoger wordt getrokken dan zijn eigen inhoud, meegroeit in
+ * plaats van een stuk kale schilkleur bloot te leggen; en een kolom-/rijbreedte (`col-span-2` en
+ * dergelijke) moet op een omhullende `div` om de Kaart heen staan, niet in `className` — die landt op
+ * de binnenkern, niet op het grid-item.
  */
 export function Kaart({
   children,
@@ -40,7 +45,7 @@ export function Kaart({
   return (
     <div className="rounded-[calc(var(--radius-kaart)+0.3rem)] border border-rand-sterk bg-rand p-[0.3rem]">
       <div
-        className={`rounded-kaart border bg-vlak ${
+        className={`h-full rounded-kaart border bg-vlak ${
           aandacht ? "border-accent" : "border-rand"
         } ${onderruimte ? "pb-12" : ""} ${className}`}
       >
